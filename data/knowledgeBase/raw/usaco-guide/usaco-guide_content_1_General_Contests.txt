@@ -1,0 +1,24 @@
+## Frequent Contests
+
+These websites hold contests that I've often participated in.
+
+- [AtCoder](https://beta.atcoder.jp/contests/archive)
+  - Beginner, Regular, and Grand contests, 100-180 min
+- [Codeforces](http://codeforces.com/problemset)
+  - Div 1-4, 2-3 hrs
+- [DMOJ: Modern Online Judge](http://dmoj.ca/)
+  - usually 3 hrs, can choose your start time within a window (like USACO)
+
+## Other Websites
+
+These platforms no longer actively hold contests, but it might be worth looking
+at past problems.
+
+## Onsite Finals (Individual)
+
+## Codeforces Tools
+
+<!--   - [CF Enhancer](https://chrome.google.com/webstore/detail/codeforces-enhancer/ocmandagmgmkcplckgnfgaokpgkfenmp)
+    - no longer works -->
+
+## Contest Tools

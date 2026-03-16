@@ -1,0 +1,122 @@
+<!-- 
+   -->
+
+# Introduction
+
+<!-- Some silver problems involve $10^9+7$, should this be introduced in silver? -->
+
+In **modular arithmetic**, instead of working with integers themselves, we work
+with their remainders when divided by $m$. We call this taking modulo $m$. For
+example, if we take $m = 23$, then instead of working with $x = 247$, we use
+$x \bmod 23 = 17$. Usually, $m$ will be a large prime, given in the problem; the
+two most common values are $10^9 + 7$ and $998\,244\,353=119\cdot 2^{23}+1$.
+Modular arithmetic is used to avoid dealing with numbers that overflow built-in
+data types, because we can take remainders, according to the following formulas:
+
+$$
+(a+b) \bmod m = (a \bmod m + b \bmod m) \bmod m
+$$
+
+$$
+(a-b) \bmod m = (a \bmod m - b \bmod m) \bmod m
+$$
+
+$$
+(a \cdot b) \pmod{m} = ((a \bmod m) \cdot (b \bmod m)) \bmod m
+$$
+
+$$
+a^b \bmod {m} = (a \bmod m)^b \bmod m
+$$
+
+# Modular Exponentiation
+
+### Resources
+
+**Binary exponentiation** can be used to efficiently compute $x ^ n \mod m$. To
+do this, let's break down $x ^ n$ into binary components. For example,
+$5 ^ {10}$ = $5 ^ {1010_2}$ = $5 ^ 8 \cdot 5 ^ 2$. Then, if we know $x ^ y$ for
+all $y$ which are powers of two ($x ^ 1$, $x ^ 2$, $x ^ 4$, $\dots$ ,
+$x ^ {2^{\lfloor{\log_2n} \rfloor}}$, we can compute $x ^ n$ in
+$\mathcal{O}(\log n)$.
+
+To deal with $m$, observe that modulo doesn't affect multiplications, so we can
+directly implement the above "binary exponentiation" algorithm while adding a
+line to take results $\pmod m$.
+
+<!--
+Finally, since $x ^ y$ for some $y \neq 1$ equals $x ^ {y - 1}$, and $x$ otherwise, we can compute these sums efficiently.  -->
+
+## Solution - Exponentiation
+
+# Modular Inverse
+
+The **modular inverse** is the equivalent of the reciprocal in real-number
+arithmetic; to divide $a$ by $b$, multiply $a$ by the modular inverse of $b$.
+We'll only consider prime moduli $p$ here.
+
+For example, the inverse of $2$ modulo $p=10^9+7$ is
+$i=\frac{p+1}{2}=5\cdot 10^8+4$. This means that for any integer $x$,
+
+$$
+(2x)\cdot i\equiv x\cdot (2i)\equiv x\pmod{10^9+7}.
+$$
+
+For example, $10i\equiv 5\pmod{10^9+7}$.
+
+<!-- #### Example: Sprinkers 2
+
+There aren't many good examples of Modular Inverses in USACO.
+One problem where it was useful was the platinum problem "Sprinkers 2".
+
+We'll be skipping the other details of this problem to focus more on the modular arithmetic, so try to figure the other parts out yoruself first.
+
+In this problem, our DP transition relies on dividing our answer at some state by $2$, under a prime moduli.
+
+To perform this, we'll multiply by $500000004$ (the modular inverse of $2$), and take it under the prime moduli for the same result.
+ -->
+
+<!-- To find a modular inverse of some number modulo $p$, simply raise it to the power of $p-2$. -->
+
+## With Exponentiation
+
+[**Fermat's Little Theorem**](https://en.wikipedia.org/wiki/Fermat%27s_little_theorem)
+(not to be confused with Fermat's **Last** Theorem) states that all integers $a$
+not divisible by $p$ satisfy $a^{p - 1} \equiv 1 \pmod{p}$. Consequently,
+$a^{p-2} \cdot a \equiv 1 \pmod{p}$. Therefore, $a^{p - 2}$ is a modular inverse
+of $a$ modulo $p$.
+
+## With Euclidean Division
+
+We can also find modular inverses through Euclidean Division.
+Given the prime modulus $m > a$ we have:
+
+$$
+m = k \cdot a + r
+$$
+
+where $k = \lfloor \frac{m}{a} \rfloor$ and $r = m \mod a$. Then:
+
+$$
+\begin{align*}
+         & 0 = k \cdot a + r \mod m        \\
+  \iff{} & r = -k \cdot a \mod m           \\
+  \iff{} & r \cdot a^{-1} = -k \mod m      \\
+  \iff{} & a^{-1} = -k \cdot r^{-1} \mod m
+\end{align*}
+$$
+
+Here is a short recursive implementation of the above formula:
+
+The advantage of this approach is that we can precompute the inverse modular of numbers in the range $[1, MOD)$ in $\mathcal{O}(MOD)$.
+
+Because it takes $\mathcal{O}(\log p)$ time to compute a modular inverse modulo
+$p$, frequent use of division inside a loop can significantly increase the
+running time of a program. If the modular inverse of the same number(s) is/are
+being used many times, it is a good idea to precalculate it.
+
+Also, one must always ensure that they do not attempt to divide by 0. Be aware
+that after applying modulo, a nonzero number can become zero, so be very careful
+when dividing by non-constant values.
+
+## Problems

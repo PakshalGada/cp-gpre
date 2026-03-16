@@ -1,0 +1,74 @@
+## Tutorial
+
+## Solution - Tree Matching
+
+### Solution 1
+
+In this problem, we're asked to find the maximum matching of a tree, or the
+largest set of edges such that no two edges share an endpoint. Let's use DP on
+trees to do this.
+
+Root the tree at node $1$, allowing us to define the subtree of each node.
+
+Let $dp_2[v]$ represent the maximum matching of the subtree of $v$ such that we
+don't take any edges leading to some child of $v$. Similarly, let $dp_1[v]$
+represent the maximum matching of the subtree of $v$ such that we take one edge
+leading into a child of $v$. Note that we can't take more than one edge leading
+to a child, because then two edges would share an endpoint.
+
+#### Taking No Edges
+
+Since we will take no edges to a child of $v$, the children vertices of $v$ can
+all take an edge to some child, or not. Additionally, observe that the children
+of $v$ taking an edge to a child will not prevent other children of $v$ from
+doing the same. In other words, all of the children are independent. So, the
+transitions are:
+
+$$
+dp_2[v] = \sum_{u \in child(v)} \max(dp_1[u], dp_2[u])
+$$
+
+#### Taking One Edge
+
+The case where we take one child edge of $v$ is a bit trickier. Let's assume the
+edge we take is $v \rightarrow u$, where $u \in child(v)$. Then, to calculate
+$dp_1[v]$ for the fixed $u$:
+
+$$
+dp_1[v] = dp_2[u] + 1 + dp_2[v] - \max(dp_2[u], dp_1[u])
+$$
+
+In other words, we take the edge $v \rightarrow u$, but we can't take any
+children of $u$ in the matching, so we add $dp_2[u] + 1$. Then, to deal with the
+other children, we add:
+
+$$
+\sum_{w \in child(v), w \neq u} \max(dp_1[w], dp_2[w]).
+$$
+
+Fortunately, since we've calculated $dp_2[v]$ already, this expression
+simplifies to:
+
+$$
+dp_2[v] - \max(dp_2[u], dp_1[u])
+$$
+
+Overall, to calculate the transitions for $dp_1[v]$ over all possible children
+$u$:
+
+$$
+dp_1[v] = \max_{u \in child(v)} (dp_2[u] + 1 + dp_2[v] - \max(dp_2[u], dp_1[u]))
+$$
+
+### Solution 2 - Greedy
+
+Just keep matching a leaf with the only vertex adjacent to it while possible.
+
+## Problems
+
+### Easier
+
+### Harder
+
+These problems are not Gold level. You may wish to return to these once you're
+in Platinum.

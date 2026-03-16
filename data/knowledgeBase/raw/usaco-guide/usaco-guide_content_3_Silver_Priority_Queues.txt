@@ -1,0 +1,37 @@
+## Introduction
+
+A **priority queue** (or **heap**) supports the following operations: insertion
+of elements, deletion of the element considered highest priority, and retrieval
+of the highest priority element, all in $\mathcal{O}(\log N)$ time according to
+the number of elements in the priority queue. Priority queues are simpler and
+faster than sets, so you should use them instead whenever possible.
+
+## Example
+
+### Solution
+
+In this problem, we're asked the minimum number of rooms needed to accommodate
+$n$ customers, who arrive and leave on set days. Let's sort each customer by
+their start time so that we do not have a customer arriving at say, time 3,
+occupying a room before a customer that arrives at time 2.
+
+Now, we can iterate through the customers while maintaining a minimum priority
+queue that stores the departure times of customers we've already processed. For
+each customer, we check to see if the minimum element in the priority queue is
+less than the arrival time of the new customer.
+
+- If this is true, that means a room previously occupied has opened up, so we
+  remove the minimum element from the priority queue and replace it with the new
+  customer's departure time. The new customer will be allocated to the same room
+  as the customer who departed.
+- Otherwise, all the rooms are full, so we need to allocate another room for the
+  customer and add it to the priority queue.
+
+We can determine $k$ by finding the maximum size the priority queue reaches as
+we iterate through the customers.
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(n\log n)$
+
+## Problems

@@ -1,0 +1,132 @@
+## Initial Approach
+
+These critical nodes that the problem talks about are commonly known as **dominators**.
+Let's define $\texttt{dom}(u)$ as the set of nodes that dominate node $u$.
+
+The dominator of the starting node is itself, and the set of dominators
+for any other node $u$ is the intersection of the set of dominators for all ancestors $p$ of node $u$.
+
+$$
+\texttt{dom}(u)=
+\begin{cases}
+  u\quad\text{ if } u \text{ is the starting point} \\
+  {u}\cup \left(\bigcap_{p \in \texttt{ancestor}(u)} \texttt{dom}(p)\right)\quad\text{otherwise}
+\end{cases}
+$$
+
+### Implementation
+
+The following code uses the above recurrence.
+However, it's too slow and uses too much memory.
+We'll try to optimize this moving on!
+
+**Time complexity:** $\mathcal{O}(N^2)$.
+
+## Optimizing With Trees
+
+In this approach, we are going to build the [dominator tree](https://en.wikipedia.org/wiki/Dominator_(graph_theory)) of the graph.
+
+Before we discuss this though, let's set up some terms we're going to use throughout this module:
+
+* A node $u$ **strictly dominates** another node $v$ if $u$ dominates $v$ and $u \ne v$.
+* Let the **immediate dominator** of $u$, or $\texttt{idom}(u)$, be the unique node $v$ such that it strictly dominates node $u$ and every other dominator of node $u$ strictly dominates node $v$.
+* Let $e(u)$ be the entry time in node $u$ doing a [Euler tour](/gold/tree-euler).
+* Let the **semi-dominator** of $u$, or $\texttt{sdom}(u)$, be a $v$ such that there's a path from $v$ to $u$
+  and $e(i) \ge e(u)$ for every intermediate node $i$ along the path from $u$ to $v$, excluding the ends.
+  If there's multiple nodes that satisfy this requirement, we take the node $v$ with the smallest $e(v)$.
+* Let the **relative dominator** of $u$, or $\texttt{rdom}(u)$, be the vertex $x \ne \texttt{sdom}(u)$ on the path from $\texttt{sdom}(u)$ to $u$ in the Euler tour tree with the lowest sdom node number.
+  Unlike with the sdom, ties in this function can be broken arbitrarily.
+
+A dominator tree is a tree where each node's children are those nodes it immediately dominates. The start node is the root of the tree.
+
+Given this definition, we can see that if a node dominates another, then the former is
+an ancestor of the latter in the dominator tree.
+Thus, the answer to the CSES problem is the set of all nodes that lie on the path from the root to node $n$ in the tree.
+
+The following graph shows the sdom for every node.
+The full-color edges represent the edges part of the DFS tree.
+
+![Graph2](/content/6_Advanced/assets/dom_tree_sdom.png)
+
+### Important properties
+
+Proofs of these properties are located later in the module.
+For all of these properties, let $u$ be a node that isn't the starting node.
+
+1. $\texttt{sdom}(u)$ is a proper ancestor of $u$ is the DFS tree.
+2. If $\texttt{rdom}(u)=u$, then $\texttt{idom}(u)=\texttt{sdom}(u)$.
+3. If not, then $\texttt{idom}(u)=\texttt{idom}(\texttt{rdom}(u))$
+
+## Algorithm Overview
+
+Before we get into the nitty-gritty, here's a brief outline of how exactly we're going to build up this dominator tree.
+
+1. Compute the sdom of every node besides the start.
+2. Compute the *rdom* of every node besides the start.
+3. Visit all the vertices in the DFS tree and calculate their immediate dominator using the second and third properties that were listed above.
+   Notice that due to how we defined the rdom of a node, a preorder traversal will always visit the rdom of a node before the node itself if the two aren't the same.
+
+The first and second steps are awfully vague- let's clear those up now, shall we?
+
+### Computing $\texttt{sdom}$
+
+We can compute $\texttt{sdom}(u)$ as the minimum node in the intersection of the following groups:
+1. All the nodes $y$ such that there's an edge from $y$ to $u$ and $e(y) \le e(u)$.
+2. All the values of $\texttt{sdom}(x)$ where $x$ is any node such that there's an edge from $u$ to $x$ and $e(x) > e(u)$.
+   To be more mathematically precise, we can define this group as
+   $$
+   \{\texttt{sdom}(x)\ |\ (u, x) \in E\text{ and }e(x)>e(u)\}
+   $$
+
+The [proof](https://tanujkhattar.wordpress.com/2016/01/11/dominator-tree-of-a-directed-graph/) of why this works is beyond the scope of this module.
+
+### Implementing $\texttt{sdom}$
+
+We first perform a preorder DFS traversal of the graph from the source node and keep track of all the entry times of the nodes.
+
+Then, we compute the sdom for all nodes by applying the formula mentioned in the previous section.
+To do this, we iterate over the traversal in *reverse order* and maintain the nodes we've gone over in a [DSU](/gold/dsu).
+
+However, the DSU we use for this algorithm is going to be a little different.
+We unite nodes as usual, but the `find` function differs.
+
+Say $x$ is the root of the component we're calling `find` on.
+The node we're calling `find` on happens to be `x`, then we return `x` as usual.
+However, if it's some other node, then we return a node with the minimum sdom that lies on the path from $u$ to $x$.
+
+To process node $u$ we iterate over all nodes $v$ that have an edge directed towards it.
+If $v$ comes before $u$ in the preorder traversal, then $v$ is an ancestor of $u$ and would not have been processed till now.
+In that case, `find(v)` would return $v$ itself.
+
+If not, then `find(v)` would return a node $x$ lying on the path from $v$ to the root in its DSU component with the smallest sdom.
+
+If you're still a bit confused by this explanation, pseudocode for it is located
+on slide 33 of the Princeton slides given at the start of this module.
+
+### Computing $\texttt{rdom}$
+
+The rdom of a node is the node with the sdom that comes earliest in the traversal.
+Since this reduces to finding the minimum of a value along a certain path in a tree,
+we can implement this using an augmentation of [binary jumping](/plat/binary-jump).
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}((N+M) \cdot \log N)$
+
+## Cycles
+
+### Explanation
+
+The problem asks as to find the an intersection node of all cycles, if it exists.
+
+First, let's remove the nodes that don't belong to any cycle.
+To todo this, we can recursively remove the nodes without any outgoing edge.
+By "recursively," we mean that after finishing with a node we can check its parents to see if the parents have no outgoing edges as well.
+
+Now our graph is basically a bunch of cycles.
+Assuming that the intersection of all cycles is not empty, we reduce the cycles node by node.
+The last node standing is be the intersection.
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(N)$

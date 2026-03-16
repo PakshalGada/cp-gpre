@@ -1,0 +1,125 @@
+## Introduction
+
+## Why Use Lambdas?
+Lambdas allow us to write simple and anonymous functions inline.
+This allows us to write smaller functions while keeping code local and
+organized. In addition, lambdas can capture their surrounding variables, which
+is often convenient when writing helper functions.
+
+The C++ standard library has good support for lambdas, with functions
+like `std::sort` and `std::lower_bound` allowing you to pass custom functions
+to act as a comparator of objects. This is often more convenient than the
+alternative of writing a dedicated function to act as a comparator.
+
+## General Form
+Lambdas have the following form:
+
+```
+[capture_list](parameters) -> trailing_return_type {
+	// function body
+}
+```
+
+The parameters, return type, and function body are all pretty straightforward.
+In competitive programming contexts, we typically use the following capture types:
+
+`[]`: Does not capture anything in the local scope.
+
+`[&]`: Captures everything in the local scope by reference.
+
+`[=]`: Captures everything in the local scope by copy.
+
+**The lambda's local scope is the scope where it is defined, not the scope where it is
+used.**
+
+You can also specify what variables to capture, but this typically is not necessary.
+
+For an example of a lambda, say we want to write a function returns the square
+of a given number. We can write the following lambda expression:
+
+```cpp
+auto square = [](int x) -> long long { return (long long)x * x; };
+```
+
+Then, you can call the lambda like a normal function.
+```cpp
+cout << square(10) << '\n';  // prints out 100
+```
+
+As mentioned in the [custom comparator module](/silver/sorting-custom?lang=cpp)
+module, lambdas can also be used as comparators.
+
+## Recursive Lambdas
+
+Let's say we want to write a recursive GCD function. With a lambda, the most
+straightforward way to write it would be like this:
+
+```cpp
+auto gcd = [](int a, int b) -> int { return b == 0 ? a : gcd(b, a % b); };
+```
+
+Unfortunately, this does not work, because a lambda cannot directly reference
+itself in its definition. However, there are workarounds to this issue.
+
+### With `y_combinator`
+
+If we add the following from the link above in C++14:
+
+```cpp
+namespace std {
+
+template <class Fun> class y_combinator_result {
+	Fun fun_;
+
+  public:
+	template <class T>
+	explicit y_combinator_result(T &&fun) : fun_(std::forward<T>(fun)) {}
+
+	template <class... Args> decltype(auto) operator()(Args &&...args) {
+		return fun_(std::ref(*this), std::forward<Args>(args)...);
+	}
+};
+
+template <class Fun> decltype(auto) y_combinator(Fun &&fun) {
+	return y_combinator_result<std::decay_t<Fun>>(std::forward<Fun>(fun));
+}
+
+}  // namespace std
+```
+
+Then we can have code like the following:
+
+```cpp
+int main() {
+	cout << y_combinator([](auto gcd, int a, int b) -> int {
+		return b == 0 ? a : gcd(b, a % b);
+	})(20, 30)
+	     << "\n";  // outputs 10
+}
+```
+
+### With [`std::function`](https://en.cppreference.com/w/cpp/utility/functional/function)
+
+Instead of `auto`, use `function<return_type(param)>`.
+
+```cpp
+int main() {
+	function<int(int, int)> gcd = [&](int a, int b) {
+		return b == 0 ? a : gcd(b, a % b);
+	};
+	cout << gcd(20, 30) << '\n';  // outputs 10
+}
+```
+
+### With Generic Lambdas
+To remedy the issue of the lambda being unable to access itself, we pass it
+into itself.
+
+```cpp
+int main() {
+	auto gcd = [&](int a, int b, auto &&gcd) -> int {
+		return b == 0 ? a : gcd(b, a % b, gcd);
+	};
+	cout << gcd(20, 30, gcd) << '\n';  // outputs 10
+}
+```

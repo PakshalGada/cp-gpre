@@ -1,0 +1,92 @@
+## Euclidean Algorithm
+
+The original Euclidean Algorithm computes $\gcd(a,b)$ and looks like this:
+
+## Extended Euclidean Algorithm
+
+The extended Euclidean algorithm computes integers $x$ and $y$ such that
+
+$$
+ax+by=\gcd(a,b)
+$$
+
+We can slightly modify the version of the Euclidean algorithm given above to
+return more information!
+
+### Recursive Version
+
+becomes
+
+The pair will equal to the first two returned elements of the array in the
+iterative version. Looking at this version, we can prove by induction that when
+$a$ and $b$ are distinct positive integers, the returned pair $(x,y)$ will
+satisfy $|x|\le \frac{b}{2\gcd(a,b)}$ and $|y|\le \frac{a}{2\gcd(a,b)}$.
+Furthermore, there can only exist one pair that satisfies these conditions!
+
+Note that this works when $a,b$ are quite large (say, $\approx 2^{60}$) and we
+won't wind up with overflow issues.
+
+## Application - Modular Inverse
+
+It seems that when multiplication / division is involved in this problem,
+$n^2 < \texttt{LLONG\_MAX}$.
+
+## Application - Chinese Remainder Theorem
+
+### For Two Congruences
+
+#### Explanation
+
+The [Chinese Remainder Theorem](https://en.wikipedia.org/wiki/Chinese_remainder_theorem) - also referred to as CRT - yields a unique
+solution to a system of simultaneous modular congruences with pairwise coprime moduli. More specifically, CRT determines a number $x$ that
+when divided by the given divisors leaves the given remainders. Mathematically, it solves the following system of modular congruences:
+
+$$
+x \equiv a_1 \pmod{m_1} \\
+x \equiv a_2 \pmod{m_2} \\
+x \equiv a_3 \pmod{m_3} \\
+\vdots\\
+x \equiv a_k \pmod{m_k} \\
+\tag{1}
+$$
+<center>$M=m_1\cdot m_2 \cdot m_3 \cdots m_k$</center>
+
+The above system has exactly one solution modulo $M$.
+
+We'll focus on the particular case for $k=2$; for two coprime moduli:
+
+$$
+x \equiv a_1 \pmod{m_1} \\
+x \equiv a_2 \pmod{m_2} \\
+\tag{2}
+$$
+<center>$M=m_1 \cdot m_2$</center>
+- Let $n_1$ and $n_2 $be the modular inverse of $m_1$ modulo $m_2$ and the modular inverse of $m_2$
+modulo $m_1$, respectively, thus the properties hold: $n_1 \cdot m_1 \equiv 1 \pmod{m_2}$ and $n_2 \cdot m_2 \equiv 1 \pmod{m_1}$.
+It's worth mentioning that $n_1$ and $n_2$ always exists because $\gcd(m_1,m_2)=1$. We can define a solution $x$ as:
+
+$$
+x = a_1 \cdot m_2 \cdot n_2 + a_2 \cdot m_1 \cdot n_1 \pmod{m_1\cdot m_2}
+$$
+
+It satisfies both equations:
+- Modulo $m_1$ we have $x \equiv a_1 \cdot m_2 \cdot n_2 \pmod{m_1} \iff x \equiv a_1 \pmod{m_1}$ since $m_2 \cdot n_2 \equiv 1 \pmod{m_1}$
+- Modulo $m_2$ we have $x \equiv a_2 \cdot m_1 \cdot n_1 \pmod{m_2} \iff x \equiv a_2 \pmod{m_2}$ since $m_1 \cdot n_1 \equiv 1 \pmod{m_2}$
+
+Now that we have a solution $x \pmod{M}$ it only remains to show that it is indeed the only valid
+solution modulo $m_1 \cdot m_2$. Assuming that there is a different valid solution $y$ we have: $m_1 | y-x$, $m_2 | y-x$,
+$m_3 | y-x$, $\ldots$, $m_k | y-x$, then it follows that $m_1 \cdot m_2 \cdots m_k$ divides $y-x$, since $m_1, m_2, \ldots, m_k$ are relatively
+prime. This means that: $y \equiv x \pmod{m_1 \cdot m_2 \cdots m_k}$.
+
+#### Implementation
+
+**Time Complexity:** $\mathcal{O}(T \cdot \log{MN})$
+
+### For Several Congruences
+
+Using the same notations as in $(1)$, consider $n_i = \frac{M}{m_i}$ - the product of all moduli excluding $m_i$ - and $n_i' \equiv n_i^{-1} \pmod{m_i}$.
+By similar arguments as before, the unique solution mod $M$ is:
+
+$$
+x = \sum_{i=1}^{n}{a_i \cdot n_i \cdot n_i'} \pmod{M}
+$$

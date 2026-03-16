@@ -1,0 +1,104 @@
+## Example - Fibonacci
+
+The Fibonacci numbers are defined as follows:
+
+$$
+\begin{align*}
+F_0 &= 0 \\
+F_1 &= 1 \\
+F_{n+1} &= F_{n} + F_{n-1}
+\end{align*}
+$$
+
+We can also write them using the following matrix recurrence:
+
+$$
+A = \begin{bmatrix}1&1\\1&0\end{bmatrix}^n=\begin{bmatrix}F_{n+1} & F_n \\ F_n & F_{n-1}\end{bmatrix}
+$$
+
+### Proof by Induction
+
+Base case ($n=1$):
+
+$$
+A^1 = \begin{bmatrix}1 & 1 \\ 1 & 0\end{bmatrix} = \begin{bmatrix}F_2 & F_1 \\ F_1 & F_0\end{bmatrix}
+$$
+
+Inductive step ($n+1$):
+
+$$
+A^{n+1}=A\,A^n=\begin{bmatrix}
+1 & 1 \\ 1 & 0
+\end{bmatrix}\begin{bmatrix}
+F_{n+1} & F_{n} \\ F_{n} & F_{n-1}
+\end{bmatrix}=\begin{bmatrix}
+F_{n+1}+F_n & F_{n}+F_{n-1} \\  F_{n+1} & F_{n}
+\end{bmatrix}=\begin{bmatrix}
+F_{n+2} & F_{n+1} \\ F_{n+1} & F_{n}
+\end{bmatrix}
+$$
+
+With this, we've shown that the formula holds for all $n \in \mathbb{N}$.
+
+## Implementation
+
+**Time Complexity:** $\mathcal{O}(\log N)$
+
+## Finding the Right Matrix - Generalized Linear Recurrences
+
+We can generalize the technique above to calculate values in any linear recurrence. The tricky part is finding the correct matrix for the problem. Let's see how we can find this matrix $M$. We know that following equation must hold:
+
+$$
+	\begin{bmatrix}
+    M_{1,1} & M_{1, 2} & \dots \\
+    \vdots & \ddots & \vdots \\
+    M_{k, 1} & \dots & M_{k, k}
+    \end{bmatrix}
+	\begin{bmatrix}
+	a_1 \\ \vdots \\ a_k
+	\end{bmatrix} =
+	\begin{bmatrix}
+	a_2 \\ \vdots \\ a_{k + 1}
+	\end{bmatrix}
+$$
+
+Here, we use the values of $a_1, \dots, a_n$ to find $a_{k+1}$. We can also discard $a_1$ since it won't be used to calculate $a_{k+2}$. If we think about the matrix multiplication, we notice that there is a diagonal of $1$s shifted to the right by $1$ since $a_i \rarr a_{i + 1}$ for $i < k$. So now we have (using $k = 5$ as an example):
+
+$$
+M =	\begin{bmatrix}
+	0 & 1 & 0 & 0 & 0 \\
+	0 & 0 & 1 & 0 & 0 \\
+	0 & 0 & 0 & 1 & 0 \\
+	0 & 0 & 0 & 0 & 1 \\
+    M_{5, 1} & M_{5, 2} & M_{5, 3} & M_{5, 4} & M_{5, 5}
+    \end{bmatrix}
+$$
+
+To find the bottom row, we use the recurrence formula:
+$$
+M =	\begin{bmatrix}
+	0 & 1 & 0 & 0 & 0 \\
+	0 & 0 & 1 & 0 & 0 \\
+	0 & 0 & 0 & 1 & 0 \\
+	0 & 0 & 0 & 0 & 1 \\
+    c_5 & c_4 & c_3 & c_2 & c_1
+    \end{bmatrix}
+$$
+
+With this $M$, the equation always holds.
+
+## Implementation
+
+**Time Complexity:** $\mathcal{O}(K^3 \log N)$
+
+## Takeaway
+
+The takeaway here is not the exact matrix used in linear recurrences, but the method in deriving it. The process of thinking about a vector before and after applying $M$, then deducing $M$ through logic, is a technique that generalizes far beyond standard linear recurrences. For example, see if you can find the equation needed and correct matrix (using $k = 5$ as an example) to solve this modified recurrence for $i > k$:
+
+$$
+a_i = c_1a_{i-1} + c_2a_{i-2} + ... + c_ka_{i-k} + C
+$$
+
+where $C$ is a given constant.
+
+## Problems

@@ -1,0 +1,89 @@
+Most gold range query problems require you to support following tasks in
+$\mathcal{O}(\log N)$ time each on an array of size $N$:
+
+- Update the element at a single position (point).
+- Query the sum of some consecutive subarray.
+
+Both **segment trees** and **binary indexed trees** can accomplish this.
+
+# Segment Tree
+
+A **segment tree** allows you to do point update and range query in
+$\mathcal{O}(\log N)$ time each for **any** associative operation, not just
+summation.
+
+## Resources
+
+You can skip more advanced applications such as **lazy propagation** for now.
+They will be covered in [platinum](/plat/seg-ext).
+
+## Dynamic Range Minimum Queries
+
+### Recursive Implementation
+
+**Time Complexity:** $\mathcal{O}((N + Q) \log N)$
+
+### Iterative Implementation
+
+Though less extensible, this implementation is shorter and has a better constant factor.
+The ranges it operates on are also end-exclusive, unlike the previous one which
+is end-inclusive.
+
+**Time Complexity:** $\mathcal{O}((N + Q) \log N)$
+
+## Dynamic Range Sum Queries
+
+### Recursive Implementation
+
+**Time Complexity:** $\mathcal{O}((N + Q) \log N)$
+
+### Iterative Implementation
+
+**Time Complexity:** $\mathcal{O}((N + Q) \log N)$
+
+# Binary Indexed Tree
+
+The implementation is shorter than segment tree, but maybe more confusing at
+first glance.
+
+## Resources
+
+## Dynamic Range Sum Queries
+
+### Implementation
+
+# Finding the $k$-th Element
+
+Suppose that we want a data structure that supports all the operations as a
+`set` in C++ in addition to the following:
+
+- `order_of_key(x)`: counts the number of elements in the set that are strictly
+  less than `x`.
+- `find_by_order(k)`: similar to `find`, returns the iterator corresponding to
+  the `k`-th lowest element in the set (0-indexed).
+
+## Order Statistic Tree
+
+Luckily, such a built-in data structure already exists in C++.
+However, it's only supported on GCC, so Clang users are out of luck.
+
+## With a BIT
+
+However, if all updates are in the range $[1,N]$,
+we can do the same thing with a BIT.
+
+<!--    -->
+
+## With a Segment Tree
+
+Covered in [Platinum](/plat/seg-ext).
+
+## Inversion Counting
+
+### Implementation
+
+# Problems
+
+## General
+
+## USACO

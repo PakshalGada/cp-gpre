@@ -1,0 +1,71 @@
+To review, a **directed** graph consists of edges that can only be traversed in
+one direction. Additionally, an **acyclic** graph defines a graph which does not
+contain cycles, meaning you are unable to traverse across one or more edges and
+return to the node you started on. Putting these definitions together, a
+**directed acyclic** graph, sometimes abbreviated as DAG, is a graph which has
+edges which can only be traversed in one direction and does not contain cycles.
+
+## Topological Sort
+
+A [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) of a
+directed acyclic graph is a linear ordering of its vertices such that for every
+directed edge $u\to v$ from vertex $u$ to vertex $v$, $u$ comes before $v$ in
+the ordering.
+
+There are two common ways to topologically sort, one involving DFS and the other
+involving BFS.
+
+## DFS
+
+## BFS
+
+The BFS version is known as
+[Kahn's Algorithm](https://en.wikipedia.org/wiki/Topological_sorting#Kahn's_algorithm).
+
+### Finding a Cycle
+
+We can modify the DFS algorithm above to return a directed cycle in the case where a
+topological sort does not exist.
+To find the cycle, we add each node we visit onto the stack
+until we detect a node already on the stack.
+
+For example, suppose that our stack currently consists of $s_1,s_2,\ldots,s_i$
+and we then visit $u=s_j$ for some $j\le i$.
+If that's the case, then $s_j\to s_{j+1}\to \cdots\to s_i\to s_j$ is a cycle.
+We can reconstruct the cycle without explicitly storing the stack b
+marking $u$ as not part of the stack and recursively backtracking
+until $u$ is reached again.
+
+## Dynamic Programming
+
+<!-- 	 -->
+
+One useful property of directed acyclic graphs is, as the name suggests, that no
+cycles exist. If we consider each node in the graph as a state, we can perform
+dynamic programming on the graph if we process the states in an order that
+guarantees for every edge $u\to v$ that $u$ is processed before $v$.
+Fortunately, this is the exact definition of a topological sort!
+
+In this task, we must find the longest path in a DAG.
+
+## Solution - Longest Flight Route
+
+Let $dp[v]$ denote the length of the longest path ending at the node $v$.
+Clearly
+
+$$
+dp[v]=\max_{\text{edge } u\to v \text{ exists}}dp[u]+1,
+$$
+
+or $1$ if $v$ is node $1$. If we process the states in topological order, it is
+guaranteed that $dp[u]$ will already have been computed before computing
+$dp[v]$.
+
+Note that the implementation of this idea below uses Kahn's algorithm for
+topological sorting:
+
+<!-- However, not all problems clearly give you directed acyclic graphs (ex. [Plat - Cave Paintings](http://usaco.org/index.php?page=viewproblem2&cpid=996)). An important step in many problems is to reduce the statement into a directed acyclic graph. See the editorial of the linked problem for more information.
+
+(Ben - this last paragraph doesn't seem very helpful.) -->
+
+## Problems

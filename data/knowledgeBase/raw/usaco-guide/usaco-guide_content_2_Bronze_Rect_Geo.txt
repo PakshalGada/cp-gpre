@@ -1,0 +1,103 @@
+<br />
+
+Most problems in this category include only two or three squares or rectangles,
+in which case you can simply draw out cases on paper. This should logically lead
+to a solution.
+
+## Example - Fence Painting
+
+### Slow Solution
+
+Since all the intervals lie between the range, $[0, 100]$, we can mark each
+interval of length $1$ contained within each interval as painted using a loop.
+Then the answer will be the number of marked intervals.
+
+**Time Complexity:** $\mathcal{O}(\text{max coordinate})$
+
+However, this solution would not work for higher constraints (ex. if the
+coordinates were up to $10^9$).
+
+### Fast Solution
+
+Calculate the answer by adding the original lengths and subtracting the
+intersection length.
+
+$$
+(b-a)+(d-c)-\text{intersection}([a,b],[c,d])
+$$
+
+The
+[official analysis](http://www.usaco.org/current/data/sol_paint_bronze_dec15.html)
+splits computing the intersection length into several cases. However, we can do it
+in a simpler way. An interval $[x,x+1]$ is contained within both $[a,b]$ and
+$[c,d]$ if $a\le x$, $c\le x$, $x<b$, and $x<d$, or in other words if,
+$\max(a,c)\le x$ and $x<\min(b,d)$. So the length of the intersection is
+$\min(b,d)-\max(a,c)$ if this quantity is positive and zero otherwise!
+
+**Time Complexity:** $\mathcal{O}(1)$
+
+## Example - Blocked Billboard
+
+Think of this as the 2D analog of the previous example.
+
+### Slow Solution
+
+**Time Complexity:** $\mathcal{O}((\text{max coordinate})^2)$
+
+Since all coordinates are in the range $[-1000,1000]$, we can simply go through
+each of the $2000^2$ possible visible squares and check which ones are visible
+using nested for loops.
+
+This wouldn't suffice if the coordinates were changed to be up to $10^9$.
+
+### Fast Solution
+
+**Time Complexity:** $\mathcal{O}(1)$
+
+[Official Analysis](http://www.usaco.org/current/data/sol_billboard_bronze_dec17.html)
+
+## Common Formulas
+
+Certain tasks show up often in rectangle geometry problems. For example, many problems
+involve finding the overlapping area of two or more rectangles based on their coordinate points,
+or determining whether two rectangles intersect. Here, we'll discuss these formulas.
+
+Note that these formulas only apply to rectangles which have sides parallel to the coordinate axes.
+
+### Finding area
+
+The formula for finding the area of an individual rectangle is $w \cdot l$.
+
+$\texttt{length}$ is the length of the vertical sides, and $\texttt{width}$ is the length of the horizontal sides.
+
+1. $\texttt{width} = \texttt{tr}_x - \texttt{bl}_x$
+2. $\texttt{length} = \texttt{tr}_y - \texttt{bl}_y$
+3. $\texttt{area} = \texttt{width} \cdot \texttt{length}$
+
+### Implementation
+
+### Checking if two rectangles intersect
+
+Given two rectangles $a$ and $b$, there are only two cases where they do not intersect:
+
+1. $\texttt{tr}_{a_y}$ $\leq$ $\texttt{bl}_{b_y}$ or $\texttt{bl}_{a_y}$ $\geq$ $\texttt{tr}_{b_y}$.
+2. $\texttt{bl}_{a_x}$ $\geq$ $\texttt{tr}_{b_x}$ or $\texttt{tr}_{a_x}$ $\leq$ $\texttt{bl}_{b_x}$.
+
+In all other cases, the rectangles intersect.
+### Implementation
+
+### Finding area of intersection
+
+We'll assume that the shape formed by the intersection of two rectangles is itself a rectangle.
+
+First, we'll find this rectangle's length and width.
+$\texttt{width} = \min(\texttt{tr}_{a_x}, \texttt{tr}_{b_x}) - \max(\texttt{bl}_{a_x}, \texttt{bl}_{b_x})$.
+$\texttt{length} = \min(\texttt{tr}_{a_y}, \texttt{tr}_{b_y}) - \max(\texttt{bl}_{a_y}, \texttt{bl}_{b_y})$.
+
+If either of these values are negative, the rectangles do not intersect.
+If they are zero, the rectangles intersect at a single point.
+Multiply the length and width to find the overlapping area.
+
+### Implementation
+
+## Problems

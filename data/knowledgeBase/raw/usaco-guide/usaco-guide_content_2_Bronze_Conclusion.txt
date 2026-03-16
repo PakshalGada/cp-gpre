@@ -1,0 +1,20 @@
+## What Now?
+
+After completing this section on the USACO Guide, you should be comfortable with
+the topics that have historically appeared in the USACO Bronze
+division. In order to maximize your chance at promoting, you should
+aim to **practice** by doing more problems.
+
+## Uncategorized Problems
+
+Below we list some problems that we think are roughly Bronze level but don't
+really fit in previous modules. The difficulties listed here are relative to the Bronze
+division (difficulty is subjective and isn't always accurate though). We'll be
+expanding this list as we get more problem suggestions.
+
+## Final Thoughts
+
+Refer to our FAQ to
+[find more problems to practice](/general/usaco-faq#q-where-can-i-find-more-practice-problems).
+You may also find the [How to Practice](/general/practicing)
+module worth reading. Best of luck on future contests!

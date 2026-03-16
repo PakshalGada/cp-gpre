@@ -1,0 +1,23 @@
+Construct the dict of author's contribution percentage Date of last commit 
+# Algorithms for Competitive Programming¶
+ 
+The goal of this project is to translate the wonderful resource https://e-maxx.ru/algo which provides descriptions of many algorithms
+and data structures especially popular in field of competitive programming.
+Moreover we want to improve the collected knowledge by extending the articles
+and adding new articles to the collection.
+ 
+We're an ad-free, volunteer-run website that's free for everyone. Users can contribute articles or help sponsor bounties on articles for greater algorithmic coverage. Your help is greatly appreciated.
+ 
+Compiled pages are published at https://cp-algorithms.com/ .
+ 
+## Become a Contributor¶
+ - How to Contribute - Code of Conduct - Test-Your-Page Form 
+## Sponsor Us¶
+ - Become a Financial Supporter 
+## Changelog¶
+ - August, 2025: Overhaul of CP-Algorithms donation system . Please consider supporting us, so that we can grow! - August, 2025: Launched a Discord server ! - October, 2024: Welcome new maintainers: jxu , mhayter and kostero ! - October, 15, 2024: GitHub pages based mirror is now served at https://gh.cp-algorithms.com/ , and an auxiliary competitive programming library is available at https://lib.cp-algorithms.com/ . - July 16, 2024: Major overhaul of the Finding strongly connected components / Building condensation graph article. - June 26, 2023: Added automatic RSS feeds for new articles and updates in articles . - December 20, 2022: The repository name and the owning organizations were renamed! Now the repo is located at https://github.com/cp-algorithms/cp-algorithms . It is recommended to update the upstream link in your local repositories, if you have any. - October 31, 2022: It is now possible to select and copy $\LaTeX$ source code of formulas within the articles. - June 8, 2022: Tags are enabled. Each article is now marked whether it is translated or original, overall tag info is present in the tag index . For translated articles, clicking on From: X tag would lead to the original article. - June 7, 2022: Date of last commit and author list with contribution percentage is tracked for each page. - June 5, 2022: Enabled content tabs and sidebar navigation. The navigation is moved to a separate page and its structure should be adjusted in navigation.md whenever a new article is created or an old one is moved. - January 16, 2022: Switched to the MkDocs site generator with the Material for MkDocs theme, which give the website a more modern look, brings a couple of new features (dark mode, better search, ...), makes the website more stable (in terms of rendering math formulas), and makes it easier to contribute. 
+### New articles¶
+ - (19 August 2025) Minimum Enclosing Circle - (21 May 2025) Simulated Annealing - (12 July 2024) Manhattan distance - (8 June 2024) Knapsack Problem - (28 January 2024) Introduction to Dynamic Programming - (8 December 2023) Hungarian Algorithm - (10 September 2023) Tortoise and Hare Algorithm - (12 July 2023) Finding faces of a planar graph - (18 April 2023) Bit manipulation - (17 October 2022) Binary Search - (17 October 2022) MEX (Minimum Excluded element in an array) - (12 May 2022) Factoring Exponentiation - (7 May 2022) Knuth's Optimization - (31 March 2022) Continued fractions 
+Full list of updates: Commit History
+ 
+Full list of articles: Navigation

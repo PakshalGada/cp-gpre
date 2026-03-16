@@ -1,0 +1,40 @@
+## Resources
+
+<!--
+	 -->
+
+## Implementation
+
+As the implementation is quite simple, you may prefer to use this in place of
+DFS for computing connected components.
+
+## Solution - Focus Problem
+
+Without union find, we would have to represent the graph with an adjacency list
+and use [flood fill](/silver/flood-fill) to calculate connected components. This
+approach takes $\mathcal{O}(NQ)$ time, which is too slow, motivating us to use
+**union find**.
+
+By representing the graph with the union find data structure that was just
+implemented above, we can use its methods to both _unite_ vertices and check
+if two vertices $u_i$ and $v_i$ are in the same connected component using only
+$\mathcal{O}(\alpha(N))$ amortized time.
+
+This reduces the overall time complexity to $\mathcal{O}(Q \alpha(N))$, which
+is a substantial improvement and allows us to pass all test cases.
+
+## Implementation
+
+**Time Complexity:** $\mathcal{O}(Q \alpha(N))$
+
+## Problems
+
+### Standard
+
+You should already be familiar with the DFS / Binary Search solutions to
+"Wormhole Sort" and "Moocast."
+
+### Harder
+
+Don't worry about solving these if this is the first time you've encountered
+DSU.

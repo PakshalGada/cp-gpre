@@ -1,0 +1,253 @@
+If you've never encountered any **combinatorics** before, AoPS is a good place
+to start.
+
+## Resources
+
+If you prefer watching videos instead, here are some options:
+
+## Binomial Coefficients
+
+The **binomial coefficient** $\binom{n}{k}$ (pronounced as "$n$ choose $k$" or
+sometimes written as ${}_nC_k$) represents the number of ways to choose a subset
+of $k$ elements from a set of $n$ elements. For example, $\binom{4}{2} = 6$,
+because the set $\{1,2,3,4\}$ has $6$ subsets of $2$ elements:
+
+$$
+\{1, 2\}, \{1, 3\}, \{1, 4\}, \{2, 3\}, \{2, 4\}, \{3, 4\}
+$$
+
+There are two ways to calculate binomial coefficients:
+
+### Method 1: Pascal's Triangle (Dynamic Programming) - $\mathcal{O}(n^2)$
+
+Binomial coefficients can be recursively calculated as follows:
+
+$$
+	\binom{n}{k} = \binom{n - 1}{k - 1} + \binom{n - 1}{k}
+$$
+
+The intuition behind this is to fix an element $x$ in the set and choose $k − 1$
+elements from $n − 1$ elements if $x$ is included in the set or choose $k$
+elements from $n − 1$ elements, otherwise.
+
+The base cases for the recursion are:
+
+$$
+	\binom{n}{0} = \binom{n}{n}  = 1
+$$
+
+because there is always exactly one way to construct an empty subset and a
+subset that contains all the elements.
+
+This recursive formula is commonly known as [Pascal's
+Triangle](https://brilliant.org/wiki/pascals-triangle/).
+
+A naive implementation of this would use a recursive formula, like below:
+
+Additionally, we can optimize this from $\mathcal{O}(2^n)$ to $\mathcal{O}(n^2)$
+using [dynamic programming](/gold/intro-dp) (DP) by caching the values of
+smaller binomials to prevent recalculating the same values over and over again.
+The code below shows a bottom-up implementation of this.
+
+### Method 2: Factorial Definition (Modular Inverses) - $\mathcal{O}(n + \log MOD)$
+
+Define $n!$ as $n \times (n - 1) \times (n - 2) \times \ldots 1$. $n!$
+represents the number of permutations of a set of $n$ elements. See [this AoPS
+Article](https://artofproblemsolving.com/wiki/index.php/Factorial) for more
+details.
+
+Another way to calculate binomial coefficients is as follows:
+
+$$
+	\binom{n}{k} = \frac{n!}{k!(n-k)!}
+$$
+
+Recall that $\binom{n}{k}$ also represents the number of ways to choose $k$
+elements from a set of $n$ elements. One strategy to get all such combinations
+is to go through all possible permutations of the $n$ elements, and only pick
+the first $k$ elements out of each permutation. There are $n!$ ways to do so.
+However, note the the order of the elements inside and outside the subset does
+not matter, so the result is divided by $k!$ and $(n − k)!$.
+
+Since these binomial coefficients are large, problems typically require us to
+output the answer modulo a large prime $p$ such as $10^9 + 7$. Fortunately, we
+can use [modular inverses](/gold/modular) to divide $n!$ by $k!$ and $(n - k)!$
+modulo $p$ for any prime $p$. Computing inverse factorials **online** can be
+very time-consuming. Instead, we can **precompute** all factorials in
+$\mathcal{O}(n)$ time and inverse factorials in $\mathcal{O}(n + \log MOD)$.
+First, we compute the modular inverse of the largest factorial using binary
+exponentiation. For the rest, we use the fact that $(n!)^{-1} \equiv
+(n!)^{-1}\times (n+1)^{-1} \times (n+1) \equiv ((n+1)!)^{-1}\times (n+1)$. See
+the code below for the implementation.
+
+### Solution - Binomial Coefficients
+
+The first method for calculating binomial factorials is too slow for this
+problem since the constraints on $a$ and $b$ are $(1 \leq b \leq a \leq 10^6)$
+(recall that the first implementation runs in $\mathcal{O}(n^2)$ time
+complexity). However, we can use the second method to answer each of the $n$
+queries in constant time by precomputing factorials and their modular inverses.
+
+## Derangements
+
+The number of derangements of $n$ numbers, expressed as $!n$, is the number of
+permutations such that no element appears in its original position. Informally,
+it is the number of ways $n$ hats can be returned to $n$ people such that no
+person receives their own hat.
+
+### Method 1: Principle of Inclusion-Exclusion
+
+Suppose we had events $E_1, E_2, \dots, E_n$, where event $E_i$ corresponds to
+person $i$ receiving their own hat. We would like to calculate $n! - \lvert E_1
+\cup E_2 \cup \dots \cup E_n \rvert$.
+
+We subtract from $n!$ the number of ways for each event to occur; that is,
+consider the quantity $n! - \lvert E_1 \rvert - \lvert E_2 \rvert - \dots -
+\lvert E_n \rvert$. This undercounts, as we are subtracting cases where more
+than one event occurs too many times. Specifically, for a permutation where at
+least two events occur, we undercount by one. Thus, add back the number of ways
+for two events to occur. We can continue this process for every size of subsets
+of indices. The expression is now of the form:
+
+$$
+n! - \lvert E_1 \cup E_2 \cup \dots \cup E_n \rvert = \sum_{k = 1}^n (-1)^k \cdot (\text{number of permutations with $k$ fixed points})
+$$
+
+For a set size of $k$, the number of permutations with at least $k$ indices can
+be computed by choosing a set of size $k$ that are fixed, and permuting the
+other indices. In mathematical terms:
+
+$$
+{n \choose k}(n-k)! = \frac{n!}{k!(n-k)!}(n-k)! = \frac{n!}{k!}
+$$
+
+Thus, the problem now becomes computing
+
+$$
+n!\sum_{k=0}^n\frac{(-1)^k}{k!}
+$$
+
+which can be done in linear time.
+
+### Method 2: Dynamic Programming
+
+Suppose person 1 received person $i$'s hat. There are two cases:
+
+1. If person $i$ receives person 1's hat, then the problem is reduced to a
+   subproblem of size $n - 2$. There are $n - 1$ possibilities for $i$ in this
+   case, so we add to the current answer $(n - 1)\cdot !(n - 2)$.
+2. If person $i$ does not receive person 1's hat, then we can reassign person
+   1's hat to be person $i$'s hat (if they received person 1's hat, then this
+   would become first case). Thus, this becomes a subproblems with size $n - 1$,
+   are there $n - 1$ ways to choose $i$.
+
+Thus, we have
+
+$$
+!n = (n - 1)(!(n - 2) + !(n - 1))
+$$
+
+which can be computed in linear time with DP. The base cases are that
+$!0 = 1$ and $!1 = 0$.
+
+## Stars and Bars
+
+[Stars and Bars](https://en.wikipedia.org/wiki/Stars_and_bars_(combinatorics)) is a useful method in combinatorics that involves
+grouping indistinguishable objects into distinguishable boxes. The number of ways to put $n$ indistinguishable objects into
+$k$ distinguishable boxes is:
+
+$$
+\binom{n+k-1}{n}=\binom{n+k-1}{k-1}
+$$
+
+The second binomial coefficient from above can be derived from the property of binomial coefficients: $\binom{n}{k}=\binom{n}{n-k}$.
+
+Let's take a look at a particular example for $n=3$ and $k=2$ that has $4$ possibilities. As the name implies, the visualization is usually done with stars
+separated into groups by bars:
+
+$$
+||\bigstar \bigstar \bigstar  \\
+|\bigstar |\bigstar \bigstar  \\
+|\bigstar \bigstar| \bigstar  \\
+\bigstar \bigstar \bigstar ||  \\
+$$
+
+As you've probably noticed, there can be empty boxes - when we put all the stars in the first or second box. There may be cases in
+which the all the boxes should be non-empty. In that case, the number of ways to put $n$ indistinguishable objects into $k$
+distinguishable **non-empty** boxes is: $\binom{n-1}{k-1}$
+
+### Explanation
+
+For this problem we should think the other way around: let's say that the $k$ colors from which we choose are in fact boxes and instead of choosing $n$ marbles we put them
+in the respective boxes. The problem has the restriction that we should pick at least one marble of all kinds, which means in our new perspective that all the boxes should be
+non-empty. Thus, the answer is obtained by the second formula: $\binom{n-1}{k-1}$
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(T \cdot K)$
+
+## Expected Value
+
+An expected value is the theoretical mean of a probability distribution. A **random variable** is used to represent a possible probability distribution. Let $X$ be a random variable and $P(X = x)$ be the probability that the result of the random variable $X$ is $x$. Then, the expected value of $X$, denoted as $E[X]$, is
+$$
+\sum_x x \cdot P(X = x)
+$$
+
+For example, let $X$ be the probability distribution of a fair 6-sided die. $P(X = x)$ is $\frac{1}{6}$ for $1 \leq x \leq 6$. Using the formula, we get $E[X] = \frac{21}{6} = \frac{7}{2}$.
+
+### Explanation
+
+Let $X$ represent the probability distribution of the maximum number of candies a child gets. To get $E[X]$, we need $P(X = x)$ for $1 \leq x \leq k$. $(\frac{x}{k})^n$ is the probability that each child gets at most $x$ candies. To get $P(X = x)$, we must subtract out the probability that each child gets strictly less than $x$ candies, which is $(\frac{x - 1}{k})^n$.
+
+Therefore, $P(X = x) = (\frac{x}{k})^n - (\frac{x - 1}{k})^n$, allowing us to calculate $E[X]$.
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(k)$ (assuming power runs in constant time).
+
+## Linearity of Expectation
+
+Linearity of expectation states that $E[X + Y] = E[X] + E[Y]$ no matter if $X$ and $Y$ are independent of each other. For example, if on a certain day Alice goes to the gym with a probability of $\frac{1}{10}$ and her husband Bob goes to the gym with a probability of $\frac{3}{10}$, the expected number of visits to the gym on a certain day amongst the couple is $\frac{1}{10} + \frac{3}{10} = \frac{2}{5}$. This works even though the decisions of one person may affect the other.
+
+This can be generalized to a sequence of random variables $X_1, X_2, \dots, X_n$ and arbitrary constants $c_1, c_2, \dots, c_n$:
+$$
+E\left[\sum_{i = 1}^{n} c_iX_i \right] = \sum_{i = 1}^{n}c_i \cdot E[ X_i]
+$$
+
+### Explanation
+
+While this may seem impossible at first glance given the amount of different sequences of operations, linearity of expectation allows us to break down the expected value into the sum of smaller parts.
+
+We can break this down by decomposing the initial random variable into the sums
+of various *indicator* random variables.
+Let $X_u$ be a variable that indicates whether node $u$ was explicitly marked for removal.
+Since it's basically a boolean, it can only take on either $0$ or $1$,
+which also means that the probability that it's $1$ is equal to its expected value.
+
+Now, let's consider how an operation affects node $u$.
+1. Either it chooses a node that can't reach $u$, and nothing happens as far as $u$ is concerned.
+2. It chooses $u$ itself, making the indicator variable $1$.
+3. It chooses another node that can reach $u$, making the indicator variable $0$.
+Since all nodes have an equal chance of being chosen, the chance that $X_u=1$
+is $\frac{1}{a_u}$, where $a_u$ is the number of nodes that can reach $u$ *including $u$ itself*.
+
+We put the expected values of all the indicator variables back together, giving us our final answer.
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(N^3)$ using a naive DFS or BFS.
+
+## Expected Products
+
+Linearity of expectation deals with $E[X + Y]$, but what about $E[X \cdot Y]$?
+
+$E[X \cdot Y] = E[X] \cdot E[Y]$ if $X$ and $Y$ are independent from each other.
+We can reconsider the example of a fair 6-sided die to show that $E[X^2] \neq E[X]^2$.
+We know that $E[X] = \frac{7}{2}$, so $E[X]^2 = \frac{7}{2} \cdot \frac{7}{2} = \frac{49}{4}$.
+
+On the other hand,
+$$
+E[X^2] = \sum_x x^2 \cdot P(X = x) = \frac{1 + 4 + 9 + 16 + 25 + 36}{6} = \frac{91}{6}.
+$$
+
+## Problems

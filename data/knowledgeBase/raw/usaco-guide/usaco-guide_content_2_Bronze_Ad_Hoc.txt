@@ -1,0 +1,34 @@
+## Introduction
+
+According to USACO Training section 1.2:
+
+> **Ad hoc** problems are those whose algorithms do not fall into standard
+> categories with well-studied solutions. Each ad hoc problem is different; no
+> specific or general techniques exist to solve them.
+
+Here are some general tips that may be useful in approaching problems that
+appear to be ad hoc.
+
+- Draw lots of small cases to gain a better understanding of the problem. If
+  you're having trouble debugging, draw more cases. If you don't know how to
+  start with a problem, draw more cases. Whenever you don't know how to further
+  approach a problem, you're probably missing an important observation, so draw
+  more cases and make observations about properties of the problem.
+- Whenever you find an observation that seems useful, write it down! Writing
+  down ideas lets you easily come back to them later, and makes sure you don't
+  forget about ideas that could potentially be the solution.
+- Don't get stuck on any specific idea, unless you see an entire solution.
+- Try to approach the problem from a lot of different perspectives. Try to mess
+  around with formulas or draw a visual depiction of the problem. One of the
+  most helpful things you can do when solving ad hoc problems is to keep trying
+  ideas until you make progress. This is something you get better at as you do
+  more problems.
+
+In the end, the best way to get better at ad hoc problems (or any type of
+problem) is to do a lot of them.
+
+## Example - Photoshoot 2
+
+## Problems
+
+## Quiz

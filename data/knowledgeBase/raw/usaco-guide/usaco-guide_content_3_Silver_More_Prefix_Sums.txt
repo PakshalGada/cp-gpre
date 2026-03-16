@@ -1,0 +1,325 @@
+## Max Subarray Sum
+
+### Solution - Max Subarray Sum
+
+Consider the prefix sum array $p[0], p[1], \dots, p[n]$ where $p[i]=\sum_{j=1}^ix_j$. Then the sum of the subarray $x_{l+1\dots r}$ ($0\le l < r\le n$) is equal to $p[r]-p[l]$.
+
+For a fixed right bound $r$, the maximum subarray sum over all valid $l$ is
+
+$$
+p[r]-\min_{l < r}{p[l]}.
+$$
+
+Thus, we can keep a running minimum to store $\min\limits_{l < r}{p[l]}$ as we
+iterate through $r$ in increasing order. This yields the maximum subarray sum for each possible
+right bound, and the maximum over all these values is our answer.
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(n)$
+
+## 2D Prefix Sums
+
+Now, what if we wanted to process $Q$ queries for the sum over a subrectangle of
+a 2D matrix with $N$ rows and $M$ columns? Let's assume both rows and columns
+are 1-indexed, and we use the following matrix as an example:
+
+<center>
+
+<table className="text-center">
+	<tbody>
+		<tr>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>1</td>
+			<td>5</td>
+			<td>6</td>
+			<td>11</td>
+			<td>8</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>1</td>
+			<td>7</td>
+			<td>11</td>
+			<td>9</td>
+			<td>4</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>4</td>
+			<td>6</td>
+			<td>1</td>
+			<td>3</td>
+			<td>2</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>7</td>
+			<td>5</td>
+			<td>4</td>
+			<td>2</td>
+			<td>3</td>
+		</tr>
+	</tbody>
+</table>
+
+</center>
+
+Naively, each sum query would then take $\mathcal{O}(NM)$ time, for a total of
+$\mathcal{O}(QNM)$. This is too slow.
+
+Let's take the following example region, which we want to sum:
+
+<center>
+
+<table className="text-center">
+	<tbody>
+		<tr>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>1</td>
+			<td>5</td>
+			<td>6</td>
+			<td>11</td>
+			<td>8</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>1</td>
+			<td className="bg-blue-100 dark:bg-blue-800">7</td>
+			<td className="bg-blue-100 dark:bg-blue-800">11</td>
+			<td className="bg-blue-100 dark:bg-blue-800">9</td>
+			<td>4</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>4</td>
+			<td className="bg-blue-100 dark:bg-blue-800">6</td>
+			<td className="bg-blue-100 dark:bg-blue-800">1</td>
+			<td className="bg-blue-100 dark:bg-blue-800">3</td>
+			<td>2</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>7</td>
+			<td>5</td>
+			<td>4</td>
+			<td>2</td>
+			<td>3</td>
+		</tr>
+	</tbody>
+</table>
+
+</center>
+
+Manually summing all the cells, we have a submatrix sum of $7+11+9+6+1+3 = 37$.
+
+The first logical optimization would be to do one-dimensional prefix sums of
+each row. Then, we'd have the following row-prefix sum matrix. The desired
+subarray sum of each row in our desired region is simply the green cell minus
+the red cell in that respective row. We do this for each row to get
+$(28-1) + (14-4) = 37$.
+
+<center>
+
+<table className="text-center">
+	<tbody>
+		<tr>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>1</td>
+			<td>6</td>
+			<td>12</td>
+			<td>23</td>
+			<td>31</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td className="bg-red-200 dark:bg-red-800">1</td>
+			<td>8</td>
+			<td>19</td>
+			<td className="bg-green-200 dark:bg-green-800">28</td>
+			<td>32</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td className="bg-red-200 dark:bg-red-800">4</td>
+			<td>10</td>
+			<td>11</td>
+			<td className="bg-green-200 dark:bg-green-800">14</td>
+			<td>16</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>7</td>
+			<td>12</td>
+			<td>16</td>
+			<td>18</td>
+			<td>21</td>
+		</tr>
+	</tbody>
+</table>
+
+</center>
+
+Now, if we wanted to find a submatrix sum, we could break up the submatrix into
+a subarray for each row, and then add their sums, which would be calculated
+using the prefix sums method described earlier. Since the matrix has $N$ rows,
+the time complexity of this is $\mathcal{O}(QN)$. This might be fast enough for
+$Q=10^5$ and $N=10^3$, but we can do better.
+
+In fact, we can do two-dimensional prefix sums. In our two dimensional prefix
+sum array, we have
+
+$$
+\texttt{prefix}[a][b]=\sum_{i=1}^{a} \sum_{j=1}^{b} \texttt{arr}[i][j].
+$$
+
+This can be calculated as follows for row index $1 \leq i \leq n$ and column
+index $1 \leq j \leq m$:
+
+$$
+\begin{aligned}
+\texttt{prefix}[i][j] =& \, \texttt{prefix}[i-1][j]+ \texttt{prefix}[i][j-1] \\
+	&- \texttt{prefix}[i-1][j-1]+ \texttt{arr}[i][j]
+\end{aligned}
+$$
+
+---
+
+Let's calculate $\texttt{prefix}[2][3]$. Try playing with the interactive widget
+below by clicking the buttons to see which numbers are added in each step.
+Notice how we overcount a subrectangle, and how we fix this by subtracting
+$\texttt{prefix}[i-1][j-1]$.
+
+---
+
+The submatrix sum between rows $a$ and $A$ and columns $b$ and $B$, can thus be
+expressed as follows:
+
+$$
+\begin{aligned}
+\sum_{i=a}^{A} \sum_{j=b}^{B} \texttt{arr}[i][j]=&\,\texttt{prefix}[A][B]
+		- \texttt{prefix}[a-1][B] \\
+		&- \texttt{prefix}[A][b-1] + \texttt{prefix}[a-1][b-1]
+\end{aligned}
+$$
+
+Summing the blue region from above using the 2D prefix sums method, we add the
+value of the green square, subtract the values of the red squares, and then add
+the value of the gray square. In this example, we have
+
+$$
+65-23-6+1 = 37,
+$$
+
+as expected.
+
+<center>
+
+<table className="text-center">
+	<tbody>
+		<tr>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td className="bg-gray-200 dark:bg-gray-700">1</td>
+			<td>6</td>
+			<td>12</td>
+			<td className="bg-red-200 dark:bg-red-800">23</td>
+			<td>31</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>2</td>
+			<td>14</td>
+			<td>31</td>
+			<td>51</td>
+			<td>63</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td className="bg-red-200 dark:bg-red-800">6</td>
+			<td>24</td>
+			<td>42</td>
+			<td className="bg-green-200 dark:bg-green-800">65</td>
+			<td>79</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td>13</td>
+			<td>36</td>
+			<td>58</td>
+			<td>83</td>
+			<td>100</td>
+		</tr>
+	</tbody>
+</table>
+
+</center>
+
+---
+
+Try playing with the interactive widget below by clicking the buttons to see
+which numbers are added in each step.
+
+---
+
+Since no matter the size of the submatrix we are summing, we only need to access
+four values of the 2D prefix sum array, this runs in $\mathcal{O}(1)$ per query
+after an $\mathcal{O}(NM)$ preprocessing.
+
+### Solution - Forest Queries
+
+### Problems
+
+## Difference Arrays
+
+### Explanation - Greg and Array
+
+Let's create an array $s$, where $s[i]$ is the number of times operation $i$ is applied.
+The important step is how we update it.
+
+For an interval $[l, r]$, we can't loop through the interval and
+increment each value, as that would be $\mathcal{O}(MK)$ and too slow.
+Instead, we increment $s[l]$ by one and decrement $s[r+1]$ by one.
+
+Now, we get the *actual* array by computing its prefix sum array,
+resulting in $\mathcal{O}(M)$ time complexity.
+The second part, applying the operations, can be done exactly the same way.
+
+### Implementation - Greg and Array
+
+**Time Complexity:** $\mathcal{O}(N+M)$
+
+### Problems
+
+## Quiz
