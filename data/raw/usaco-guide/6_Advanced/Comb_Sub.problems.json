@@ -1,0 +1,120 @@
+{
+  "MODULE_ID": "comb-sub",
+  "sam": [
+    {
+      "uniqueId": "cf-815C",
+      "name": "Karen & Supermarket",
+      "url": "https://codeforces.com/contest/815/problem/C",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "comb-sub"
+      }
+    }
+  ],
+  "gen": [
+    {
+      "uniqueId": "ceoi-17-museum",
+      "name": "2017 - Museum",
+      "url": "https://oj.uz/problem/view/CEOI17_museum",
+      "source": "CEOI",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "link",
+        "url": "https://archive.org/download/oi-ted-ceoi-archive/CEOI/2017/"
+      }
+    },
+    {
+      "uniqueId": "coci-19-dzumbus",
+      "name": "2019 - Dzumbus",
+      "url": "https://oj.uz/problem/view/COCI19_dzumbus",
+      "source": "COCI",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cfgym-103886Q",
+      "name": "Cereal Trees II",
+      "url": "https://codeforces.com/gym/103886/problem/Q",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Tree", "DP"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "ioi-05-rivers",
+      "name": "2005 - Rivers",
+      "url": "http://dmoj.ca/problem/ioi05p6",
+      "source": "IOI",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "ac-treePatrolling",
+      "name": "Tree Patrolling",
+      "url": "https://atcoder.jp/contests/abc207/tasks/abc207_f",
+      "source": "AC",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["DP", "Tree"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "AC"
+      }
+    },
+    {
+      "uniqueId": "cf-735E",
+      "name": "Ostap & Tree",
+      "url": "https://codeforces.com/contest/735/problem/E",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["DP"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1280D",
+      "name": "Div 1 D - Miss Punyverse",
+      "url": "https://codeforces.com/contest/1280/problem/D",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "coci-periodni",
+      "name": "Periodni",
+      "url": "https://dmoj.ca/problem/coci08c4p6",
+      "source": "COCI",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["NT"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    }
+  ]
+}

@@ -1,0 +1,236 @@
+{
+  "MODULE_ID": "hashing",
+  "ex": [
+    {
+      "uniqueId": "ccc-SearchingForStrings",
+      "name": "Searching For Strings",
+      "url": "https://dmoj.ca/problem/ccc20s3",
+      "source": "CCC",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Hashing"],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "hashing"
+      }
+    }
+  ],
+  "general": [
+    {
+      "uniqueId": "cses-1733",
+      "name": "Finding Periods",
+      "url": "https://cses.fi/problemset/task/1733/",
+      "source": "CSES",
+      "difficulty": "Very Easy",
+      "isStarred": false,
+      "tags": ["Hashing"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-529",
+      "name": "Censoring",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=529",
+      "source": "Silver",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Hashing"],
+      "solutionMetadata": {
+        "kind": "USACO",
+        "usacoId": "529"
+      }
+    },
+    {
+      "uniqueId": "ceoi-17-PalindromicPartitions",
+      "name": "2017 - Palindromic Partitions",
+      "url": "https://qoj.ac/problem/793/",
+      "source": "CEOI",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Greedy", "Hashing"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1056E",
+      "name": "Check Transcription",
+      "url": "https://codeforces.com/problemset/problem/1056/E",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Hashing"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-104048K",
+      "name": "Fullmetal Alchemist II",
+      "url": "https://codeforces.com/gym/104048/problem/K",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Hashing"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-741",
+      "name": "Bovine Genomics",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=741",
+      "source": "Gold",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Hashing", "Binary Search"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-599",
+      "name": "Lights Out",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=599",
+      "source": "Gold",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Hashing", "Simulation"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "rmi-17-Hangman2",
+      "name": "2017 - Hangman 2",
+      "url": "https://csacademy.com/contest/rmi-2017-day-1/task/hangman2/",
+      "source": "RMI",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Hashing"],
+      "solutionMetadata": {
+        "kind": "internal",
+        "hasHints": true
+      }
+    },
+    {
+      "uniqueId": "coci-17-osmosmjerka",
+      "name": "2017 - Osmosmjerka",
+      "url": "https://oj.uz/problem/view/COCI17_osmosmjerka",
+      "source": "COCI",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Hashing", "Probability"],
+      "solutionMetadata": {
+        "kind": "link",
+        "url": "https://github.com/mostafa-saad/MyCompetitiveProgramming/blob/master/Olympiad/COCI/official/2017/contest4_solutions"
+      }
+    },
+    {
+      "uniqueId": "coci-21-sateliti",
+      "name": "2021 - Sateliti",
+      "url": "https://oj.uz/problem/view/COCI20_satellti",
+      "source": "COCI",
+      "difficulty": "Hard",
+      "isStarred": true,
+      "tags": ["Hashing", "Binary Search"],
+      "solutionMetadata": {
+        "kind": "internal",
+        "hasHints": true
+      }
+    },
+    {
+      "uniqueId": "cf-822E",
+      "name": "Liar",
+      "url": "https://codeforces.com/contest/822/problem/E",
+      "source": "CF",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["DP", "Hashing"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "baltic-18-genetics",
+      "name": "2018 - Genetics",
+      "url": "https://open.kattis.com/problems/genetics2",
+      "source": "Baltic OI",
+      "difficulty": "Hard",
+      "isStarred": true,
+      "tags": ["Hashing"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "coci-16-zamjene",
+      "name": "2016 - Zamjene",
+      "url": "https://oj.uz/problem/view/COCI16_zamjene",
+      "source": "COCI",
+      "difficulty": "Very Hard",
+      "isStarred": false,
+      "tags": ["Hashing", "DSU"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "coi-16-palinilap",
+      "name": "2016 - Palinilap",
+      "url": "https://oj.uz/problem/view/COI16_palinilap",
+      "source": "COI",
+      "difficulty": "Very Hard",
+      "isStarred": false,
+      "tags": ["Hashing", "Binary Search"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    }
+  ],
+  "exxor": [
+    {
+      "uniqueId": "ac-PrefixEquality",
+      "name": "Prefix Equality",
+      "url": "https://atcoder.jp/contests/abc250/tasks/abc250_e",
+      "source": "AC",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["XOR Hashing"],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "hashing"
+      }
+    }
+  ],
+  "generalxor": [
+    {
+      "uniqueId": "cf-ThreeOccurrences",
+      "name": "Three Occurrences",
+      "url": "https://codeforces.com/contest/1418/problem/G",
+      "source": "CF",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Two Pointers, XOR Hashing"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cf-HyperregularBracketStrings",
+      "name": "Hyperregular Bracket Strings",
+      "url": "https://codeforces.com/contest/1830/problem/C",
+      "source": "CF",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Combinatorics, XOR Hashing"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "MODULE_ID": "offline-del",
+  "rollback": [
+    {
+      "uniqueId": "ys-PersistentUnionFind",
+      "name": "Persistent Union Find",
+      "url": "https://judge.yosupo.jp/problem/persistent_unionfind",
+      "source": "YS",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["DSUrb"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "mmcc-inaho",
+      "name": "Inaho",
+      "url": "https://dmoj.ca/problem/mmcc15p1",
+      "source": "MMCC",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["DSUrb"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    }
+  ],
+  "sam": [
+    {
+      "uniqueId": "ys-VertexAddComponentSum",
+      "name": "Vertex Add Component Sum",
+      "url": "https://judge.yosupo.jp/problem/dynamic_graph_vertex_add_component_sum",
+      "source": "YS",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Dynacon"],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "offline-del"
+      }
+    }
+  ],
+  "res": [
+    {
+      "uniqueId": "cf-100551A",
+      "name": "Connect and Disconnect",
+      "url": "https://codeforces.com/gym/100551/problem/A",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Dynacon"],
+      "solutionMetadata": {
+        "kind": "none"
+      }
+    },
+    {
+      "uniqueId": "cf-891C",
+      "name": "Envy",
+      "url": "https://codeforces.com/contest/891/problem/C",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["DSUrb"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-100551E",
+      "name": "Disconnected Graph",
+      "url": "https://codeforces.com/gym/100551/problem/E",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": true,
+      "tags": ["DSUrb"],
+      "solutionMetadata": {
+        "kind": "none"
+      }
+    },
+    {
+      "uniqueId": "cf-1140F",
+      "name": "Extending Set of Points",
+      "url": "https://codeforces.com/contest/1140/problem/F",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["DSUrb"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cf-1217F",
+      "name": "Forced Online Queries Problem",
+      "url": "https://codeforces.com/contest/1217/problem/F",
+      "source": "CF",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Dynacon"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cf-601E",
+      "name": "A Museum Robbery",
+      "url": "https://codeforces.com/contest/601/problem/E",
+      "source": "CF",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Dynacon"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "baltic-20-joker",
+      "name": "2020 - Joker",
+      "url": "https://codeforces.com/contest/1386/problem/C",
+      "source": "Baltic OI",
+      "difficulty": "Very Hard",
+      "isStarred": false,
+      "tags": ["D&C", "DSUrb"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    }
+  ]
+}

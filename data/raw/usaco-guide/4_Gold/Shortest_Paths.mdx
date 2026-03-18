@@ -1,0 +1,504 @@
+---
+id: shortest-paths
+redirects:
+  - /gold/sp
+title: 'Shortest Paths with Non-Negative Edge Weights'
+author: Benjamin Qi, Andi Qu, Qi Wang, Neo Wang
+prerequisites:
+  - unweighted-shortest-paths
+  - custom-cpp-stl
+description: 'Bellman-Ford, Floyd-Warshall, and Dijkstra.'
+frequency: 2
+---
+
+Nearly all Gold shortest path problems involve Dijkstra. However, it's a good
+idea to learn Bellman-Ford and Floyd-Warshall first since they're simpler.
+
+## Bellman-Ford
+
+<Resources>
+	<Resource source="CPH" title="13.1 - Bellman-Ford">
+		up to but not including "Negative Cycles"
+	</Resource>
+</Resources>
+
+## Floyd-Warshall
+
+<!-- All Pairs Shortest Path (APSP) -->
+
+### Tutorial
+
+<Resources>
+	<Resource source="CPH" title="13.3 - Floyd-Warshall" starred>
+		example calculation, code
+	</Resource>
+	<Resource
+		source="cp-algo"
+		title="Floyd-Warshall"
+		url="graph/all-pair-shortest-path-floyd-warshall.html"
+		starred
+	>
+		code, why it works
+	</Resource>
+	<Resource source="PAPS" title="12.3.3 - Floyd-Warshall">
+		code, why it works
+	</Resource>
+	<Resource source="CP2" title="4.5 - All-Pairs Shortest Paths" />
+</Resources>
+
+<Optional title="Incorrect Floyd-Warshall">
+
+From [this paper](https://arxiv.org/pdf/1904.01210.pdf):
+
+> A common mistake in implementing the Floyd–Warshall algorithm is to misorder
+> the triply nested loops (The correct order is `KIJ`). The incorrect `IJK` and
+> `IKJ` algorithms do not give correct solutions for some instance. However, we
+> can prove that if these are repeated three times, we obtain the correct
+> solutions.
+>
+> It would be emphasized that these fixes (repeating incorrect algorithms three
+> times) have the same time complexity as the correct Floyd–Warshall algorithm
+> up to constant factors. Therefore, our results suggest that, if one is
+> confused by the order of the triply nested loops, one can repeat the procedure
+> three times just to be safe.
+
+</Optional>
+
+### Problem
+
+<FocusProblem problem="apspSam" />
+
+#### Explanation
+
+This problem asks us to compute shortest paths between any two vertices. Hence,
+Floyd-Warshall is suitable because of the low $N (N \le 500)$, and the inclusion of negative weights.
+
+#### Implementation
+
+**Time Complexity:** $\mathcal{O}(N^3)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <iostream>
+#include <vector>
+
+using std::cout;
+using std::endl;
+using std::vector;
+
+constexpr long long BIG = 1e18;  // We can't use LLONG_MAX because of overflow
+
+int main() {
+	int n, m, q;
+	std::cin >> n >> m >> q;
+
+	vector<vector<long long>> min_dist(n, vector<long long>(n, BIG));
+	for (int i = 0; i < m; i++) {
+		int a, b;
+		int c;
+		std::cin >> a >> b >> c;
+		a--;
+		b--;
+		if (c < min_dist[a][b]) { min_dist[a][b] = min_dist[b][a] = c; }
+	}
+
+	// Floyd-Warshall algorithm
+	for (int k = 0; k < n; k++) {
+		for (int i = 0; i < n; i++) {
+			for (int j = i + 1; j < n; j++) {
+				long long new_dist = min_dist[i][k] + min_dist[k][j];
+				if (new_dist < min_dist[i][j]) {
+					min_dist[i][j] = min_dist[j][i] = new_dist;
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < q; i++) {
+		int a, b;
+		std::cin >> a >> b;
+		a--;
+		b--;
+
+		// Check if the two nodes are the same or can't reach each other
+		if (a == b) {
+			min_dist[a][b] = 0;
+		} else if (min_dist[a][b] == BIG) {
+			min_dist[a][b] = -1;
+		}
+
+		cout << min_dist[a][b] << '\n';
+	}
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class ShortestRoutesII {
+	// We can't use Long.MAX_VALUE because of overflow
+	private static final long BIG = (long)1e18;
+
+	public static void main(String[] args) {
+		Kattio io = new Kattio();
+
+		int n = io.nextInt();
+		int m = io.nextInt();
+		int q = io.nextInt();
+
+		long[][] minDist = new long[n][n];
+		for (int i = 0; i < n; i++) { Arrays.fill(minDist[i], BIG); }
+		for (int i = 0; i < m; i++) {
+			int a = io.nextInt() - 1;
+			int b = io.nextInt() - 1;
+			int c = io.nextInt();
+			if (c < minDist[a][b]) { minDist[a][b] = minDist[b][a] = c; }
+		}
+
+		// Floyd-Warshall algorithm
+		for (int k = 0; k < n; k++) {
+			for (int i = 0; i < n; i++) {
+				for (int j = i + 1; j < n; j++) {
+					long newDist = minDist[i][k] + minDist[k][j];
+					if (newDist < minDist[i][j]) {
+						minDist[i][j] = minDist[j][i] = newDist;
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < q; i++) {
+			int a = io.nextInt() - 1;
+			int b = io.nextInt() - 1;
+
+			// Check if the two nodes are the same or can't reach each other
+			if (a == b) {
+				minDist[a][b] = 0;
+			} else if (minDist[a][b] == BIG) {
+				minDist[a][b] = -1;
+			}
+
+			io.println(minDist[a][b]);
+		}
+
+		io.close();
+	}
+
+	// CodeSnip{Kattio}
+}
+```
+
+</JavaSection>
+<PySection>
+
+<Warning>
+
+Due to Python's bad constant factor, this code TLEs on a couple of test cases.
+
+</Warning>
+
+```py
+# 1e18 is used instead of float('inf') for performance reasons
+BIG = int(1e18)
+
+n, m, q = map(int, input().split())
+
+min_dist = [[BIG] * n for _ in range(n)]
+
+for _ in range(m):
+	a, b, c = map(int, input().split())
+	a, b = a - 1, b - 1
+	if c < min_dist[a][b]:
+		min_dist[a][b] = min_dist[b][a] = c
+
+# Floyd-Warshall algorithm
+for k in range(n):
+	for i in range(n):
+		for j in range(i + 1, n):
+			new_dist = min_dist[i][k] + min_dist[k][j]
+			if new_dist < min_dist[i][j]:
+				min_dist[i][j] = min_dist[j][i] = new_dist
+
+for _ in range(q):
+	a, b = map(int, input().split())
+	a, b = a - 1, b - 1
+
+	# Check if the two nodes are the same or can't reach each other
+	if a == b:
+		min_dist[a][b] = 0
+	elif min_dist[a][b] == BIG:
+		min_dist[a][b] = -1
+
+	print(min_dist[a][b])
+```
+
+</PySection>
+</LanguageSection>
+
+### Problems
+
+This algorithm is used as the first step of the following:
+
+<Problems problems="apsp" />
+
+## Dijkstra
+
+### Tutorial
+
+#### $\mathcal{O}(N^2)$
+
+<Resources>
+	<Resource
+		source="cp-algo"
+		title="Dijkstra (Dense Graphs)"
+		url="graph/dijkstra.html"
+	/>
+</Resources>
+
+#### $\mathcal{O}(M\log N)$
+
+<Resources>
+	<Resource source="CPH" title="13.2 - Dijkstra" starred>
+		code
+	</Resource>
+	<Resource
+		source="cp-algo"
+		title="Dijkstra (Sparse Graphs)"
+		url="graph/dijkstra_sparse.html"
+	/>
+	<Resource source="CPC" title="8 - Shortest Paths" url="08_graphs_2" />
+	<Resource source="CP2" title="4.4.3 - SSSP on Weighted Graph" />
+	<Resource
+		source="alexyd88"
+		title="Dijkstra Visualizer"
+		url="https://alexyd88.github.io/Dijkstra-Visualizer/"
+	/>
+</Resources>
+
+#### $\mathcal{O}(M\log N)$ Implementation
+
+<Resources>
+	<Resource
+		source="Benq"
+		title="Dijkstra"
+		url="https://github.com/bqi343/USACO/blob/master/Implementations/content/graphs%20(12)/Basics/Dijkstra%20(7.3).h"
+	/>
+</Resources>
+
+### Problem
+
+<FocusProblem problem="sample" />
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(N + M\log N)$
+
+Here's an animation of how the algorithm works:
+<video width="960" height="720" controls>
+	<source src="/animations/dijkstra.mp4" type="video/mp4"/>
+</video>
+
+<LanguageSection>
+<CPPSection>
+
+Recall from the second prerequisite module that we can use `greater<>` to make
+the top element of a priority queue the least instead of the greatest.
+Alternatively, you can negate distances before placing them into the priority
+queue.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	int n, m;
+	cin >> n >> m;
+
+	// Adjacency list of (neighbour, edge weight)
+	vector<vector<pair<int, int>>> neighbors(n);
+	for (int i = 0; i < m; i++) {
+		int a, b, c;
+		cin >> a >> b >> c;
+		neighbors[a - 1].push_back({b - 1, c});
+	}
+
+	// Initially set all distances to infinity
+	vector<long long> dist(n, LLONG_MAX);
+
+	// Dijkstra's algorithm
+	using T = pair<long long, int>;
+	priority_queue<T, vector<T>, greater<T>> pq;
+
+	int start = 0;
+	dist[start] = 0;  // The shortest path from a node to itself is 0
+	pq.push({0, start});
+
+	while (!pq.empty()) {
+		const auto [cdist, node] = pq.top();
+		pq.pop();
+		if (cdist != dist[node]) { continue; }
+		for (const pair<int, int> &i : neighbors[node]) {
+			// If we can reach a neighbouring node faster,
+			// we update its minimum distance
+			if (cdist + i.second < dist[i.first]) {
+				pq.push({dist[i.first] = cdist + i.second, i.first});
+			}
+		}
+	}
+
+	for (int i = 0; i < n - 1; i++) { cout << dist[i] << ' '; }
+	cout << dist[n - 1] << endl;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class ShortestRoutesI {
+	// BeginCodeSnip{Pair Class}
+	static class Pair<K, V> {
+		public K a;
+		public V b;
+
+		public Pair(K a, V b) {
+			this.a = a;
+			this.b = b;
+		}
+	}
+	// EndCodeSnip
+
+	public static void main(String[] args) {
+		Kattio io = new Kattio();
+
+		int n = io.nextInt();
+		int m = io.nextInt();
+
+		// Adjacency list of (neighbour, edge weight)
+		List<Pair<Integer, Integer>>[] neighbors = new ArrayList[n];
+		for (int i = 0; i < n; i++) { neighbors[i] = new ArrayList<>(); }
+		for (int i = 0; i < m; i++) {
+			int a = io.nextInt() - 1;
+			int b = io.nextInt() - 1;
+			int c = io.nextInt();
+			neighbors[a].add(new Pair<>(b, c));
+		}
+
+		// Initially set all distances to infinity
+		long[] dist = new long[n];
+		Arrays.fill(dist, Long.MAX_VALUE);
+
+		// Dijkstra's algorithm
+		PriorityQueue<Pair<Long, Integer>> pq =
+		    new PriorityQueue<>(Comparator.comparingLong(i -> i.a));
+
+		int start = 0;
+		dist[start] = 0;  // The shortest path from a node to itself is 0
+		pq.add(new Pair<>(0L, start));
+		while (!pq.isEmpty()) {
+			Pair<Long, Integer> curr = pq.poll();
+			long cdist = curr.a;
+			int node = curr.b;
+			if (cdist != dist[node]) { continue; }
+			for (Pair<Integer, Integer> i : neighbors[node]) {
+				// If we can reach a neighbouring node faster,
+				// we update its minimum distance
+				if (cdist + i.b < dist[i.a]) {
+					pq.add(new Pair<>(dist[i.a] = cdist + i.b, i.a));
+				}
+			}
+		}
+
+		for (int i = 0; i < n - 1; i++) { io.print(dist[i] + " "); }
+		io.println(dist[n - 1]);
+		io.close();
+	}
+
+	// CodeSnip{Kattio}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+import heapq
+
+n, m = map(int, input().split())
+
+# Adjacency list of (neighbour, edge weight)
+graph = [[] for _ in range(n)]
+for i in range(m):
+	a, b, c = map(int, input().split())
+	graph[a - 1].append((b - 1, c))
+
+# Initially set all distances to infinity
+dist = [float("inf") for _ in range(n)]
+
+# Dijkstra's algorithm
+pq = []
+
+start = 0
+heapq.heappush(pq, (0, start))
+dist[start] = 0  # The shortest path from a node to itself is 0
+while pq:
+	cdist, node = heapq.heappop(pq)
+	if cdist != dist[node]:
+		continue
+	for i in graph[node]:
+		# If we can reach a neighbouring node faster,
+		# we update its minimum distance
+		if cdist + i[1] < dist[i[0]]:
+			dist[i[0]] = cdist + i[1]
+			heapq.heappush(pq, (dist[i[0]], i[0]))
+
+for i in range(n):
+	print(dist[i], end=" ")
+```
+
+</PySection>
+</LanguageSection>
+
+<Warning>
+
+It's important to include `continue`. This ensures that when all edge weights
+are non-negative, we will never go through the adjacency list of any vertex more
+than once. Removing it will cause TLE on the last test case of the above
+problem!
+
+The last test case contains 100000 destinations and 149997 flights. City 1 has
+flights to cities 2 through 50000. Cities 2 through 50000 have flights to
+city 50001. City 50001 has flights to cities 50002 through 100000. Without the
+`continue`, after the program pops cities 1 through 50000 off the queue, the
+priority queue will contain 49999 routes that end at city 50001. Every one of
+the 49999 times city 50001 is popped off the queue and processed, we must
+iterate over all of its outgoing flights (to cities 50002 through 100000). This
+results in a runtime of $\Theta(N^2\log N)$, which will TLE.
+
+On the other hand, if we did include the `continue`, the program will never
+iterate through the adjacency list of city 50001 after processing it for the
+first time.
+
+</Warning>
+
+<Optional title="Faster Dijkstra">
+
+Can be done in $\mathcal{O}(M+N\log N)$ with
+[Fibonacci heap](https://en.wikipedia.org/wiki/Fibonacci_heap). In practice
+though, this is rarely faster, since the Fibonacci heap has a bad constant
+factor.
+
+</Optional>
+
+### Problems
+
+<Problems problems="dijk" hideSuggestProblemButton />

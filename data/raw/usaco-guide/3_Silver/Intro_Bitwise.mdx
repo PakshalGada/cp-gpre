@@ -1,0 +1,575 @@
+---
+id: intro-bitwise
+title: Intro to Bitwise Operators
+redirects:
+  - /bronze/intro-bitwise
+  - /gold/intro-bitwise
+  - /plat/intro-bitwise
+description: Six bitwise operators and the common ways they are used.
+author: Siyong Huang, Chongtian Ma, Mihnea Brebenel
+frequency: 3
+---
+
+<Resources>
+	<Resource source="CPH" title="10.2 - Bit Operations" starred />
+	<Resource
+		source="CF"
+		title="Bitwise operations for beginners"
+		url="73490"
+		starred
+	>
+		Great explanation by Errichto
+	</Resource>
+	<Resource
+		source="GFG"
+		title="Bitwise Operators in C/C++"
+		url="bitwise-operators-in-c-cpp/"
+	>
+		The same operators are used in java and python
+	</Resource>
+</Resources>
+
+At this point, you should already be familiar with the three main bitwise operators (AND, OR, and XOR).
+Let's take a look at some examples to better understand them.
+
+<FocusProblem problem="sample" />
+
+## Solution - Take a Guess
+
+In fact, we can figure out the sum of two numbers using just their AND, OR and XOR values! Suppose we know their
+XOR values, we can use the following property:
+
+$a + b = 2 \cdot (a \& b) + a \oplus b$
+
+The proof is as follows:
+
+$a \oplus b$ is essentially just $a + b$ in base $2$ but we never carry over to the next bit. Recall a bit in $a \oplus b$ is $1$ only if the bit in $a$ is different from the bit in $b$, thus one of them must be a $1$. However, when we add two $1$ bits, we yield a $0$, but we do not carry that $1$ to the next bit. This is where $a \& b$ comes in.
+
+$a \& b$ is just the carry bits themselves, since a bit is $1$ only if it's a $1$ in both $a$ and $b$, which is exactly what we need. We multiply this by $2$ to shift all the bits to the left by one, so every value carries over to the next bit.
+
+To acquire the XOR values of the two numbers, we can use the following:
+
+$a \oplus b = \lnot(a \& b) \& (a | b)$
+
+The proof is as follows:
+
+Recall a bit in $a \oplus b$ is $1$ only if the bit in $a$ is different from the bit in $b$. By negating $a \& b$, the bits that are left on are in the following format:
+
+- If it's $1$ in $a$ and $0$ in $b$
+- If it's $0$ in $a$ and $1$ in $b$
+- If it's $0$ in $a$ and $0$ in $b$
+
+Now this looks pretty great, but we need to get rid of the third case. By taking the bitwise AND with $a | b$, the ones that are left on is only if there is a $1$ in either $a$ or $b$. Obviously, the third case isn't included in $a | b$ since both bits are off, and we successfully eliminate that case.
+
+Now that we can acquire the sum of any two numbers in two queries, we can easily solve the problem now. We can find the values of the first three numbers of the array using a system of equations involving their sum (note $n \geq 3$). Once we have acquired their independent values, we can loop through the rest of the array.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int ask(string s, int a, int b) {
+	cout << s << ' ' << a << ' ' << b << endl;
+	int res;
+	cin >> res;
+	return res;
+}
+
+/** @return the sum of the elements at a and b (0-indexed) */
+int sum(int a, int b) {
+	int and_ = ask("and", ++a, ++b);
+	int or_ = ask("or", a, b);
+
+	int xor_ = ~and_ & or_;  // a ^ b = ~(a & b) & (a | b)
+
+	return 2 * and_ + xor_;  // a + b = 2(a & b) + a ^ b
+}
+
+int main() {
+	int n, k;
+	cin >> n >> k;
+
+	// Acquire the first 3 elements
+	int a_plus_b = sum(0, 1);
+	int a_plus_c = sum(0, 2);
+	int b_plus_c = sum(1, 2);
+
+	// Get the actual values by solving the equations
+	vector<int> arr{(a_plus_b + a_plus_c - b_plus_c) / 2};
+	arr.push_back(a_plus_b - arr[0]);
+	arr.push_back(a_plus_c - arr[0]);
+
+	// Get the rest of the array
+	for (int i = 3; i < n; i++) { arr.push_back(sum(i - 1, i) - arr.back()); }
+
+	sort(arr.begin(), arr.end());
+	cout << "finish " << arr[k - 1] << endl;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class TakeAGuess {
+	private static BufferedReader br =
+	    new BufferedReader(new InputStreamReader(System.in));
+
+	public static void main(String[] args) throws IOException {
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int n = Integer.parseInt(st.nextToken());
+		int k = Integer.parseInt(st.nextToken());
+
+		// Acquire the first 3 elements
+		int aPlusB = sum(0, 1);
+		int aPlusC = sum(0, 2);
+		int bPlusC = sum(1, 2);
+
+		// Get the actual values by solving the equations
+		List<Integer> arr = new ArrayList<>();
+		arr.add((aPlusB + aPlusC - bPlusC) / 2);
+		arr.add(aPlusB - arr.get(0));
+		arr.add(aPlusC - arr.get(0));
+
+		// Get the rest of the array
+		for (int i = 3; i < n; i++) {
+			arr.add(sum(i - 1, i) - arr.get(arr.size() - 1));
+		}
+
+		arr.sort(Comparator.comparingInt(i -> i));
+		System.out.printf("finish %d%n", arr.get(k - 1));
+	}
+
+	/** @return the sum of the elements at a and b (0-indexed) */
+	private static int sum(int a, int b) throws IOException {
+		int and = ask("and", ++a, ++b);
+		int or = ask("or", a, b);
+
+		int xor = ~and & or;  // a ^ b = ~(a & b) & (a | b)
+
+		return 2 * and + xor;  // a + b = 2(a & b) + a ^ b
+	}
+
+	private static int ask(String s, int a, int b) throws IOException {
+		System.out.printf("%s %d %d%n", s, a, b);
+		System.out.flush();
+		return Integer.parseInt(br.readLine());
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+def ask(s: str, a: int, b: int) -> int:
+	print(f"{s} {a} {b}", flush=True)
+	return int(input())
+
+
+def sum(a: int, b: int) -> int:
+	""":return: the sum of the elements at a and b (0-indexed)"""
+	a += 1
+	b += 1
+	and_ = ask("and", a, b)
+	or_ = ask("or", a, b)
+
+	xor = ~and_ & or_  # a ^ b = ~(a & b) & (a | b)
+
+	return 2 * and_ + xor  # a + b = 2(a & b) + a ^ b
+
+
+n, k = [int(i) for i in input().split()]
+
+# Acquire the first 3 elements
+a_plus_b = sum(0, 1)
+a_plus_c = sum(0, 2)
+b_plus_c = sum(1, 2)
+
+# Get the actual values by solving the equations
+arr = [(a_plus_b + a_plus_c - b_plus_c) // 2]
+arr.append(a_plus_b - arr[0])
+arr.append(a_plus_c - arr[0])
+
+# Get the rest of the array
+for i in range(3, n):
+	arr.append(sum(i - 1, i) - arr[-1])
+
+arr.sort()
+print(f"finish {arr[k - 1]}")
+```
+
+</PySection>
+</LanguageSection>
+
+## Example - Addition
+
+Now let's take a look at implementing addition and multiplication using only bitwise operators.
+Before we do so, though, try implementing addition using bitwise operators on your own!
+You can test your implementation [here](http://poj.org/problem?id=1000).
+
+
+### Solution - Addition
+
+If we perform addition without carrying, then we are simply performing the XOR
+(`^`) operator. Then, the bits that we carry over are those equivalent to $1$ in
+both numbers: $a\&b$.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+int add(int a, int b) {
+	while (b > 0) {
+		int carry = a & b;
+		a ^= b;
+		b = carry << 1;
+	}
+	return a;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+public static int add(int a, int b) {
+	while (b > 0) {
+		int carry = a & b;
+		a ^= b;
+		b = carry << 1;
+	}
+	return a;
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+def add(a: int, b: int) -> int:
+	while b > 0:
+		carry = a & b
+		a ^= b
+		b = carry << 1
+	return a
+```
+
+</PySection>
+</LanguageSection>
+
+## Example - Multiplication
+
+Now try implementing multiplication using bitwise operators!
+If you want to test your implementation of multiplication,
+you can do so [here](https://www.hackerrank.com/challenges/handshake/problem).
+
+### Solution - Multiplication
+
+For simplicity, we will use the `sum` functions defined above. If we divide up
+$b$ into $2^{b_1}+2^{b_2}+\dots+2^{b_n}$, we get the following:
+
+$$
+\begin{align*}
+&a \times b \\
+&= a \times (2^{b_1}+2^{b_2}+\dots+2^{b_n}) \\
+&= a2^{b_1}+a2^{b_2}+\dots+a2^{b_n} \\
+&= \sum_{\text{bits in b}} {a\texttt{<<}b_i}
+\end{align*}
+$$
+
+(This same idea is used in binary exponentiation!)
+
+<LanguageSection>
+
+<CPPSection>
+
+```cpp
+int prod(int a, int b) {
+	int c = 0;
+	while (b > 0) {
+		if ((b & 1) == 1) {
+			c = add(c, a);  // Use the addition function we coded previously
+		}
+		a <<= 1;
+		b >>= 1;
+	}
+	return c;
+}
+```
+
+</CPPSection>
+
+<JavaSection>
+
+```java
+public static int prod(int a, int b) {
+	int c = 0;
+	while (b > 0) {
+		if ((b & 1) == 1) {
+			c = add(c, a);  // Use the addition function we coded previously
+		}
+		a <<= 1;
+		b >>= 1;
+	}
+	return c;
+}
+```
+
+</JavaSection>
+
+<PySection>
+
+```py
+def prod(a: int, b: int) -> int:
+	c = 0
+	while b > 0:
+		if b & 1:
+			c = add(c, a)  # Use the addition function we coded previously
+		a <<= 1
+		b >>= 1
+	return c
+```
+
+</PySection>
+
+</LanguageSection>
+
+## XOR Operation
+
+Perhaps one of the most common binary operations in practice is [bitwise xor](https://en.wikipedia.org/wiki/Bitwise_operation#XOR).
+The special property that differentiates it from the other bitwise operations is that xor is its own inverse, i.e. $x \oplus x = 0$.
+
+<FocusProblem problem = "sample2" />
+
+### Explanation
+
+Let's analyze the bits of each xor-sum independently. In this case, we'll check for every bit position, i.e.
+for every power of two, whether or not it's set in the xor-sum of every contiguous subsequence.
+This way, we transformed the problem into counting the number of subsequences with
+non-zero xor-sum; this will be applied on the array form by the bits on the same position
+in all the values.
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(N)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <iostream>
+#include <numeric>
+#include <vector>
+
+using namespace std;
+
+int main() {
+	int n;
+	cin >> n;
+	vector<int> v(n);
+	for (int &a : v) { cin >> a; }
+
+	long long ans = -accumulate(v.begin(), v.end(), 0LL);
+
+	// For every bit position,
+	// check if it's set on in the xor-sum of every subsequence
+	for (int i = 0; i < 30; i++) {
+		int s = 0;
+		// Count the prefix sums
+		// The # of 0 xor-sum prefxises starts from 1 to count the prefixes with
+		// xor-sum 1
+		vector<int> pref = {1, 0};
+		for (int a : v) {
+			s ^= (a >> i) & 1;
+			/*
+			 * Count the # of sequences ending at this position with xor-sum
+			 * non-zero by counting the prefixes of the inversed bit, i.e.
+			 * pref[i] ^ pref[j] = 1. Update the answer by adding the # of such
+			 * sequences multiplied by the respective power of two.
+			 */
+			ans += pref[s ^ 1] * 1LL << i;
+			// Update the prexies
+			pref[s]++;
+		}
+	}
+
+	cout << ans << endl;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.StringTokenizer;
+
+public class Main {
+	public static void main(String[] args) throws IOException {
+		BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
+
+		StringTokenizer st = new StringTokenizer(read.readLine());
+
+		int n = Integer.parseInt(st.nextToken());
+		int[] v = new int[n];
+
+		st = new StringTokenizer(read.readLine());
+
+		long ans = 0;
+		for (int i = 0; i < n; i++) {
+			v[i] = Integer.parseInt(st.nextToken());
+			ans -= v[i];
+		}
+
+		// For every bit position,
+		// check if it's set on in the xor-sum of every subsequence
+		for (int i = 0; i < 30; i++) {
+			int s = 0;
+			// Count the prefix sums
+			//  The # of 0 xor-sum prefixes start from 1 to count the prefixes with
+			//  xor-sum 1
+			int[] pref = {1, 0};
+			for (int a : v) {
+				s ^= (a >> i) & 1;
+				/*
+				 * Count the # of sequences ending at this position with xor-sum
+				 * non-zero by counting the prefixes of the inversed bit, i.e.
+				 * pref[i] ^ pref[j] = 1. Update the answer by adding the # of such
+				 * sequences multiplied by the respective power of two.
+				 */
+				ans += (long)pref[s ^ 1] << i;
+				// Update the prefixes
+				pref[s]++;
+			}
+		}
+
+		System.out.println(ans);
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+n = int(input())
+v = list(map(int, input().split()))
+
+res = 0
+"""
+For every bit position
+check if it's set on in the xor-sum of every subsequence
+"""
+for i in range(30):
+	s = 0
+	"""
+	Count the prefix sums
+	The # of 0 xor-sum prefxises starts from 1 to count the prefixes with
+	xor-sum 1
+	"""
+	pref = [1, 0]
+	for a in v:
+		s ^= (a >> i) & 1
+		"""
+		Count the # of sequences ending at this position with xor-sum
+		non-zero by counting the prefixes of the inversed bit, i.e.
+		pref[i] ^ pref[j] = 1. Update the answer by adding the # of such
+		sequences multiplied by the respective power of two.
+		"""
+		res += pref[s ^ 1] * (1 << i)
+		# update the prexies
+		pref[s] += 1
+
+print(res - sum(v))
+```
+
+</PySection>
+</LanguageSection>
+
+<Problems problems="probs" />
+
+## Quiz
+
+<Quiz>
+  <Quiz.Question>
+    Which of the following will set the kth bit of int x as true? Assume you do not know what the value of the kth bit currently is.
+    <Quiz.Answer>
+      `x &= (1 << k)`
+      <Quiz.Explanation>
+        Incorrect. This will set the number to $1<<k$ if the kth bit was true, and 0 if the kth bit was false.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer correct>
+      `x |= (1 << k)`
+      <Quiz.Explanation>
+        Correct. This will set the kth bit to true regardless of what it currently is.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      `x += (1 << k)`
+      <Quiz.Explanation>
+        Incorrect. If the kth bit is already true, it will make the kth bit false and mess up the rest of x.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+  </Quiz.Question>
+  <Quiz.Question>
+    Which gives the number of subsets for an array of size n? (Include the empty subset)
+    <Quiz.Answer>
+      `n << 1`
+      <Quiz.Explanation>
+        Incorrect. This will give n*2.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer correct>
+      `1 << n`
+      <Quiz.Explanation>
+        Correct. This will give 2^n.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      `n << 2`
+      <Quiz.Explanation>
+        Incorrect. This will give n*4.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      `2 << n`
+      <Quiz.Explanation>
+        Incorrect. This will give 2^(n+1)
+      </Quiz.Explanation>
+    </Quiz.Answer>
+  </Quiz.Question>
+  <Quiz.Question>
+    Which checks if the kth bit in int x is true?
+    <Quiz.Answer correct>
+      `x & ( 1 << k)`
+      <Quiz.Explanation>
+        Correct. This will check the kth bit in x.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      `x && (1 << k)`
+      <Quiz.Explanation>
+        Incorrect. This will be true if x an k are both not 0.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      `x | (1 << k)`
+      <Quiz.Explanation>
+        Incorrect. This will be true if either x or k is not 0.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      `x || (1 << k)`
+      <Quiz.Explanation>
+        Incorrect. This will be true if either x or k is not 0.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+  </Quiz.Question>
+</Quiz>

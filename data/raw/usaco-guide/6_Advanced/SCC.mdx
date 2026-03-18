@@ -1,0 +1,601 @@
+---
+id: SCC
+title: 'Strongly Connected Components'
+author: Benjamin Qi, Dong Liu, Neo Wang, Rameez Parwez
+prerequisites:
+  - toposort
+  - BCC-2CC
+description:
+  Subsets of nodes in directed graphs where each node in a subset can reach each
+  other node in the subset.
+frequency: 1
+---
+
+# Strongly Connected Components (SCCs)
+
+<FocusProblem problem="ex" />
+
+The definition of a kingdom in this problem is equivalent to the definition of a
+strongly connected component. We can compute these components using either
+**Kosaraju's** or **Tarjan's** algorithms, both of which are described below.
+
+## Kosaraju's Algorithm
+
+<Resources>
+	<Resource source="CPH" title="17 - Strong Connectivity" />
+	<Resource source="Wikipedia" title="Kosaraju's Algorithm" url="https://en.wikipedia.org/wiki/Kosaraju%27s_algorithm" />
+	<Resource source="TC" title="Kosaraju's Algorithm for SCCs"
+	url="https://www.topcoder.com/thrive/articles/kosarajus-algorithm-for-strongly-connected-components"/>
+</Resources>
+
+## Explanation
+
+In the first phase, the algorithm performs a depth-first search (DFS) on the original graph to determine the exit times of vertices; that is, the node that is processed last will be at the top of the stack (reverse topological sort). As each vertex finishes processing, it is pushed onto a stack. In the next phase, nodes are processed off the stack in the order of their decreasing finish times. This ordering will be used in the second phase.
+
+In the second phase, the algorithm conducts another DFS, this time on the transposed graph, where all edges are reversed. The DFS processes nodes according to the order defined by the stack from the first phase. By reversing the edges and following this specific order, each DFS run in this phase can identify all vertices of one SCC before moving on to the next.
+
+We know that the transposed graph will have the same strongly connected components (SCCs) as the original because reversing an edge doesn't change the reachability within the components. Since each SCC is both maximal and disjoint. This means that within an SCC, every pair of vertices is mutually reachable; you can get from any vertex $u$ to any other vertex $v$, and vice versa. The term "maximal" indicates that you can't add any more vertices to an SCC without losing its strongly connected property. Furthermore, SCCs are disjoint, which means that no vertex can belong to more than one SCC. If a vertex were part of two SCCs, those SCCs would actually merge into a single, larger SCC. Therefore, reversing edges doesn't affect the undirected connections in the original graph.
+
+During the second DFS, we process the vertices in the order determined by the stack from the first phase. This ensures that we start with the vertex that finished last in the initial DFS, which is guaranteed to be part of an SCC with no outgoing edges to other SCCs — essentially making it a "[sink](https://en.wikipedia.org/wiki/Sink_(computing)#:~:text=In%20graph%20theory,-Main%20article%3A%20Directed&text=In%20a%20Directed%20acyclic%20graph,neural%20networks%20and%20data%20compression.)" in the transposed graph.
+
+By processing the vertices in this specific order, we fully explore all vertices within the current SCC before moving on to the next one. SCCs are maximal subgraphs where every vertex can reach every other vertex within the same subgraph, so the DFS will traverse through all nodes in an SCC, isolating it completely. Once the entire SCC is processed, we move to the next highest exit time vertex that hasn’t been visited yet, ensuring that each SCC is handled independently and thoroughly, so no vertices from another SCC will be mistakenly included in the current one.
+
+For visualization, refer to the TopCoder resource mentioned [here](https://www.topcoder.com/thrive/articles/kosarajus-algorithm-for-strongly-connected-components).
+
+<Info title="Sink">
+A node is considered a sink in a graph if it has out-degree of 0 (except for the source node).
+</Info>
+
+## Implementation
+
+**Time Complexity:** $\mathcal{O}(N+M)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+
+const int N = 1e5 + 1;
+
+// adj_t is the transpose of adj
+std::vector<int> adj[N], adj_t[N];
+std::vector<int> order;
+std::vector<int> vis(N), id(N);
+
+// calculates the order in which nodes are processed
+void dfs1(int v) {
+	vis[v] = true;
+	for (int u : adj[v]) {
+		if (!vis[u]) { dfs1(u); }
+	}
+	order.push_back(v);
+}
+
+/*
+ * traverse one SCC at a time and
+ * assign component ID to all nodes in one SCC
+ */
+void dfs2(int x, int comp) {
+	vis[x] = true;
+
+	for (int u : adj_t[x]) {
+		if (!vis[u]) { dfs2(u, comp); }
+	}
+	id[x] = comp;
+}
+
+int main() {
+	int n, m;
+	std::cin >> n >> m;
+
+	for (int i = 1; i <= m; i++) {
+		int u, v;
+		std::cin >> u >> v;
+		adj[u].push_back(v);
+		adj_t[v].push_back(u);
+	}
+
+	vis.assign(N, false);
+
+	for (int i = 1; i <= n; i++) {
+		if (!vis[i]) { dfs1(i); }
+	}
+
+	vis.assign(N, false);
+	std::reverse(begin(order), end(order));
+	int comps = 0;
+	for (int v : order) {
+		if (!vis[v]) {
+			comps++;  // counter for SCC
+			dfs2(v, comps);
+		}
+	}
+
+	std::cout << comps << '\n';
+
+	for (int i = 1; i <= n; i++) { std::cout << id[i] << " \n"[i == n]; }
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class Main {
+	static final int N = 100001;
+	static boolean[] vis = new boolean[N + 1];
+	// Adjacency list of neighbor
+	static List<Integer>[] adj = new ArrayList[N + 1];
+	// adjT is the transpose of adj
+	static List<Integer>[] adjT = new ArrayList[N + 1];
+	static int[] id = new int[N + 1];
+	static List<Integer> dfsOrder = new ArrayList<>();
+
+	public static void main(String[] args) {
+		Kattio io = new Kattio();
+		int n = io.nextInt();
+		int m = io.nextInt();
+		for (int i = 1; i <= n; i++) {
+			adj[i] = new ArrayList<>();
+			adjT[i] = new ArrayList<>();
+		}
+		for (int i = 0; i < m; i++) {
+			int a = io.nextInt();
+			int b = io.nextInt();
+			adj[a].add(b);
+			adjT[b].add(a);
+		}
+
+		for (int i = 1; i <= n; i++) {
+			if (!vis[i]) { dfs(i, 1, i); }
+		}
+
+		Arrays.fill(vis, false);
+		int components = 0;
+		for (int i = n - 1; i >= 0; i--) {
+			if (!vis[dfsOrder.get(i)]) {
+				components++;
+				dfs(dfsOrder.get(i), 2, components);
+			}
+		}
+
+		io.println(components);
+		for (int i = 1; i <= n; i++) { io.print(id[i] + " "); }
+		io.close();
+	}
+
+	private static void dfs(int x, int pass, int num) {
+		vis[x] = true;
+		List<Integer> ad = (pass == 1) ? adj[x] : adjT[x];
+		for (int e : ad) {
+			if (!vis[e]) { dfs(e, pass, num); }
+		}
+		dfsOrder.add(x);
+		if (pass == 2) { id[x] = num; }
+	}
+
+	// CodeSnip{Kattio}
+}
+```
+
+</JavaSection>
+<PySection>
+
+<Warning>
+
+The below solution only runs in time if you submit with PyPy.
+
+</Warning>
+
+```py
+order = []
+
+
+def dfs1(v: int):
+	"""Calculate the order to process nodes."""
+	stack = [v]
+	while stack:
+		node = stack[-1]
+		if not vis[node]:
+			vis[node] = True
+		finished = True
+		for u in adj[node]:
+			if not vis[u]:
+				stack.append(u)
+				finished = False
+				break
+		if finished:
+			order.append(stack.pop())
+		else:
+			vis[node] = True
+
+
+def dfs2(x: int, comp: int):
+	"""Traverse an SCC and assign component numbers to each of them."""
+	stack = [x]
+	while stack:
+		node = stack.pop()
+		if not vis[node]:
+			vis[node] = True
+			comp_id[node] = comp
+			for u in rev_adj[node]:
+				if not vis[u]:
+					stack.append(u)
+
+
+n, m = map(int, input().split())
+
+adj = [[] for _ in range(n)]
+rev_adj = [[] for _ in range(n)]
+vis = [False] * n
+comp_id = [0] * n
+
+for _ in range(m):
+	u, v = map(int, input().split())
+	u -= 1
+	v -= 1
+	adj[u].append(v)
+	rev_adj[v].append(u)
+
+for i in range(n):
+	if not vis[i]:
+		dfs1(i)
+
+vis = [False] * n
+comps = 0
+for i in range(len(order) - 1, -1, -1):
+	v = order[i]
+	if not vis[v]:
+		comps += 1  # counter for SCC
+		dfs2(v, comps)
+
+print(comps)
+print(*comp_id)
+```
+
+</PySection>
+</LanguageSection>
+
+## Tarjan's Algorithm
+
+<Resources>
+	<Resource source="CPC" title="7 - Graphs 1" url="07_graphs_1" />
+	<Resource source="CP2" title="4.2.9 - Finding SCCs"/>
+	<Resource source="Wikipedia" title="Tarjan's SCC Algorithm" url="https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm" />
+</Resources>
+
+<IncompleteSection>
+
+link to dpv in resources and just tell them to look at that, no way we're
+beating that explanation
+
+</IncompleteSection>
+
+## Implementation
+
+**Time Complexity:** $\mathcal{O}(N+M)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+using std::cout;
+using std::endl;
+using std::vector;
+
+/** Takes in an adjacency list and calculates the SCCs of the graph. */
+class TarjanSolver {
+  private:
+	vector<vector<int>> rev_adj;
+	vector<int> post;
+	vector<int> comp;
+
+	vector<bool> visited;
+	int timer = 0;
+	int id = 0;
+
+	void fill_post(int at) {
+		visited[at] = true;
+		for (int n : rev_adj[at]) {
+			if (!visited[n]) { fill_post(n); }
+		}
+		post[at] = timer++;
+	}
+
+	void find_comp(int at) {
+		visited[at] = true;
+		comp[at] = id;
+		for (int n : adj[at]) {
+			if (!visited[n]) { find_comp(n); }
+		}
+	}
+
+  public:
+	const vector<vector<int>> &adj;
+
+	TarjanSolver(const vector<vector<int>> &adj)
+	    : adj(adj), rev_adj(adj.size()), post(adj.size()), comp(adj.size()),
+	      visited(adj.size()) {
+		vector<int> nodes(adj.size());
+		for (int n = 0; n < adj.size(); n++) {
+			nodes[n] = n;
+			for (int next : adj[n]) { rev_adj[next].push_back(n); }
+		}
+
+		for (int n = 0; n < adj.size(); n++) {
+			if (!visited[n]) { fill_post(n); }
+		}
+		std::sort(nodes.begin(), nodes.end(),
+		          [&](int n1, int n2) { return post[n1] > post[n2]; });
+
+		visited.assign(adj.size(), false);
+		for (int n : nodes) {
+			if (!visited[n]) {
+				find_comp(n);
+				id++;
+			}
+		}
+	}
+
+	int comp_num() const { return id; }
+
+	int get_comp(int n) const { return comp[n]; }
+};
+
+int main() {
+	int planet_num;
+	int tele_num;
+	std::cin >> planet_num >> tele_num;
+	vector<vector<int>> adj(planet_num);
+	for (int t = 0; t < tele_num; t++) {
+		int from, to;
+		std::cin >> from >> to;
+		adj[--from].push_back(--to);
+	}
+
+	TarjanSolver scc(adj);
+	cout << scc.comp_num() << '\n';
+	for (int p = 0; p < planet_num - 1; p++) { cout << scc.get_comp(p) + 1 << ' '; }
+	cout << scc.get_comp(planet_num - 1) + 1 << endl;
+}
+```
+
+</CPPSection>
+</LanguageSection>
+
+## Problems
+
+<Problems problems="general" />
+
+# 2-SAT
+
+<Resources>
+	<Resource source="CF" title="2-SAT" url="16205" />
+	<Resource source="cp-algo" title="2-SAT" url="https://cp-algorithms.com/graph/2SAT.html#algorithm" />
+	<Resource source="Algorithms Live!" title="2SAT" url="https://youtu.be/0nNYy3rltgA" />
+</Resources>
+
+<FocusProblem problem="satEx" />
+
+## Explanation
+
+### Introduction
+
+The CSES problem already gives us a boolean formula in conjunctive normal form
+(CNF) that consists of a series of logical OR clauses ANDed together like so:
+
+$$
+(\lnot x_1 \lor x_2) \land (x_1 \lor \lnot x_2) \land (\lnot x_1 \lor \lnot x_2) \land (x_1 \lor \lnot x_3)
+$$
+
+Before we proceed, try linking this to graph theory. Hint: represent a variable
+and its negation with two nodes.
+
+### Construction
+
+Like the hint says, we can construct a graph with each variable having two
+nodes: one for itself and one for its negation. We're going to try to proceed by
+assigning each node a truth value. Note that the value of one of the variable's
+nodes determines the other, since if we know the value of one node, the other is
+the negation of that value.
+
+Now, for each clause $(a \lor b)$, we add two directed edges:
+$\lnot a \rightarrow b$ and $\lnot b \rightarrow a$. What this means for us is
+that if $a$ was false, then $b$ must be true, and vice versa.
+
+With these edges, an SCC implies a group of values that all have to have the
+same truth value.
+
+### Solving the Graph
+
+The only way for there to be an impossible assignment of truth values is if a
+node and its negation are in the same SCC, since this means that a boolean and
+its negation have to both be true, which is impossible.
+
+If the graph is consistent and there are no impossible configurations, we can
+start assigning truth values, starting from the SCCs that have no outgoing edges
+to other SCCs and proceeding backwards. With the initial SCCs, we set them all
+to true. As for other SCCs, if a value has already been assigned due to its
+negation being in a previously processed component, we have to assign all other
+values in the component to that value.
+
+Due to
+[certain properties about the graph we've constructed](https://en.wikipedia.org/wiki/2-satisfiability#Strongly_connected_components),
+we can guarantee that the resulting assignment of the variables does not have
+any "true" SCCs leading to "false" SCCs. A proof of this is beyond the scope of
+this module.
+
+## Implementation
+
+We use Tarjan's algorithm as it already provides us with a topological order to
+process the nodes in. However, it is also possible to use Kosaraju's algorithm.
+
+**Time Complexity:** $\mathcal{O}(N+M)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+using std::cout;
+using std::endl;
+using std::vector;
+
+// BeginCodeSnip{SCC Solver}
+class TarjanSolver {
+  private:
+	vector<vector<int>> rev_adj;
+	vector<int> post;
+	vector<int> comp;
+
+	vector<bool> visited;
+	int timer = 0;
+	int id = 0;
+
+	void fill_post(int at) {
+		visited[at] = true;
+		for (int n : rev_adj[at]) {
+			if (!visited[n]) { fill_post(n); }
+		}
+		post[at] = timer++;
+	}
+
+	void find_comp(int at) {
+		visited[at] = true;
+		comp[at] = id;
+		for (int n : adj[at]) {
+			if (!visited[n]) { find_comp(n); }
+		}
+	}
+
+  public:
+	const vector<vector<int>> &adj;
+	TarjanSolver(const vector<vector<int>> &adj)
+	    : adj(adj), rev_adj(adj.size()), post(adj.size()), comp(adj.size()),
+	      visited(adj.size()) {
+		vector<int> nodes(adj.size());
+		for (int n = 0; n < adj.size(); n++) {
+			nodes[n] = n;
+			for (int next : adj[n]) { rev_adj[next].push_back(n); }
+		}
+
+		for (int n = 0; n < adj.size(); n++) {
+			if (!visited[n]) { fill_post(n); }
+		}
+		std::sort(nodes.begin(), nodes.end(),
+		          [&](int n1, int n2) { return post[n1] > post[n2]; });
+
+		visited.assign(adj.size(), false);
+		for (int n : nodes) {
+			if (!visited[n]) {
+				find_comp(n);
+				id++;
+			}
+		}
+	}
+
+	int comp_num() const { return id; }
+
+	int get_comp(int n) const { return comp[n]; }
+};
+// EndCodeSnip
+
+struct Clause {
+	int var1;   // id of the first variable
+	bool neg1;  // is it negated?
+	int var2;
+	bool neg2;
+};
+
+/**
+ * @return a vector of booleans that satisfy the given clauses,
+ * or an empty vector if no such set of booleans exist
+ */
+vector<int> solve_sat(const vector<Clause> &clauses, int var_num) {
+	vector<vector<int>> adj(2 * var_num);
+	// 2 * var is the variable, while 2 * var + 1 is its negation
+	for (const Clause &c : clauses) {
+		// falseness of the first implies the truth of the second
+		adj[2 * c.var1 + !c.neg1].push_back(2 * c.var2 + c.neg2);
+		// and vice versa
+		adj[2 * c.var2 + !c.neg2].push_back(2 * c.var1 + c.neg1);
+	}
+
+	TarjanSolver scc(adj);
+	// a list of all the components in the graph
+	vector<vector<int>> comps(scc.comp_num());
+	for (int i = 0; i < 2 * var_num; i += 2) {
+		// do a node and its negation share the same component?
+		if (scc.get_comp(i) == scc.get_comp(i + 1)) { return {}; }
+		comps[scc.get_comp(i)].push_back(i);
+		comps[scc.get_comp(i + 1)].push_back(i + 1);
+	}
+
+	vector<int> val(2 * var_num, -1);
+	/*
+	 * because of how our tarjan solver works, starting from
+	 * starting from comp 0 and going up process the graph
+	 * in reverse topological order- neat, huh?
+	 */
+	for (const vector<int> &comp : comps) {
+		int set_to = 1;  // set all to true by default
+		// check if any values have had their negations set yet
+		for (int v : comp) {
+			int neg = v % 2 == 1 ? v - 1 : v + 1;
+			if (val[neg] != -1) {
+				set_to = !val[neg];
+				break;
+			}
+		}
+
+		for (int v : comp) { val[v] = set_to; }
+	}
+
+	vector<int> actual_val(var_num);
+	for (int i = 0; i < var_num; i++) { actual_val[i] = val[2 * i]; }
+
+	return actual_val;
+}
+
+int main() {
+	int req_num;
+	int topping_num;
+	std::cin >> req_num >> topping_num;
+	vector<Clause> clauses(req_num);
+	for (Clause &c : clauses) {
+		char neg1, neg2;
+		std::cin >> neg1 >> c.var1 >> neg2 >> c.var2;
+		c.var1--;
+		c.var2--;
+		c.neg1 = neg1 == '-';
+		c.neg2 = neg2 == '-';
+	}
+
+	vector<int> sat_res = solve_sat(clauses, topping_num);
+	if (sat_res.empty()) {
+		cout << "IMPOSSIBLE" << endl;
+	} else {
+		for (int t = 0; t < topping_num; t++) {
+			cout << (sat_res[t] ? '+' : '-') << " \n"[t == topping_num - 1];
+		}
+	}
+}
+```
+
+</CPPSection>
+</LanguageSection>
+
+## Problems
+
+<Problems problems="2SAT" />

@@ -1,0 +1,217 @@
+{
+  "MODULE_ID": "greedy-sorting",
+  "studyalgo": [
+    {
+      "uniqueId": "cfgym-102951B",
+      "name": "Studying Algorithms",
+      "url": "https://codeforces.com/gym/102951/problem/B",
+      "source": "CF",
+      "difficulty": "Very Easy",
+      "isStarred": false,
+      "tags": ["Sorting", "Greedy"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    }
+  ],
+  "movie": [
+    {
+      "uniqueId": "cses-1629",
+      "name": "Movie Festival",
+      "url": "https://cses.fi/problemset/task/1629",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Sorting", "Greedy"],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "greedy-sorting"
+      }
+    }
+  ],
+  "cses": [
+    {
+      "uniqueId": "cses-1074",
+      "name": "Stick Lengths",
+      "url": "https://cses.fi/problemset/task/1074",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Median"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cses-1084",
+      "name": "Apartments",
+      "url": "https://cses.fi/problemset/task/1084",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Greedy", "Sorting"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cses-1090",
+      "name": "Ferris Wheel",
+      "url": "https://cses.fi/problemset/task/1090",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Greedy", "Sorting", "2P"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cses-1630",
+      "name": "Tasks & Deadlines",
+      "url": "https://cses.fi/problemset/task/1630",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": true,
+      "tags": ["Greedy", "Sorting"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    }
+  ],
+  "other": [
+    {
+      "uniqueId": "cf-762B",
+      "name": "USB vs. PS/2",
+      "url": "https://codeforces.com/contest/762/problem/B",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Greedy", "Sorting", "2P"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-835",
+      "name": "Lemonade Line",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=835",
+      "source": "Silver",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Greedy", "Sorting"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-571",
+      "name": "High Card Wins",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=571",
+      "source": "Silver",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Greedy", "Sorting"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-573",
+      "name": "High Card Low Card",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=573",
+      "source": "Gold",
+      "difficulty": "Easy",
+      "isStarred": true,
+      "tags": ["Greedy", "Sorting"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1158A",
+      "name": "The Party and Sweets",
+      "url": "https://codeforces.com/problemset/problem/1158/A",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Sorting", "Greedy"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-1350",
+      "name": "Bovine Acrobatics",
+      "url": "https://usaco.org/index.php?page=viewproblem2&cpid=1350",
+      "source": "Silver",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Sorting", "Greedy", "Deque"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-810",
+      "name": "Rest Stops",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=810",
+      "source": "Silver",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Greedy"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-990",
+      "name": "Berry Picking",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=990",
+      "source": "Silver",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Sorting", "Greedy"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-321B",
+      "name": "Ciel and Duel",
+      "url": "https://codeforces.com/contest/321/problem/B",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Greedy"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1783C",
+      "name": "Yet Another Tournament",
+      "url": "https://codeforces.com/contest/1783/problem/C",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Greedy", "Sorting"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "usaco-1158",
+      "name": "Closest Cow Wins",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=1158",
+      "source": "Silver",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Sorting", "Greedy", "2P"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    }
+  ]
+}

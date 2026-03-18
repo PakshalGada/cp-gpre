@@ -1,0 +1,1326 @@
+---
+id: complete-rec
+title: 'Complete Search with Recursion'
+author: Many
+contributors:
+  Darren Yao, Sam Zhang, Michael Cao, Andrew Wang, Benjamin Qi, Dong Liu, Maggie
+  Liu, Dustin Miao
+description: 'Harder problems involving iterating through the entire solution space,
+including those that require generating subsets and permutations.'
+frequency: 1
+prerequisites:
+  - intro-complete
+---
+
+<Warning>
+
+Although knowledge of recursion is not strictly necessary for Bronze, we think
+that it makes more sense to include this module as part of Bronze rather than
+Silver.
+
+</Warning>
+
+## Subsets
+
+<FocusProblem problem="subset" />
+
+### Resources
+
+<Resources>
+	<Resource source="CPH" title="5.1 - Generating Subsets" starred>
+		good explanation + code, no need to repeat
+	</Resource>
+</Resources>
+
+### Solution - Apple Division
+
+Since $n \le 20$, we can solve this by trying all possible divisions
+of $n$ apples into two sets and finding the one with the minimum difference in
+weights. Here are two ways to do this.
+
+#### Generating Subsets Recursively
+
+The first method would be to write a recursive function which searches over all
+possibilities.
+
+At some index, we either add $\texttt{weight}_i$ to the first set or the second
+set, storing two sums $\texttt{sum}_1$ and $\texttt{sum}_2$ with the sum of
+values in each set.
+
+Then, we return the difference between the two sums once we've reached the end
+of the array.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int n;
+vector<long long> weights;
+
+ll recurse_apples(int index, ll sum1, ll sum2) {
+	// We've added all apples- return the absolute difference
+	if (index == n) { return abs(sum1 - sum2); }
+
+	// Try adding the current apple to either the first or second set
+	return min(recurse_apples(index + 1, sum1 + weights[index], sum2),
+	           recurse_apples(index + 1, sum1, sum2 + weights[index]));
+}
+
+int main() {
+	cin >> n;
+	weights.resize(n);
+	for (int i = 0; i < n; i++) { cin >> weights[i]; }
+
+	// Solve the problem starting at apple 0 with both sets being empty
+	cout << recurse_apples(0, 0, 0) << endl;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class AppleDivision {
+	static int n;
+	static int[] weights;
+
+	public static void main(String[] args) throws Exception {
+		Kattio io = new Kattio();
+
+		n = io.nextInt();
+		weights = new int[n];
+		for (int i = 0; i < n; i++) { weights[i] = io.nextInt(); }
+
+		// Solve the problem starting at apple 0 with both sets being empty
+		io.println(recurseApples(0, 0, 0));
+		io.close();
+	}
+
+	static long recurseApples(int index, long sum1, long sum2) {
+		// We've added all apples- return the absolute difference
+		if (index == n) { return Math.abs(sum1 - sum2); }
+
+		// Try adding the current apple to either the first or second set
+		return Math.min(recurseApples(index + 1, sum1 + weights[index], sum2),
+		                recurseApples(index + 1, sum1, sum2 + weights[index]));
+	}
+
+	// CodeSnip{Kattio}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+n = int(input())
+weights = list(map(int, input().split()))
+
+
+def recurse_apples(i: int, sum1: int, sum2: int) -> int:
+	# We've added all apples- return the absolute difference
+	if i == n:
+		return abs(sum2 - sum1)
+
+	# Try adding the current apple to either the first or second set
+	return min(
+		recurse_apples(i + 1, sum1 + weights[i], sum2),
+		recurse_apples(i + 1, sum1, sum2 + weights[i]),
+	)
+
+
+# Solve the problem starting at apple 0 with both sets being empty
+print(recurse_apples(0, 0, 0))
+```
+
+</PySection>
+</LanguageSection>
+
+#### Generating Subsets with Bitmasks
+
+<Warning>
+
+You are not expected to know this for Bronze.
+
+</Warning>
+
+A **bitmask** is an integer whose binary representation is used to represent a
+subset. In the context of this problem, if the $i$'th bit is equal to $1$ in a particular bitmask,
+we say the $i$'th apple is in $s_1$. If not, we'll say it's in $s_2$.
+We can iterate through all subsets $s_1$ if we check all bitmasks ranging from
+$0$ to $2^N-1$.
+
+Let's do a quick demo with $N=3$.
+These are the integers from $0$ to $2^3-1$ along with their
+binary representations and the corresponding elements included in $s_1$.
+As you can see, all possible subsets are accounted for.
+
+<center>
+
+| Number | Binary | Apples In $s_1$ |
+|--------|--------|-----------------|
+| 0      | `000`  | $\{\}$          |
+| 1      | `001`  | $\{0\}$         |
+| 2      | `010`  | $\{1\}$         |
+| 3      | `011`  | $\{0,1\}$       |
+| 4      | `100`  | $\{2\}$         |
+| 5      | `101`  | $\{0,2\}$       |
+| 6      | `110`  | $\{1,2\}$       |
+| 7      | `111`  | $\{0,1,2\}$     |
+
+</center>
+
+With this concept, we can implement our solution.
+
+You'll notice that our code contains some fancy bitwise operations:
+
+- `1 << x` for an integer $x$ is another way of writing $2^x$, which, in binary,
+  has only the $x$'th bit turned on.
+- The `&` (AND) operator will take two integers and return a new integer.
+  `a & b` for integers $a$ and $b$ will return a new integer whose $i$th bit is
+  turned on if and only if the $i$'th bit is turned on for both $a$ and $b$.
+  Thus, `mask & (1 << x)` will return a positive value only if the $x$'th bit is
+  turned on in $mask$.
+
+If you wanna learn more about them, we have a
+[dedicated module](/silver/intro-bitwise) for bitwise operations.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+int main() {
+	int n;
+	cin >> n;
+	vector<ll> weights(n);
+	for (ll &w : weights) { cin >> w; }
+
+	ll ans = INT64_MAX;
+	for (int mask = 0; mask < (1 << n); mask++) {
+		ll sum1 = 0;
+		ll sum2 = 0;
+		for (int i = 0; i < n; i++) {
+			// Check if the ith bit is toggled
+			if (mask & (1 << i)) {
+				// If it is, the apple is included in sum1
+				sum1 += weights[i];
+			} else {
+				sum2 += weights[i];
+			}
+		}
+		ans = min(ans, abs(sum1 - sum2));
+	}
+
+	cout << ans << endl;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class AppleDivision {
+	public static void main(String[] args) throws Exception {
+		Kattio io = new Kattio();
+
+		int n = io.nextInt();
+		int[] weights = new int[n];
+		for (int i = 0; i < n; i++) { weights[i] = io.nextInt(); }
+
+		long ans = Long.MAX_VALUE;
+		for (int mask = 0; mask < (1 << n); mask++) {
+			long sum1 = 0;
+			long sum2 = 0;
+			for (int i = 0; i < n; i++) {
+				// Check if the ith bit is toggled
+				if ((mask & (1 << i)) > 0) {
+					// If it is, the apple is included in sum1
+					sum1 += weights[i];
+				} else {
+					sum2 += weights[i];
+				}
+			}
+			ans = Math.min(ans, Math.abs(sum1 - sum2));
+		}
+
+		io.println(ans);
+		io.close();
+	}
+
+	// CodeSnip{Kattio}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+n = int(input())
+weights = list(map(int, input().split()))
+
+ans = float("inf")
+for mask in range(1 << n):
+	sum1 = 0
+	sum2 = 0
+	for i in range(n):
+		# Checks if the ith bit is set
+		if mask & (1 << i):
+			# If it is, the apple is included in sum1
+			sum1 += weights[i]
+		else:
+			sum2 += weights[i]
+
+	ans = min(ans, abs(sum1 - sum2))
+
+print(ans)
+```
+
+</PySection>
+</LanguageSection>
+
+## Permutations
+
+A **permutation** is a reordering of a list of elements.
+
+<FocusProblem problem="permSam" />
+
+### Lexicographical Order
+
+This term is mentioned quite frequently, ex. in
+[USACO Bronze - Photoshoot](http://www.usaco.org/index.php?page=viewproblem2&cpid=988).
+
+<!-- <Problems problems={"ex"} /> -->
+
+Think about how are words ordered in a dictionary. (In fact, this is where the
+term "lexicographical" comes from.)
+
+In dictionaries, you will see that words beginning with the letter `a` appears
+at the very beginning, followed by words beginning with `b`, and so on. If two
+words have the same starting letter, the second letter is used to compare them;
+if both the first and second letters are the same, then use the third letter to
+compare them, and so on until we either reach a letter that is different, or we
+reach the end of some word (in this case, the shorter word goes first).
+
+Permutations can be placed into lexicographical order in almost the same way. We
+first group permutations by their first element; if the first element of two
+permutations are equal, then we compare them by the second element; if the
+second element is also equal, then we compare by the third element, and so on.
+
+For example, the permutations of 3 elements, in lexicographical order, are
+
+$$
+[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1].
+$$
+
+Notice that the list starts with permutations beginning with 1 (just like a
+dictionary that starts with words beginning with `a`), followed by those
+beginning with 2 and those beginning with 3. Within the same starting element,
+the second element is used to make comparisons.
+
+Generally, unless you are specifically asked to find the lexicographically
+smallest/largest solution, you do not need to worry about whether permutations
+are being generated in lexicographical order. However, the idea of
+lexicographical order does appear quite often in programming contest problems,
+and in a variety of contexts, so it is strongly recommended that you familiarize
+yourself with its definition.
+
+Some problems will ask for an ordering of elements that satisfies certain
+conditions. In these problems, if $N \leq 10$, we can just iterate through all
+$N!=N\cdot (N-1)\cdot (N-2)\cdots 1$ permutations and check each permutation for
+validity.
+
+### Solution - Creating Strings I
+
+<Resources>
+	<Resource source="CPH" title="5.2 - Generating Permutations" starred>
+		brief explanation + code for both of the methods below
+	</Resource>
+</Resources>
+
+#### Generating Permutations Recursively
+
+<!-- For a list of $N$ elements, there are  ways to permute them, and generally we'll need to read through each permutation once to check its validity, for a time complexity of $\mathcal{O}(N \cdot N!)$. -->
+
+This is just a slight modification of method 1 from CPH.
+
+We'll use the recursive function $\texttt{search}$ to find all the permutations
+of the string $s$. First, keep track of how many of each character there are in
+$s$. For each function call, add an available character to the current string,
+and call $\texttt{search}$ with that string. When the current string has the
+same size as $s$, we've found a permutation and can add it to the list of
+$\texttt{perms}$.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+string s;
+vector<string> perms;
+int char_count[26];
+
+void search(const string &curr = "") {
+	// We've finished creating a permutation
+	if (curr.size() == s.size()) {
+		perms.push_back(curr);
+		return;
+	}
+	for (int i = 0; i < 26; i++) {
+		// For all available characters
+		if (char_count[i] > 0) {
+			// Add it to the current string and continue the search
+			char_count[i]--;
+			search(curr + (char)('a' + i));
+			char_count[i]++;
+		}
+	}
+}
+
+int main() {
+	cin >> s;
+	for (char c : s) { char_count[c - 'a']++; }
+
+	search();
+
+	cout << perms.size() << '\n';
+	for (const string &perm : perms) { cout << perm << '\n'; }
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class CreatingStrings1 {
+	static String s;
+	static List<String> perms = new ArrayList<String>();
+	static int[] charCount = new int[26];
+
+	static void search(String curr) {
+		// We've finished creating a permutation
+		if (curr.length() == s.length()) {
+			perms.add(curr);
+			return;
+		}
+		for (int i = 0; i < 26; i++) {
+			// For all available characters
+			if (charCount[i] > 0) {
+				// Add it to the current string and continue the search
+				charCount[i]--;
+				search(curr + (char)(i + 'a'));
+				charCount[i]++;
+			}
+		}
+	}
+
+	public static void main(String[] args) throws IOException {
+		Kattio io = new Kattio();
+		s = io.next();
+
+		for (int i = 0; i < s.length(); i++) { charCount[s.charAt(i) - 'a']++; }
+
+		search("");
+
+		io.println(perms.size());
+		for (String perm : perms) { io.println(perm); }
+		io.close();
+	}
+
+	// CodeSnip{Kattio}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+s = input()
+perms = []
+char_count = [0] * 26
+
+
+def search(curr: str = ""):
+	# we've finished creating a permutation
+	if len(curr) == len(s):
+		perms.append(curr)
+		return
+	for i in range(26):
+		# For all available characters
+		if char_count[i] > 0:
+			# Add it to the current string and continue the search
+			char_count[i] -= 1
+			search(curr + chr(ord("a") + i))
+			char_count[i] += 1
+
+
+for c in s:
+	char_count[ord(c) - ord("a")] += 1
+
+search()
+
+print(len(perms))
+for perm in perms:
+	print(perm)
+```
+
+</PySection>
+</LanguageSection>
+
+<LanguageSection>
+<CPPSection>
+
+#### Generating Permutations Using [`next_permutation`](https://en.cppreference.com/w/cpp/algorithm/next_permutation)
+
+<Resources>
+	<Resource
+		source="Mark Nelson"
+		title="Next Permutation"
+		url="https://web.archive.org/web/20240327002825/https://marknelson.us/posts/2002/03/01/next-permutation.html"
+		starred
+	>
+		explanation with an example
+	</Resource>
+</Resources>
+
+Alternatively, we can just use the `next_permutation()` function. This function
+takes in a range and modifies it to the next greater permutation. If there is no
+greater permutation, it returns false. To iterate through all permutations,
+place it inside a `do-while` loop. We are using a `do-while` loop here instead
+of a typical `while` loop because a `while` loop would modify the smallest
+permutation before we got a chance to process it.
+
+What's going to be in the `check` function depends on the problem, but it should
+verify whether the current permutation satisfies the constraints given in the
+problem.
+
+```cpp
+do {
+	check(v);  // process or check the current permutation for validity
+} while (next_permutation(v.begin(), v.end()));
+```
+
+Each call to `next_permutation` makes a constant number of swaps on average if
+we go through all $N!$ permutations of size $N$.
+
+<Warning>
+
+One small detail is that you need to sort the string before calling
+`next_permutation()` because the method generates strings in lexicographical
+order. If the string isn't sorted, then strings which are lexicographically
+smaller than the initial string won't be generated.
+
+</Warning>
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+	string s;
+	cin >> s;
+	sort(s.begin(), s.end());
+
+	// perms is a sorted list of all the permutations of the given string
+	vector<string> perms;
+	do { perms.push_back(s); } while (next_permutation(s.begin(), s.end()));
+
+	cout << perms.size() << endl;
+	for (const string &perm : perms) { cout << perm << endl; }
+}
+```
+
+</CPPSection>
+<JavaSection/>
+<PySection>
+
+#### Generating Permutations Using [`itertools.permutations`](https://docs.python.org/3/library/itertools.html#itertools.permutations)
+
+Since `itertools.permutations` treats elements as unique based on position, not
+value, it returns all permutations, with repeats. Putting the returned tuples in
+a set can filter out duplicates, and since tuples are returned, we need to join
+the characters into a string.
+
+```py
+from itertools import permutations
+
+s = input()
+
+# perms is a sorted list of all the permutations of the given string
+perms = sorted(set(permutations(s)))
+
+print(len(perms))
+for perm in perms:
+	print("".join(perm))
+```
+
+</PySection>
+</LanguageSection>
+
+## Backtracking
+
+<FocusProblem problem="back" />
+
+### Resources
+
+<Resources>
+	<Resource source="CPH" title="5.3 - Backtracking" starred>
+		code and explanation for focus problem
+	</Resource>
+	<Resource source="CP2" title="3.2 - Complete Search">
+		iterative vs recursive complete search
+	</Resource>
+</Resources>
+
+### Solution - Chessboard & Queens
+
+#### By Generating Permutations
+
+A brute-force solution that checks all $\binom{64}{8}$ possible queen
+combinations will have over 4 billion arrangements to check, making it too slow.
+
+We have to brute-force a bit smarter:
+notice that we can directly generate permutations so that no two queens are
+attacking each other due to being in the same row or column.
+
+Since no two queens can be in the same column, it makes sense
+to lay one out in each row.
+It remains to figure out how to vary the *rows* each queen is in.
+This can be done by generating all permutations from $1 \cdots 8$, with the
+numbers representing which row each queen is in.
+
+For example, the permutation $[6, 0, 5, 1, 4, 3, 7, 2]$ results in this
+queen arrangement:
+
+<table class="text-center">
+	<tbody>
+		<tr>
+			<td></td>
+			<td>0</td>
+			<td>1</td>
+			<td>2</td>
+			<td>3</td>
+			<td>4</td>
+			<td>5</td>
+			<td>6</td>
+			<td>7</td>
+		</tr>
+		<tr>
+			<td>0</td>
+			<td></td>
+			<td>Q</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>1</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td>Q</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>2</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td>Q</td>
+		</tr>
+		<tr>
+			<td>3</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td>Q</td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>4</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td>Q</td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>5</td>
+			<td></td>
+			<td></td>
+			<td>Q</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>6</td>
+			<td>Q</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>7</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td>Q</td>
+			<td></td>
+		</tr>
+	</tbody>
+</table>
+
+Doing this cuts down the number of arrangements we have to check down to
+a much more manageable $8!$.
+
+<Info title="Easier Diagonal Checking">
+
+To make the implementation easier, notice that some bottom-left to
+top-right diagonal can be represented as all squares $i, j$
+($i$ being the row and $j$ being the column) such that $i + j = S$ for some $S$.
+For example, all squares on the diagonal from $6, 0$ to $0, 6$ have their
+coordinates sum to $6$.
+
+Similarly, some bottom-right to top-left diagonal can
+be represented as the same thing, but with $i-j$ instead of $i+j$.
+
+</Info>
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int DIM = 8;
+
+int main() {
+	vector<vector<bool>> blocked(DIM, vector<bool>(DIM));
+	for (int r = 0; r < DIM; r++) {
+		string row;
+		cin >> row;
+		for (int c = 0; c < DIM; c++) { blocked[r][c] = row[c] == '*'; }
+	}
+
+	vector<int> queens(DIM);
+	// Set the initial values to 0, 1...7
+	iota(queens.begin(), queens.end(), 0);
+
+	int valid_num = 0;
+	do {
+		bool works = true;
+		// Check if any cells have been blocked off by the input
+		for (int c = 0; c < DIM; c++) {
+			if (blocked[queens[c]][c]) {
+				works = false;
+				break;
+			}
+		}
+
+		// Check the diagonals from the top-left to the bottom-right
+		vector<bool> taken(DIM * 2 - 1);
+		for (int c = 0; c < DIM; c++) {
+			// Check if the diagonal with sum has been taken
+			if (taken[c + queens[c]]) {
+				works = false;
+				break;
+			}
+			taken[c + queens[c]] = true;
+		}
+
+		// Check the diagonals from the top-right to the bottom-left
+		taken = vector<bool>(DIM * 2 - 1);
+		for (int c = 0; c < DIM; c++) {
+			// queens[c] - c can be negative; the DIM - 1 offsets that
+			if (taken[queens[c] - c + DIM - 1]) {
+				works = false;
+				break;
+			}
+			taken[queens[c] - c + DIM - 1] = true;
+		}
+
+		if (works) { valid_num++; }
+	} while (next_permutation(queens.begin(), queens.end()));
+
+	cout << valid_num << endl;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class ChessboardQueens {
+	private static final int DIM = 8;
+
+	private static boolean[][] blocked = new boolean[DIM][DIM];
+
+	private static final List<Integer> queens = new ArrayList<>();
+	private static final boolean[] chosen = new boolean[DIM];
+
+	private static int validNum = 0;
+
+	public static void main(String[] args) throws Exception {
+		BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
+		for (int r = 0; r < DIM; r++) {
+			String row = read.readLine();
+			for (int c = 0; c < DIM; c++) {
+				if (row.charAt(c) == '*') { blocked[r][c] = true; }
+			}
+		}
+
+		genQueens();
+
+		System.out.println(validNum);
+	}
+
+	private static void genQueens() {
+		if (queens.size() == DIM) {
+			boolean works = true;
+
+			// Check if any cells have been blocked off by the input
+			for (int c = 0; c < DIM; c++) {
+				if (blocked[queens.get(c)][c]) {
+					works = false;
+					break;
+				}
+			}
+
+			// Check the diagonals from the top-left to the bottom-right
+			boolean[] taken = new boolean[DIM * 2 - 1];
+			for (int c = 0; c < DIM; c++) {
+				// Check if the diagonal with this sum has been taken
+				if (taken[c + queens.get(c)]) {
+					works = false;
+					break;
+				}
+				taken[c + queens.get(c)] = true;
+			}
+
+			// Check the diagonals from the top-right to the bottom-left
+			taken = new boolean[DIM * 2 - 1];
+			for (int c = 0; c < DIM; c++) {
+				// queens.get(c) - c can be negative; the DIM - 1 offsets that
+				if (taken[queens.get(c) - c + DIM - 1]) {
+					works = false;
+					break;
+				}
+				taken[queens.get(c) - c + DIM - 1] = true;
+			}
+
+			if (works) { validNum++; }
+		} else {
+			for (int c = 0; c < DIM; c++) {
+				if (chosen[c]) { continue; }
+				chosen[c] = true;
+				queens.add(c);
+				genQueens();
+				chosen[c] = false;
+				queens.remove(queens.size() - 1);
+			}
+		}
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+from itertools import permutations
+
+DIM = 8
+
+blocked = [[False] * DIM for _ in range(DIM)]
+for r in range(DIM):
+	row = input()
+	for c in range(DIM):
+		blocked[r][c] = row[c] == "*"
+
+valid_num = 0
+for queens in permutations(range(DIM)):
+	works = True
+
+	# Check if any cells have been blocked off by the input
+	for c in range(DIM):
+		if blocked[queens[c]][c]:
+			works = False
+			break
+
+	# Check the diagonals from the top-left to the bottom-right
+	taken = [False] * (DIM * 2 - 1)
+	for c in range(DIM):
+		# Check if the diagonal with sum has been taken
+		if taken[c + queens[c]]:
+			works = False
+			break
+		taken[c + queens[c]] = True
+
+	# Check the diagonals from the top-right to the bottom-left
+	taken = [False] * (DIM * 2 - 1)
+	for c in range(DIM):
+		# queens[c] - c can be negative; the DIM - 1 offsets that
+		if taken[queens[c] - c + DIM - 1]:
+			works = False
+			break
+		taken[queens[c] - c + DIM - 1] = True
+
+	if works:
+		valid_num += 1
+
+print(valid_num)
+```
+
+</PySection>
+</LanguageSection>
+
+#### Using Backtracking
+
+According to CPH:
+
+> A backtracking algorithm begins with an empty solution and extends the
+> solution step by step. The search recursively goes through all different ways
+> how a solution can be constructed.
+
+Since the bounds are small, we can recursively backtrack over all ways to place
+the queens, storing the current state of the board.
+
+At each level, we try to place a queen at all squares that aren't blocked
+or attacked by other queens.
+After this, we recurse, then remove this queen and backtrack.
+
+Finally, we increment the answer when we've placed all eight queens.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int DIM = 8;
+
+vector<vector<bool>> blocked(DIM, vector<bool>(DIM));
+vector<bool> rows_taken(DIM);
+// Indicators for diagonals that go from the bottom left to the top right
+vector<bool> diag1(DIM * 2 - 1);
+// Indicators for diagonals that go from the bottom right to the top left
+vector<bool> diag2(DIM * 2 - 1);
+
+int valid_num = 0;
+
+void search_queens(int c = 0) {
+	if (c == DIM) {
+		// We've filled all rows, increment and return
+		valid_num++;
+		return;
+	}
+
+	for (int r = 0; r < DIM; r++) {
+		bool row_open = !rows_taken[r];
+		bool diag_open = !diag1[r + c] && !diag2[r - c + DIM - 1];
+		if (!blocked[r][c] && row_open && diag_open) {
+			// A row and two diagonals have been taken
+			rows_taken[r] = diag1[r + c] = diag2[r - c + DIM - 1] = true;
+			search_queens(c + 1);
+			// And now they aren't anymore
+			rows_taken[r] = diag1[r + c] = diag2[r - c + DIM - 1] = false;
+		}
+	}
+}
+
+int main() {
+	for (int r = 0; r < DIM; r++) {
+		string row;
+		cin >> row;
+		for (int c = 0; c < DIM; c++) { blocked[r][c] = row[c] == '*'; }
+	}
+
+	search_queens();
+
+	cout << valid_num << endl;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+
+public class ChessboardQueens {
+	private static final int DIM = 8;
+
+	private static boolean[][] blocked = new boolean[DIM][DIM];
+
+	private static final boolean[] rowsTaken = new boolean[DIM];
+	// Indicators for diagonals that go from the bottom left to the top right
+	private static final boolean[] diag1 = new boolean[DIM * 2 - 1];
+	// Indicators for diagonals that go from the bottom right to the top left
+	private static final boolean[] diag2 = new boolean[DIM * 2 - 1];
+
+	private static int validNum = 0;
+
+	public static void main(String[] args) throws Exception {
+		BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
+		for (int r = 0; r < DIM; r++) {
+			String row = read.readLine();
+			for (int c = 0; c < DIM; c++) {
+				if (row.charAt(c) == '*') { blocked[r][c] = true; }
+			}
+		}
+
+		searchQueens(0);
+
+		System.out.println(validNum);
+	}
+
+	private static void searchQueens(int c) {
+		if (c == DIM) {
+			// We've filled all rows, increment and return
+			validNum++;
+			return;
+		}
+
+		for (int r = 0; r < DIM; r++) {
+			boolean row_open = !rowsTaken[r];
+			boolean diag_open = !diag1[r + c] && !diag2[r - c + DIM - 1];
+			if (!blocked[r][c] && row_open && diag_open) {
+				// A row and two diagonals have been taken
+				rowsTaken[r] = diag1[r + c] = diag2[r - c + DIM - 1] = true;
+				searchQueens(c + 1);
+				// And now they aren't anymore
+				rowsTaken[r] = diag1[r + c] = diag2[r - c + DIM - 1] = false;
+			}
+		}
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+DIM = 8
+
+blocked = [[False for _ in range(DIM)] for _ in range(DIM)]
+for r in range(DIM):
+	row = input()
+	for c in range(DIM):
+		blocked[r][c] = row[c] == "*"
+
+rows_taken = [False] * DIM
+# Indicators for diagonals that go from the bottom left to the top right
+diag1 = [False] * (DIM * 2 - 1)
+# Indicators for diagonals that go from the bottom right to the top left
+diag2 = [False] * (DIM * 2 - 1)
+
+valid_num = 0
+
+
+def search_queens(c: int = 0):
+	global valid_num
+
+	if c == DIM:
+		# We've filled all rows, increment and return
+		valid_num += 1
+		return
+
+	for r in range(DIM):
+		row_open = not rows_taken[r]
+		diag_open = not diag1[r + c] and not diag2[r - c + DIM - 1]
+		if not blocked[r][c] and row_open and diag_open:
+			# A row and two diagonals have been taken
+			rows_taken[r] = diag1[r + c] = diag2[r - c + DIM - 1] = True
+			search_queens(c + 1)
+			# And now they aren't anymore
+			rows_taken[r] = diag1[r + c] = diag2[r - c + DIM - 1] = False
+
+
+search_queens()
+print(valid_num)
+```
+
+</PySection>
+</LanguageSection>
+
+
+## Problems
+
+<Problems problems="gen" />
+
+You can find more problems at the CP2 link given above or at
+[USACO Training](https://train.usaco.org/). However, these sorts of problems
+appear much less frequently than they once did.
+
+<LanguageSection>
+    <PySection>
+	<Quiz>
+	  <Quiz.Question>
+	    For what size of $n$ could we expect a solution that runs through all of the subsets of an array of length $n$ under reasonable time constraints?
+	    <Quiz.Answer>
+	      $n \leq 10^9$
+	      <Quiz.Explanation>
+		Incorrect: There are $2^n$ subsets of $n$ numbers. $2^{10^9}$ has around 301030000 digits which would take well until the heat death of the universe to finish generating all the subsets!
+	      </Quiz.Explanation>
+	    </Quiz.Answer>
+	    <Quiz.Answer>
+	      $n \leq 10^4$
+	      <Quiz.Explanation>
+		Incorrect: $n = 10^4$ is still too large
+	      </Quiz.Explanation>
+	    </Quiz.Answer>
+	    <Quiz.Answer correct>
+	      $n \leq 22$
+	      <Quiz.Explanation>
+		Correct: This is just about right: $2^{22} \approx 10^7$, which is a bit less than the number of computations that the grading server can run in a second (which is around $10^8$).
+	      </Quiz.Explanation>
+	    </Quiz.Answer>
+	    <Quiz.Answer correct>
+	      $n \leq 10$
+	      <Quiz.Explanation>
+		Correct: It's definitely possible to run a $2^n$ solution for $n \leq 10$. However, we can go larger, up to around $n \leq 25$
+	      </Quiz.Explanation>
+	    </Quiz.Answer>
+	  </Quiz.Question>
+	</Quiz>
+    </PySection>
+
+    <JavaSection>
+	<Quiz>
+	  <Quiz.Question>
+	    For what size of $n$ could we expect a solution that runs through all of the subsets of an array of length $n$ under reasonable time constraints?
+	    <Quiz.Answer>
+	      $n \leq 10^9$
+	      <Quiz.Explanation>
+		Incorrect: There are $2^n$ subsets of $n$ numbers. $2^{10^9}$ has around 301030000 digits which would take well until the heat death of the universe to finish generating all the subset!
+	      </Quiz.Explanation>
+	    </Quiz.Answer>
+	    <Quiz.Answer>
+	      $n \leq 10^4$
+	      <Quiz.Explanation>
+		Incorrect: $n = 10^4$ is still too large
+	      </Quiz.Explanation>
+	    </Quiz.Answer>
+	    <Quiz.Answer correct>
+	      $n \leq 22$
+	      <Quiz.Explanation>
+		Correct: This is just about right: $2^{22} \approx 10^7$, which is a bit less than the number of computations that the grading server can run in a second (which is around $10^8$).
+	      </Quiz.Explanation>
+	    </Quiz.Answer>
+	    <Quiz.Answer correct>
+	      $n \leq 10$
+	      <Quiz.Explanation>
+		Correct: It's definitely possible to run a $2^n$ solution for $n \leq 10$. However, we can go larger, up to around $n \leq 25$
+	      </Quiz.Explanation>
+	    </Quiz.Answer>
+	  </Quiz.Question>
+	</Quiz>
+    </JavaSection>
+    <CPPSection>
+	<Quiz>
+	  <Quiz.Question>
+	    What is the time complexity of the following code?
+
+    	```cpp
+    	vector<int> perm(n);
+    	iota(begin(perm), end(perm), 1);
+    	do {
+    	} while (next_permutation(begin(perm), end(perm)));
+    	```
+        <Quiz.Answer>
+          $\mathcal{O}(n)$
+          <Quiz.Explanation>
+    	Incorrect: Consider how many permutations there are in total
+          </Quiz.Explanation>
+        </Quiz.Answer>
+        <Quiz.Answer>
+          $\mathcal{O}(2^n)$
+          <Quiz.Explanation>
+    	Incorrect: Remember that permutations and subsets are different
+          </Quiz.Explanation>
+        </Quiz.Answer>
+        <Quiz.Answer correct>
+          $\mathcal{O}(n!)$
+          <Quiz.Explanation>
+    	Correct: `std::next_permutation` in C++ will run in $\mathcal{O}(n!)$ time.
+          </Quiz.Explanation>
+        </Quiz.Answer>
+        <Quiz.Answer>
+          $\mathcal{O}(n! \cdot n)$
+          <Quiz.Explanation>
+    	  Incorrect: Although an iteration of `std::next_permutation` may take up to $\mathcal{O}(n)$ time, the total time amortizes to $\mathcal{O}(n!)$. In practice, however, this difference doesn't matter.
+          </Quiz.Explanation>
+        </Quiz.Answer>
+      </Quiz.Question>
+      <Quiz.Question>
+        For what size of $n$ could we expect a solution that runs through all of the subsets of an array of length $n$ under reasonable time constraints?
+        <Quiz.Answer>
+          $n \leq 10^9$
+          <Quiz.Explanation>
+    	Incorrect: There are $2^n$ subsets of $n$ numbers. $2^{10^9}$ has around 301030000 digits which would take well until the heat death of the universe to finish generating all the subsets!
+          </Quiz.Explanation>
+        </Quiz.Answer>
+        <Quiz.Answer>
+          $n \leq 10^4$
+          <Quiz.Explanation>
+    	Incorrect: $n = 10^4$ is still too large
+          </Quiz.Explanation>
+        </Quiz.Answer>
+        <Quiz.Answer correct>
+          $n \leq 22$
+          <Quiz.Explanation>
+    	Correct: This is just about right: $2^{22} \approx 10^7$, which is a bit less than the number of computations that the grading server can run in a second (which is around $10^8$).
+          </Quiz.Explanation>
+        </Quiz.Answer>
+        <Quiz.Answer correct>
+          $n \leq 10$
+          <Quiz.Explanation>
+    	Correct: It's definitely possible to run a $2^n$ solution for $n \leq 10$. However, we can go larger, up to around $n \leq 25$
+          </Quiz.Explanation>
+        </Quiz.Answer>
+      </Quiz.Question>
+      <Quiz.Question>
+        Why is using `std::next_permutation` generally preferable to writing your own recursive function to iterate through permutations?
+        <Quiz.Answer>
+          Recursion often runs into the issue of stack size, which can cause unexpected runtime errors
+          <Quiz.Explanation>
+    	Incorrect: Most complete search with permutations/subsets is that $n$ is small, usually $n\leq 20$. This means that recursion won't go particularly deep, and there won't be any issues with stack size.
+          </Quiz.Explanation>
+        </Quiz.Answer>
+        <Quiz.Answer correct>
+          Using the C++ library function is easier and less buggy.
+          <Quiz.Explanation>
+    	Correct: Learning to use the C++ Standard Library to its full potential will save you a lot of time coding and debugging.
+          </Quiz.Explanation>
+        </Quiz.Answer>
+        <Quiz.Answer>
+          Recursion introduces unnecessary overhead that often causes Time Limit Exceeded.
+          <Quiz.Explanation>
+    	Incorrect: Although recursion is slowing than iterative methods, it's still fast enough to pass most problems
+          </Quiz.Explanation>
+        </Quiz.Answer>
+      </Quiz.Question>
+      <Quiz.Question>
+        The following code is meant to generate all subsets of a given array:
+    	```cpp
+    	int A[] = {1, 2, 3, 4, 5};
+    	void generateSubsets(int i, vector<int> &subset) {
+    		if (i == 5) {
+    			for (int x : subset) cout << x << ' ';
+    			cout << '\n';
+    		}
+    		subset.push_back(A[i]);
+    		generateSubsets(i + 1, subset);
+    		subset.pop_back();
+    		generateSubsets(i + 1, subset);
+    	}
+    	```
+        There is an error with this code that causes it to crash. What does the corrected code look like?
+        <Quiz.Answer>
+    	```cpp
+    	void generateSubsets(int i, vector<int> &subset) {
+    		if (i == 5) {
+    			for (int x : subset) cout << x << ' ';
+    			cout << '\n';
+    		}
+    		// must always go to empty subset first
+    		generateSubsets(i + 1, subset);
+    		subset.push_back(A[i]);
+    		generateSubsets(i + 1, subset);
+    	}
+    	```
+    	<Quiz.Explanation>
+    	Incorrect: This is another way of generating subsets, but it's not the error!
+          </Quiz.Explanation>
+        </Quiz.Answer>
+        <Quiz.Answer>
+    	```cpp
+    	void generateSubsets(int i, vector<int> &subset) {
+    		if (i == 4) {  // incorrect ending index
+    			for (int x : subset) cout << x << ' ';
+    			cout << '\n';
+    		}
+    		subset.push_back(A[i]);
+    		generateSubsets(i + 1, subset);
+    		subset.pop_back();
+    		generateSubsets(i + 1, subset);
+    	}
+    	```
+
+          <Quiz.Explanation>
+    	Incorrect: This doesn't stop the error and prevents us from adding the last number to any subset
+          </Quiz.Explanation>
+        </Quiz.Answer>
+        <Quiz.Answer correct>
+    	```cpp
+    	void generateSubsets(int i, vector<int> &subset) {
+    		if (i == 5) {
+    			for (int x : subset) cout << x << ' ';
+    			cout << '\n';
+    			return;  // missing return statement
+    		}
+    		subset.push_back(A[i]);
+    		generateSubsets(i + 1, subset);
+    		subset.pop_back();
+    		generateSubsets(i + 1, subset);
+    	}
+    	```
+          <Quiz.Explanation>
+    	Correct: After we finish printing (or checking) the subset, remember to always return immediately. Otherwise, it causes nasty errors that often crashes the program.
+          </Quiz.Explanation>
+        </Quiz.Answer>
+      </Quiz.Question>
+    </Quiz>
+    </CPPSection>
+
+ </LanguageSection>

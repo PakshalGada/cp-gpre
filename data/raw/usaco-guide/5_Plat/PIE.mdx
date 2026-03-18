@@ -1,0 +1,352 @@
+---
+id: PIE
+title: 'Inclusion-Exclusion Principle'
+author: Mihnea Brebenel
+contributors: Rameez Parwez
+prerequisites:
+  - combo
+description:
+  'The inclusion-exclusion principle is a counting technique that generalizes the formula for computing the size of union of n finite sets.'
+frequency: 1
+---
+
+## Resources
+
+<Resources>
+    <Resource source="cp-algo" title="The Inclusion-Exclusion Principle" url="https://cp-algorithms.com/combinatorics/inclusion-exclusion.html" starred> Well-covered article </Resource>
+	<Resource source="CF" title="Inclusion-Exclusion Principle" url="https://codeforces.com/blog/entry/64625"> Good Explanation </Resource>
+    <Resource source="Wikipedia" title="Inclusion-exclusion  principle" url="https://en.wikipedia.org/wiki/Inclusion%E2%80%93exclusion_principle">Wiki</Resource>
+</Resources>
+
+## Introduction
+
+The inclusion-exclusion principle relates to finding the size of the union of some sets.
+
+Verbally it can be stated as following:
+<center>
+
+Sum the sizes of the sets separately, subtract the sizes of all pairwise intersections of the sets, add back the sizes of intersections of triples of the sets, subtract the size of quadruples of the sets, ...
+
+</center>
+
+The mathematical identity of the above is:
+
+$$
+\left| \bigcup_{i=1}^n A_i \right| = \sum_{i=1}^n|A_i| - \sum_{1\leq i<j\leq n} |A_i \cap A_j| + \sum _{1\leq i<j<k\leq n}|A_i \cap A_j \cap A_k| - \cdots + (-1)^{n-1} | A_1 \cap \cdots \cap A_n |
+$$
+
+Written in a compact form:
+
+$$
+\bigg|\bigcup_{i=1}^nA_i \bigg|= \sum_{0 \neq J \in \{1, 2,...,n\} } (-1)^{|J|-1} \bigg| \bigcap_{j \in J} A_j \bigg|
+$$
+
+## Mobius Function
+
+The [Mobius function](https://en.wikipedia.org/wiki/M%C3%B6bius_function) is a multiplicative function that comes in handy when dealing with inclusion-exclusion technique and divisors-related problems. It has values in $\{-1, 0, 1\}$  depending on number's factorization.
+
+$$
+\mu(n)=\begin{cases}
+1 & \text{if $n$ is $1$},\\
+0 & \text{if $n$ has a squared prime factor},\\
+(-1)^k & \text{if $n$ is a product of $k$ distinct prime factors}.
+\end{cases}
+$$
+
+Below you can see the first $19$ values of $\mu(n)$:
+
+| n | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 |
+| ---| ---|-|-  | - | - | - | - | - | - | -  | -  |  - | -  |  - | -  | -  | -  | -  | -- |
+| $\mu(n)$ | 1 | -1 | -1 | 0 | -1 | 1 | -1 | 0 | 0 | 1 | -1 | 0 | -1 | 1 | 1 | 0 | -1 | 0 | -1|
+
+Let's take a look at how the mobius function can be precomputed with a slightly modified sieve.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+mobius[1] = -1;
+for (int i = 1; i < VALMAX; i++) {
+	if (mobius[i]) {
+		mobius[i] = -mobius[i];
+		for (int j = 2 * i; j < VALMAX; j += i) { mobius[j] += mobius[i]; }
+	}
+}
+```
+
+</CPPSection>
+</LanguageSection>
+
+## Applications
+
+### SQFREE
+
+<FocusProblem problem="SQFREE" />
+
+## Explanation
+
+A perfect application for inclusion-exclusion principle and mobius function. In this particular case the set $A_i$ - previously mentioned in the tutorial section - denotes how many numbers are divisible with $i^2$ and we're asked to find out $\bigg| \bigcup_{i=1}^{\sqrt{n}} A_i \bigg|$. The precomputed mobius array tells whether to add or subtract $A_i$.
+
+## Implementation
+
+**Time Complexity:** $\mathcal{O}(V \log V + T \cdot \sqrt{n})$, where $V = 1e7$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+const int VALMAX = 1e7;
+
+int mobius[VALMAX];
+
+int main() {
+	int test_num;
+	cin >> test_num;
+
+	mobius[1] = -1;
+	for (int i = 1; i < VALMAX; i++) {
+		if (mobius[i]) {
+			mobius[i] = -mobius[i];
+			for (int j = 2 * i; j < VALMAX; j += i) { mobius[j] += mobius[i]; }
+		}
+	}
+
+	for (int t = 0; t < test_num; t++) {
+		long long n;
+		long long ans = 0;
+		cin >> n;
+		for (int i = 1; 1LL * i * i <= n; i++) {
+			ans += mobius[i] * n / ((long long)i * i);
+		}
+		cout << ans << '\n';
+	}
+}
+```
+
+</CPPSection>
+</LanguageSection>
+
+### Cowpatibility
+
+<FocusProblem problem="cow" />
+
+## Explanation
+
+In this particular case the set $A_i$ - previously mentioned in the tutorial section - denotes how many pairs of cows have at least $i$ ice cream flavors in common. From the total number of pairs subtract the union of $A_i$. The global answer is:
+$$
+\frac{n \cdot(n-1)}{2}- \bigg| \bigcup_{i=1}^{5} A_i \bigg|
+$$
+
+## Implementation
+
+**Time Complexity:** $\mathcal{O}(N \log N)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	ifstream in("cowpatibility.in");
+	int n;
+	in >> n;
+
+	map<vector<int>, int> subsets;
+	for (int i = 1; i <= n; i++) {
+		vector<int> v(5);
+		for (int &num : v) { in >> num; }
+		sort(v.begin(), v.end());
+		for (int mask = 1; mask < (1 << 5); mask++) {
+			vector<int> subset;
+			for (int i = 0; i < 5; i++) {
+				if ((1 << i) & mask) { subset.push_back(v[i]); }
+			}
+			subsets[subset]++;
+		}
+	}
+
+	long long ans = (long long)n * (n - 1) / 2;
+	for (const auto &[subset, freq] : subsets) {
+		ans -= ((int)subset.size() % 2 == 1 ? 1LL : -1LL) * freq * (freq - 1) / 2;
+	}
+
+	ofstream("cowpatibility.out") << ans << endl;
+}
+```
+
+</CPPSection>
+<PySection>
+
+<Warning>
+
+Due to Python's constant factor, the below solution TLEs on a couple test cases.
+
+</Warning>
+
+```py
+from collections import defaultdict
+
+with open("cowpatibility.in", "r") as read:
+	n = int(read.readline().strip())
+	subsets = defaultdict(int)
+
+	for _ in range(n):
+		flavors = list(map(int, read.readline().strip().split()))
+		flavors.sort()
+
+		for mask in range(1, 1 << 5):
+			subset = tuple(flavors[i] for i in range(5) if (1 << i) & mask)
+			subsets[subset] += 1
+
+ans = n * (n - 1) // 2
+for subset, freq in subsets.items():
+	if len(subset) % 2 == 1:
+		ans -= freq * (freq - 1) // 2
+	else:
+		ans += freq * (freq - 1) // 2
+
+print(ans, file=open("cowpatibility.out", "w"))
+```
+
+</PySection>
+</LanguageSection>
+
+### The number of strings that match a certain pattern
+
+<FocusProblem problem="patterns" />
+
+## Explanation 1
+
+A dynamic programming approach with bitmasking would look like this:
+
+$dp[i][mask] = \text{the number of strings of length i that match all the patterns in set, but none other patterns. } $ The recurrence is:
+$$
+dp[i][mask \& j]=dp[i-1][j]\text{ where j is a set of patterns that match character c at position i}
+$$
+The following code illustrates this:
+
+## Implementation
+
+**Time Complexity:** $\mathcal{O}(M \cdot N \cdot 2^N)$, where $M$ is size of each strings in patterns and $N$ is the size of patterns.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+const int MOD = 1000003;
+
+int howMany(vector<string> patterns, int k) {
+	int n = patterns.size();
+	int m = patterns[0].size();
+	vector<vector<int>> dp(50, vector<int>(1 << n));
+	for (int i = 0; i < m; i++) {
+		for (char c = 'a'; c <= 'z'; c++) {
+			int mask = 0;
+			for (int j = 0; j < n; j++) {
+				if (patterns[j][i] == c || patterns[j][i] == '?') { mask |= (1 << j); }
+			}
+			if (i == 0) {
+				dp[i][mask]++;
+			} else {
+				for (int j = 0; j < (1 << n); j++) {
+					dp[i][j & mask] = (dp[i][j & mask] + dp[i - 1][j]) % MOD;
+				}
+			}
+		}
+	}
+
+	int ans = 0;
+	for (int mask = 0; mask < (1 << n); mask++) {
+		if (__builtin_popcount(mask) == k) { ans = (ans + dp[m - 1][mask]) % MOD; }
+	}
+
+	return ans;
+}
+```
+
+</CPPSection>
+</LanguageSection>
+
+## Explanation 2
+
+The problem can also be solved using the inclusion exclusion principle.
+
+An important observation is that we can easily count the strings that satisfy some specific patterns. Simply iterate through the positions of all patterns. If all the patterns contain $?$ then we can use any letter from $a$ to $z$ giving us $26$ solution, otherwise we can only put the fixed letter contained by a pattern. The answer is the product.
+
+Iterate over subsets - denoted by $A$ - of patterns consisting of exactly $k$ strings. For this specific subset count the number of string that can only match all the patterns in subset $A$. Apply the inclusion-exclusion principle over all supersets $B$ such that $A \subset B$.
+
+$$
+solve(A) = \sum_{B \supseteq A} (-1)^{|B|-k} \cdot f(B)
+$$
+
+$f(B)$ denotes the number of strings matching _at least_ set $B$
+
+The global answer is:
+$$
+ans = \sum_{A:|A|=k} solve(A)
+$$
+
+## Implementation
+
+**Time Complexity:** $\mathcal{O}(\binom{N}{k} \cdot 2^{N - k} \cdot M \cdot N)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+const int MOD = 1000003;
+
+int howMany(vector<string> patterns, int k) {
+	int n = patterns.size();
+	int m = patterns[0].size();
+	int ans = 0;
+	for (int mask = 0; mask < (1 << n); mask++) {
+		// subsets with exactly k patterns matters
+		if (__builtin_popcount(mask) != k) { continue; }
+		// iterate over all superset of current subset mask
+		for (int supermask = mask; supermask < (1 << n); supermask++) {
+			if ((mask & supermask) != mask) { continue; }
+			int sign = ((__builtin_popcount(supermask) - k) & 1 ? -1 : 1);
+			int freq = 1;  // checks how many valid strings satisfy the supermask
+			for (int i = 0; i < m; i++) {
+				bool flag = true;
+				char last_letter = '?';
+				for (int j = 0; j < n; j++) {
+					if (((1 << j) & supermask) == 0) { continue; }
+					// check for conflicts if the pattern specifies a letter not '?'
+					if (patterns[j][i] != '?') {
+						if (last_letter == '?') {
+							last_letter = patterns[j][i];
+						} else if (patterns[j][i] != last_letter) {
+							// conflict! two patterns require different letters here
+							flag = false;
+							break;
+						}
+					}
+				}
+				if (!flag) {
+					freq = 0;
+				} else if (last_letter == '?') {
+					freq = (freq * 26) % MOD;
+				}
+			}
+			ans = (ans + sign * freq) % MOD;
+			ans = (ans + MOD) % MOD;
+		}
+	}
+
+	return ans;
+}
+```
+
+</CPPSection>
+</LanguageSection>
+
+<Problems problems="pie_prob" />

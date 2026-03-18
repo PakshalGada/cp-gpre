@@ -1,0 +1,1410 @@
+---
+id: graph-traversal
+redirects:
+  - /silver/dfs
+  - /silver/bipartite
+title: Graph Traversal
+author: Siyong Huang, Benjamin Qi, Ryan Chou
+contributors: Andrew Wang, Jason Chen, Divyanshu Upreti
+prerequisites:
+  - intro-graphs
+  - complete-rec
+description: 'Traversing a graph with depth first search and breadth first search.'
+frequency: 4
+---
+
+## Introduction
+
+<Resources>
+	<Resource source="CPH" title="12 - Graph traversal" starred />
+</Resources>
+
+Graph traversal algorithms visit all nodes within a graph in a certain order and can compute some information along the way.
+Two common algorithms for doing this are **depth first search (DFS)** and **breadth first search (BFS)**.
+
+### Application: Connected Components
+
+<FocusProblem problem="connSample" />
+
+A **connected component** is a maximal set of connected nodes in an undirected
+graph. In other words, two nodes are in the same connected component _if and
+only if_ they can reach each other via edges in the graph.
+
+In the above focus problem, the goal is to add the minimum possible number of
+edges such that the entire graph forms a single connected component.
+
+### Application: Graph Two-Coloring
+
+<FocusProblem problem="bipsample" />
+
+**Graph two-coloring** refers to assigning a boolean value to each node of the
+graph, dictated by the edge configuration. The most common example of a
+two-colored graph is a **bipartite graph**, in which each edge connects two
+nodes of opposite colors.
+
+In the above focus problem, the goal is to assign each node (friend) of the
+graph to one of two colors (teams), subject to the constraint that edges
+(friendships) connect two nodes of opposite colors. In other words, we need to
+check whether the input is a bipartite graph and output a valid coloring if it
+is.
+
+## DFS
+
+<Resources>
+	<Resource
+		source="CSA"
+		title="Depth First Search"
+		url="depth_first_search"
+		starred
+	>
+		up to but not including "More about DFS"
+	</Resource>
+	<Resource source="CPH" title="12.1 - DFS">
+		example diagram + code
+	</Resource>
+</Resources>
+
+<!-- 	<Resource source="IUSACO" title="10.4 - DFS">
+		code + example
+	</Resource>
+	<Resource source="PAPS" title="12.2 - DFS">
+		pseudocode + example + code
+	</Resource>
+	<Resource
+		source="CP2"
+		title="4.2.1, 4.2.3 - DFS, Finding Connected Components"
+	 /> -->
+
+From the second resource:
+
+> Depth-first search (DFS) is a straightforward graph traversal technique. The
+> algorithm begins at a starting node, and proceeds to all other nodes that are
+> reachable from the starting node using the edges of the graph.
+>
+> Depth-first search always follows a single path in the graph as long as it
+> finds new nodes. After this, it returns to previous nodes and begins to
+> explore other parts of the graph. The algorithm keeps track of visited nodes,
+> so that it processes each node only once.
+
+<video width="960" height="720" controls>
+	<source src="/animations/dfs_demo.mp4" type="video/mp4"/>
+</video>
+
+When implementing DFS, we often use a recursive function to visit the vertices and an array to store whether we've seen a vertex before.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int n = 6;
+vector<vector<int>> adj(n);
+vector<bool> visited(n);
+
+void dfs(int current_node) {
+	if (visited[current_node]) { return; }
+	visited[current_node] = true;
+
+	for (int neighbor : adj[current_node]) { dfs(neighbor); }
+}
+
+int main() {
+	/*
+	 * Define adjacency list and read in problem-specific input
+	 *
+	 * In this example, we've provided "dummy input" that's
+	 * reflected in the GIF above to help illustrate the
+	 * order of the recursive calls.
+	 */
+	adj[0] = {1, 2, 4};
+	adj[1] = {3, 4};
+	adj[2] = {5};
+
+	for (int i = 0; i < n; i++) {
+		// iterate over all connected components in the graph
+		if (!visited[i]) { dfs(i); }
+	}
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class DFSDemo {
+	static List<Integer>[] adj;
+	static boolean[] visited;
+	static int n = 6;
+
+	public static void main(String[] args) throws IOException {
+		visited = new boolean[n];
+
+		/*
+		 * Define adjacency list and read in problem-specific input
+		 *
+		 * In this example, we've provided "dummy input" that's
+		 * reflected in the GIF above to help illustrate the
+		 * order of the recursive calls.
+		 */
+		adj = new ArrayList[n];
+		for (int i = 0; i < n; i++) { adj[i] = new ArrayList<>(); }
+		adj[0] = new ArrayList<>(Arrays.asList(1, 2, 4));
+		adj[1] = new ArrayList<>(Arrays.asList(3, 4));
+		adj[2] = new ArrayList<>(Arrays.asList(5));
+
+		for (int i = 0; i < n; i++) {
+			// iterate over all connected components in the graph
+			if (!visited[i]) { dfs(i); }
+		}
+	}
+
+	static void dfs(int currentNode) {
+		if (visited[currentNode]) { return; }
+
+		visited[currentNode] = true;
+		for (int neighbor : adj[currentNode]) { dfs(neighbor); }
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+import sys
+
+sys.setrecursionlimit(10**5)  # Python has a default recursion limit of 1000
+
+n = 6
+visited = [False] * n
+
+"""
+Define adjacency list and read in problem-specific input here.
+
+In this example, we've provided "dummy input" that's
+reflected in the GIF above to help illustrate the
+order of the recursive calls.
+"""
+adj = [[] for _ in range(n)]
+adj[0] = [1, 2, 4]
+adj[1] = [3, 4]
+adj[2] = [5]
+
+
+def dfs(current_node):
+	visited[current_node] = True
+	for neighbor in adj[current_node]:
+		if not visited[neighbor]:
+			dfs(neighbor)
+
+
+for i in range(n):
+	if not visited[i]:
+		dfs(i)
+```
+
+</PySection>
+</LanguageSection>
+
+## BFS
+
+<Resources>
+	<Resource source="CSA" title="BFS" url="breadth_first_search" starred>
+		interactive, implementation
+	</Resource>
+	<Resource source="PAPS" title="12.1 - BFS">
+		grid, 8-puzzle examples
+	</Resource>
+	<Resource source="cp-algo" title="BFS" url="graph/breadth-first-search.html">
+		common applications
+	</Resource>
+	<Resource
+		source="KA"
+		title="BFS and its uses"
+		url="https://www.khanacademy.org/computing/computer-science/algorithms/breadth-first-search/a/breadth-first-search-and-its-uses"
+	 />
+	<Resource
+		source="YouTube"
+		title="Breadth First Search Algorithm"
+		url="https://www.youtube.com/watch?v=oDqjPvD54Ss"
+	>
+		If you prefer a video format
+	</Resource>
+</Resources>
+
+<!-- <Resource source="CPH" title="12.2 - Breadth-First Search">example, implementation</Resource>
+<Resource source="cp-algo" title="" url="graph/01_bfs.html" />
+<Resource
+	source="IUSACO"
+	title="10.4 - Graph Traversal Algorithms"
+ />
+<Resource source="CP2" title="4.2.2 - BFS" /> -->
+
+In a breadth-first search, we travel through the vertices in order of their distance from the starting vertex.
+
+<video width="960" height="720" controls>
+	<source src="/animations/bfs_demo.mp4" type="video/mp4"/>
+</video>
+
+### Prerequisite - Queues & Deques
+
+<Resources>
+	<Resource source="CPH" title="4.5 - Queues, Deques" />
+	<Resource source="PAPS" title="3.2, 6.3 - Queues" />
+</Resources>
+
+#### Queues
+
+A queue is a First In First Out (FIFO) data structure that supports three
+operations, all in $\mathcal{O}(1)$ time.
+
+<LanguageSection>
+<CPPSection>
+
+[`std::queue`](http://www.cplusplus.com/reference/queue/queue/)
+
+- `push`: inserts at the back of the queue
+- `pop`: deletes from the front of the queue
+- `front`: retrieves the element at the front without removing it.
+
+```cpp
+queue<int> q;
+q.push(1);                  // [1]
+q.push(3);                  // [3, 1]
+q.push(4);                  // [4, 3, 1]
+q.pop();                    // [4, 3]
+cout << q.front() << endl;  // 3
+```
+
+</CPPSection>
+<JavaSection>
+
+- `add`: insertion at the back of the queue
+- `poll`: deletion from the front of the queue
+- `peek`: which retrieves the element at the front without removing it
+
+Java doesn't actually have a `Queue` class; it's only an interface. The most
+commonly used implementation is the `LinkedList`, declared as follows:
+
+```java
+Queue<Integer> q = new LinkedList<Integer>();
+q.add(1);                      // [1]
+q.add(3);                      // [3, 1]
+q.add(4);                      // [4, 3, 1]
+q.poll();                      // [4, 3]
+System.out.println(q.peek());  // 3
+```
+
+</JavaSection>
+<PySection>
+
+Python has a builtin `queue` module.
+
+- `Queue.put(n)`: Inserts element to the back of the queue.
+- `Queue.get()`: Gets and removes the front element. If the queue
+  is empty, this will wait forever, creating a TLE error.
+- `Queue.queue[n]`: Gets the nth element without removing it. Set
+  n to 0 for the first element.
+
+```py
+from queue import Queue
+
+q = Queue()  # []
+q.put(1)  # [1]
+q.put(2)  # [1, 2]
+v = q.queue[0]  # v = 1, q = [1, 2]
+v = q.get()  # v = 1, q = [2]
+v = q.get()  # v = 2, q = []
+v = q.get()  # Code waits forever, creating TLE error.
+```
+
+<Warning>
+
+Python's `queue.Queue()` uses Locks to maintain a threadsafe synchronization, so it's quite slow.
+To avoid TLE, use `collections.deque()` instead for a faster version of a queue.
+
+</Warning>
+
+</PySection>
+
+</LanguageSection>
+
+#### Deques
+
+A **deque** (usually pronounced "deck") stands for double ended queue and is a
+combination of a stack and a queue, in that it supports $\mathcal{O}(1)$
+insertions and deletions from both the front and the back of the deque. Not very
+common in Bronze / Silver.
+
+<LanguageSection>
+<CPPSection>
+
+[`std::deque`](http://www.cplusplus.com/reference/deque/deque/)
+
+The four methods for adding and removing are `push_back`, `pop_back`,
+`push_front`, and `pop_front`.
+
+```cpp
+deque<int> d;
+d.push_front(3);  // [3]
+d.push_front(4);  // [4, 3]
+d.push_back(7);   // [4, 3, 7]
+d.pop_front();    // [3, 7]
+d.push_front(1);  // [1, 3, 7]
+d.pop_back();     // [1, 3]
+```
+
+You can also access deques in constant time like an array in constant time with
+the `[]` operator. For example, to access the $i$th element of a
+deque $\texttt{dq}$, do $\texttt{dq}[i]$.
+
+</CPPSection>
+<JavaSection>
+
+In Java, the deque class is called `ArrayDeque`. The four methods for adding and
+removing are `addFirst` , `removeFirst`, `addLast`, and `removeLast`.
+
+```java
+ArrayDeque<Integer> deque = new ArrayDeque<Integer>();
+deque.addFirst(3);    // [3]
+deque.addFirst(4);    // [4, 3]
+deque.addLast(7);     // [4, 3, 7]
+deque.removeFirst();  // [3, 7]
+deque.addFirst(1);    // [1, 3, 7]
+deque.removeLast();   // [1, 3]
+```
+
+</JavaSection>
+<PySection>
+
+In Python, `collections.deque()` is used for a deque data structure. The four methods for adding and removing are `appendleft`, `popleft`, `append`, and `pop`.
+```py
+d = collections.deque()
+d.appendleft(3)  # [3]
+d.appendleft(4)  # [4, 3]
+d.append(7)  # [4, 3, 7]
+d.popleft()  # [3, 7]
+d.appendleft(1)  # [1, 3, 7]
+d.pop()  # [1, 3]
+```
+
+</PySection>
+</LanguageSection>
+
+### Implementation
+
+When implementing BFS, we often use a queue to track the next vertex to visit. Like DFS, we'll also keep an array to store whether we've seen a vertex before.
+
+<LanguageSection>
+<JavaSection>
+
+```java
+import java.util.*;
+
+public class Main {
+	public static void main(String[] args) {
+		int n = 6;
+		boolean[] visited = new boolean[n];
+		List<Integer>[] adj = new ArrayList[6];
+		for (int i = 0; i < n; i++) { adj[i] = new ArrayList<>(); }
+		adj[0] = new ArrayList<>(Arrays.asList(1, 2, 4));
+		adj[1] = new ArrayList<>(Arrays.asList(3, 4));
+		adj[2] = new ArrayList<>(Arrays.asList(5));
+
+		/*
+		 * Define adjacency list and read in problem-specific input
+		 *
+		 * In this example, we've provided "dummy input" that's
+		 * reflected in the GIF above to help illustrate the
+		 * order of the recursive calls.
+		 */
+		for (int i = 0; i < n; i++) {
+			// iterate over all connected components in the graph
+			if (!visited[i]) {
+				Queue<Integer> q = new LinkedList<Integer>();
+				q.add(i);
+
+				while (q.size() > 0) {
+					int currentNode = q.peek();
+					q.poll();
+
+					visited[currentNode] = true;
+
+					for (int neighbor : adj[currentNode]) {
+						if (!visited[neighbor]) { q.add(neighbor); }
+					}
+				}
+			}
+		}
+	}
+}
+```
+
+</JavaSection>
+<CPPSection>
+
+```cpp
+#include <queue>
+#include <vector>
+
+using std::queue;
+using std::vector;
+
+int main() {
+	int n = 6;
+	vector<vector<int>> adj(n);
+	vector<bool> visited(n);
+
+	/*
+	 * Define adjacency list and read in problem-specific input
+	 *
+	 * In this example, we've provided "dummy input" that's
+	 * reflected in the GIF above to help illustrate the
+	 * order of the recursive calls.
+	 */
+	adj[0] = {1, 2, 4};
+	adj[1] = {3, 4};
+	adj[2] = {5};
+
+	for (int i = 0; i < n; i++) {
+		// iterate over all connected components in the graph
+		if (!visited[i]) {
+			queue<int> q;
+			q.push(i);
+			visited[i] = true;
+			while (!q.empty()) {
+				int current_node = q.front();
+				q.pop();
+				for (int neighbor : adj[current_node]) {
+					if (!visited[neighbor]) {
+						visited[neighbor] = true;
+						q.push(neighbor);
+					}
+				}
+			}
+		}
+	}
+}
+```
+
+</CPPSection>
+<PySection>
+
+```py
+from collections import deque
+
+"""
+Define adjacency list and read in problem-specific input
+
+In this example, we've provided "dummy input" that's
+reflected in the GIF above to help illustrate the
+order of the recursive calls.
+"""
+
+n = 6
+adj = [[] for _ in range(n)]
+visited = [False] * n
+
+adj[0] = [1, 2, 4]
+adj[1] = [3, 4]
+adj[2] = [5]
+
+for i in range(n):
+	# iterate over all connected components in the graph
+	if not visited[i]:
+		q = deque([i])
+
+		while q:
+			node = q.popleft()
+			visited[node] = True
+
+			for neighbor in adj[node]:
+				if not visited[neighbor]:
+					q.append(neighbor)
+```
+
+</PySection>
+</LanguageSection>
+
+## Solution - Building Roads
+
+Note that each edge decreases the number of connected components by either zero
+or one. So you must add at least $C-1$ edges, where $C$ is the number of
+connected components in the input graph.
+
+To compute $C$, iterate through each node. If it has not been visited,
+visit it and all other nodes in its connected component using
+DFS or BFS. Then $C$ equals the number of times we perform the visiting
+operation.
+
+There are many valid ways to pick $C-1$ new roads to build. One way is to choose
+a single representative from each of the $C$ components and link them together
+in a line.
+
+### DFS Solution
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <deque>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<vector<int>> adj;
+vector<bool> visited;
+
+void dfs(int node) {
+	for (int n : adj[node]) {
+		if (!visited[n]) {
+			visited[n] = true;
+			dfs(n);
+		}
+	}
+}
+
+int main() {
+	int n;
+	int m;
+	cin >> n >> m;
+	adj = vector<vector<int>>(n);
+	for (int i = 0; i < m; i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[--a].push_back(--b);
+		adj[b].push_back(a);
+	}
+
+	visited = vector<bool>(n);
+	vector<int> city_reps;
+	for (int i = 0; i < n; i++) {
+		if (visited[i]) { continue; }
+
+		visited[i] = true;
+		city_reps.push_back(i);
+		dfs(i);
+	}
+
+	cout << city_reps.size() - 1 << '\n';
+	for (int i = 0; i < city_reps.size() - 1; i++) {
+		cout << city_reps[i] + 1 << ' ' << city_reps[i + 1] + 1 << '\n';
+	}
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class BuildingRoads {
+	static List<Integer>[] adj;
+	static boolean[] visited;
+
+	public static void main(String[] args) throws IOException {
+		Kattio io = new Kattio();
+		int n = io.nextInt();
+		int m = io.nextInt();
+
+		adj = new ArrayList[n];
+		for (int i = 0; i < n; i++) { adj[i] = new ArrayList<>(); }
+		for (int i = 0; i < m; i++) {
+			int a = io.nextInt() - 1;
+			int b = io.nextInt() - 1;
+			adj[a].add(b);
+			adj[b].add(a);
+		}
+
+		visited = new boolean[n];
+		List<Integer> cityReps = new ArrayList<>();
+		for (int i = 0; i < n; i++) {
+			if (visited[i]) { continue; }
+
+			visited[i] = true;
+			cityReps.add(i);
+			dfs(i);
+		}
+
+		StringBuilder ans = new StringBuilder();
+		ans.append(cityReps.size() - 1).append('\n');
+		for (int i = 0; i < cityReps.size() - 1; i++) {
+			ans.append(cityReps.get(i) + 1)
+			    .append(' ')
+			    .append(cityReps.get(i + 1) + 1)
+			    .append('\n');
+		}
+		io.println(ans);
+		io.close();
+	}
+
+	static void dfs(int node) {
+		for (int n : adj[node]) {
+			if (!visited[n]) {
+				visited[n] = true;
+				dfs(n);
+			}
+		}
+	}
+
+	// CodeSnip{Kattio}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+from collections import deque
+
+n, m = map(int, input().split())
+
+adj = [[] for _ in range(n)]
+for _ in range(m):
+	a, b = map(int, input().split())
+	adj[a - 1].append(b - 1)
+	adj[b - 1].append(a - 1)
+
+
+def dfs(node: int) -> None:
+	for n in adj[node]:
+		if not visited[n]:
+			visited[n] = True
+			dfs(n)
+
+
+visited = [False for _ in range(n)]
+rep_cities = []
+for i in range(n):
+	if visited[i]:
+		continue
+
+	visited[i] = True
+	rep_cities.append(i)
+	dfs(i)
+
+print(len(rep_cities) - 1)
+for i in range(len(rep_cities) - 1):
+	print(rep_cities[i] + 1, rep_cities[i + 1] + 1)
+```
+
+However, this code causes a runtime error on nearly half the test cases.
+What could be going wrong?
+
+</PySection>
+</LanguageSection>
+
+#### An Issue With Deep Recursion
+
+If you run the solution code locally on the line graph generated by the following Python code:
+
+```py
+n = 100000
+print(n, n - 1)
+for i in range(1, n):
+	print(i, i + 1)
+```
+
+<LanguageSection>
+<CPPSection>
+
+then you might get a segmentation fault even though your code passes on the
+online judge. This occurs because every recursive call contributes to the size
+of the [call stack](https://en.wikipedia.org/wiki/Call_stack), which
+is limited to a few megabytes by default. To increase the stack size, refer to
+[this module](/general/cpp-command#adjusting-stack-size-mac).
+Short answer: If you would normally compile your code with `g++ sol.cpp`,
+then compile it with `g++ -Wl,-stack_size,0xF0000000 sol.cpp` instead.
+
+</CPPSection>
+<JavaSection>
+
+then you might get a `StackOverflowError` even though your code passes on the
+online judge. This occurs because every recursive call contributes to the size
+of the [call stack](https://en.wikipedia.org/wiki/Call_stack), which is limited
+to less than a megabyte by default. To resolve this, you can pass an
+option of the form `-Xss...` to run the code with an increased stack size.
+For example, `java -Xss512m Main` will run the code with a stack size limit of 512 megabytes.
+
+</JavaSection>
+<PySection>
+
+then you will observe a *RecursionError* that looks like this:
+
+```
+Traceback (most recent call last):
+  File "input/code.py", line 28, in <module>
+	solve(n, adj)
+  File "input/code.py", line 14, in solve
+	dfs(start, start)
+  File "input/code.py", line 9, in dfs
+	dfs(start, next)
+  File "input/code.py", line 9, in dfs
+	dfs(start, next)
+  File "input/code.py", line 9, in dfs
+	dfs(start, next)
+  [Previous line repeated 994 more times]
+  File "input/code.py", line 7, in dfs
+	if next in unvisited:
+RecursionError: maximum recursion depth exceeded in comparison
+```
+
+This will occur for $N>10^3$ since the recursion limit in Python is set to
+[1000](https://stackoverflow.com/a/33008014/12128483) by default.
+We can fix this by increasing the recursion limit with
+`sys.setrecursionlimit(10 ** 6)`, although we still get TLE on two test cases.
+To resolve this, we can implement a BFS solution, as shown below.
+
+</PySection>
+</LanguageSection>
+
+### BFS Solution
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <deque>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+	int n;
+	int m;
+	cin >> n >> m;
+	vector<vector<int>> adj(n);
+	for (int i = 0; i < m; i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[--a].push_back(--b);
+		adj[b].push_back(a);
+	}
+
+	vector<bool> visited(n);
+	vector<int> city_reps;
+	for (int i = 0; i < n; i++) {
+		if (visited[i]) { continue; }
+
+		visited[i] = true;
+		city_reps.push_back(i);
+		deque<int> todo{i};
+		while (!todo.empty()) {
+			int curr = todo.front();
+			todo.pop_front();
+			for (int next : adj[curr]) {
+				if (!visited[next]) {
+					visited[next] = true;
+					todo.push_back(next);
+				}
+			}
+		}
+	}
+
+	cout << city_reps.size() - 1 << '\n';
+	for (int i = 0; i < city_reps.size() - 1; i++) {
+		cout << city_reps[i] + 1 << ' ' << city_reps[i + 1] + 1 << '\n';
+	}
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class BuildingRoads {
+	public static void main(String[] args) throws IOException {
+		Kattio io = new Kattio();
+		int n = io.nextInt();
+		int m = io.nextInt();
+
+		List<Integer>[] adj = new ArrayList[n];
+		for (int i = 0; i < n; i++) { adj[i] = new ArrayList<>(); }
+		for (int i = 0; i < m; i++) {
+			int a = io.nextInt() - 1;
+			int b = io.nextInt() - 1;
+			adj[a].add(b);
+			adj[b].add(a);
+		}
+
+		boolean[] visited = new boolean[n];
+		List<Integer> cityReps = new ArrayList<>();
+		for (int i = 0; i < n; i++) {
+			if (visited[i]) { continue; }
+
+			visited[i] = true;
+			cityReps.add(i);
+			ArrayDeque<Integer> todo = new ArrayDeque<>();
+			todo.add(i);
+			while (!todo.isEmpty()) {
+				int curr = todo.poll();
+				for (int next : adj[curr]) {
+					if (!visited[next]) {
+						visited[next] = true;
+						todo.add(next);
+					}
+				}
+			}
+		}
+
+		StringBuilder ans = new StringBuilder();
+		ans.append(cityReps.size() - 1).append('\n');
+		for (int i = 0; i < cityReps.size() - 1; i++) {
+			ans.append(cityReps.get(i) + 1)
+			    .append(' ')
+			    .append(cityReps.get(i + 1) + 1)
+			    .append('\n');
+		}
+		io.println(ans);
+		io.close();
+	}
+
+	// CodeSnip{Kattio}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+from collections import deque
+
+n, m = map(int, input().split())
+
+adj = [[] for _ in range(n)]
+for _ in range(m):
+	a, b = map(int, input().split())
+	adj[a - 1].append(b - 1)
+	adj[b - 1].append(a - 1)
+
+visited = [False for _ in range(n)]
+city_reps = []
+for i in range(n):
+	if visited[i]:
+		continue
+
+	visited[i] = True
+	city_reps.append(i)
+	todo = deque([i])
+	while todo:
+		curr = todo.popleft()
+		for next_ in adj[curr]:
+			if not visited[next_]:
+				visited[next_] = True
+				todo.append(next_)
+
+print(len(city_reps) - 1)
+for i in range(len(city_reps) - 1):
+	print(city_reps[i] + 1, city_reps[i + 1] + 1)
+```
+
+</PySection>
+</LanguageSection>
+
+### Connected Component Problems
+
+<Problems problems="general" />
+
+## Solution - Building Teams
+
+<Resources>
+	<Resource source="CPH" title="12.3 - Bipartiteness check" starred>
+		Brief solution sketch with diagrams.
+	</Resource>
+	<Resource source="IUSACO" title="10.7 - Bipartite Graphs" />
+	<Resource
+		source="cp-algo"
+		title="Bipartite Check"
+		url="graph/bipartite-check.html"
+	/>
+	<Resource source="CP2" title="4.2.6 - Bipartite Check"/>
+</Resources>
+
+For each connected component, we can arbitrarily label a node and then run DFS or BFS.
+Every time we visit a new (unvisited) node, we set its color based on the edge rule.
+When we visit a previously visited node, check to see whether its color matches the edge rule.
+
+### DFS Solution
+
+<Optional title="Adjacency List Without an Array of Vectors">
+
+See [here](https://codeforces.com/blog/entry/67883).
+
+</Optional>
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<int> assigned;
+vector<vector<int>> adj;
+
+/** @return true only if it's possible to assign each person to a team */
+bool dfs(int node) {
+	int curr = assigned[node];
+	int nColor = curr == 1 ? 2 : 1;  // The color the neighbors should be
+	for (int n : adj[node]) {
+		if (assigned[n] != 0) {
+			// Check if the already existing color lines up
+			if (assigned[n] != nColor) { return false; }
+		} else {
+			assigned[n] = nColor;
+			if (!dfs(n)) {
+				return false;  // We stop as soon as we hit a contradiction
+			}
+		}
+	}
+	return true;
+}
+
+int main() {
+	int n;
+	int m;
+	cin >> n >> m;
+	adj = vector<vector<int>>(n);
+	for (int i = 0; i < m; i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[--a].push_back(--b);
+		adj[b].push_back(a);
+	}
+
+	assigned = vector<int>(n);
+	bool valid = true;
+	for (int i = 0; i < n; i++) {
+		if (assigned[i] == 0) {
+			assigned[i] = 1;  // Assign an arbitrary starting team
+			if (!dfs(i)) {
+				valid = false;
+				break;
+			}
+		}
+	}
+
+	if (valid) {
+		for (int i = 0; i < n; i++) { cout << assigned[i] << " \n"[i == n - 1]; }
+	} else {
+		cout << "IMPOSSIBLE" << endl;
+	}
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+<Warning>
+
+Because Java is so slow, an adjacency list using lists/arraylists results in
+TLE. Instead, the Java sample code uses the edge representation mentioned in the
+optional block above.
+
+</Warning>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class BuildingTeams {
+	static List<Integer>[] adj;
+	static int[] assigned;
+
+	public static void main(String[] args) throws IOException {
+		Kattio io = new Kattio();
+		int n = io.nextInt();
+		int m = io.nextInt();
+
+		adj = new ArrayList[n];
+		for (int i = 0; i < n; i++) { adj[i] = new ArrayList<>(); }
+		for (int i = 0; i < m; i++) {
+			int a = io.nextInt() - 1;
+			int b = io.nextInt() - 1;
+			adj[a].add(b);
+			adj[b].add(a);
+		}
+
+		assigned = new int[n];
+		boolean valid = true;
+		for (int i = 0; i < n; i++) {
+			if (assigned[i] == 0) {
+				assigned[i] = 1;  // Assign an arbitrary starting team
+				if (!dfs(i)) {
+					valid = false;
+					break;
+				}
+			}
+		}
+
+		if (valid) {
+			for (int i = 0; i < n - 1; i++) { io.print(assigned[i] + " "); }
+			io.println(assigned[n - 1]);
+		} else {
+			io.println("IMPOSSIBLE");
+		}
+	}
+
+	/** @return if it's possible to assign each person to a team */
+	static boolean dfs(int node) {
+		int curr = assigned[node];
+		int nColor = curr == 1 ? 2 : 1;  // The color the neighbors should be
+		for (int n : adj[node]) {
+			if (assigned[n] != 0) {
+				// Check if the already existing color lines up
+				if (assigned[n] != nColor) { return false; }
+			} else {
+				assigned[n] = nColor;
+				if (!dfs(n)) {
+					return false;  // We stop as soon as we hit a contradiction
+				}
+			}
+		}
+		return true;
+	}
+
+	// CodeSnip{Kattio}
+}
+```
+
+</JavaSection>
+<PySection>
+
+<Warning>
+
+You have to submit with CPython (not PyPy3) to avoid TLE.
+
+</Warning>
+
+```py
+import sys
+
+input = sys.stdin.readline
+
+sys.setrecursionlimit(int(1e9))  # disable recursion limit
+
+n, m = map(int, input().strip().split())
+adj = [[] for _ in range(n)]
+team = [0] * n  # 0: not assigned yet, 1: team 1, 2: team 2
+
+for _ in range(m):
+	a, b = map(int, map(int, input().strip().split()))
+	adj[a - 1].append(b - 1)
+	adj[b - 1].append(a - 1)
+
+
+def dfs(node: int):
+	for next_node in adj[node]:
+		if team[next_node]:
+			if team[next_node] == team[node]:
+				print("IMPOSSIBLE")
+				exit()
+		else:
+			team[next_node] = 2 if team[node] == 1 else 1
+			dfs(next_node)
+
+
+for node in range(n):
+	if not team[node]:
+		team[node] = 1
+		dfs(node)
+
+print(*team)
+```
+
+</PySection>
+</LanguageSection>
+
+### BFS Solution
+
+The specifics of the algorithm are almost exactly the same; it's just that we
+do them in an iterative rather than recursive fashion.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <deque>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+	int n;
+	int m;
+	cin >> n >> m;
+	vector<vector<int>> adj(n);
+	for (int i = 0; i < m; i++) {
+		int a, b;
+		cin >> a >> b;
+		adj[--a].push_back(--b);
+		adj[b].push_back(a);
+	}
+
+	vector<int> assigned(n);
+	bool valid = true;
+	for (int i = 0; i < n; i++) {
+		if (assigned[i] != 0) { continue; }
+
+		assigned[i] = 1;
+		deque<int> todo{i};
+		while (!todo.empty()) {
+			int curr = todo.front();
+			todo.pop_front();
+			int n_color = assigned[curr] == 1 ? 2 : 1;
+			for (int next : adj[curr]) {
+				if (assigned[next] != 0) {
+					if (assigned[next] != n_color) {
+						valid = false;
+						goto end;
+					}
+				} else {
+					assigned[next] = n_color;
+					todo.push_back(next);
+				}
+			}
+		}
+	}
+end:;
+
+	if (valid) {
+		for (int i = 0; i < n; i++) { cout << assigned[i] << " \n"[i == n - 1]; }
+	} else {
+		cout << "IMPOSSIBLE" << endl;
+	}
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class BuildingTeams {
+	public static void main(String[] args) throws IOException {
+		Kattio io = new Kattio();
+		int n = io.nextInt();
+		int m = io.nextInt();
+
+		List<Integer>[] adj = new ArrayList[n];
+		for (int i = 0; i < n; i++) { adj[i] = new ArrayList<>(); }
+		for (int i = 0; i < m; i++) {
+			int a = io.nextInt() - 1;
+			int b = io.nextInt() - 1;
+			adj[a].add(b);
+			adj[b].add(a);
+		}
+
+		int[] assigned = new int[n];
+		boolean valid = true;
+	search:
+		for (int i = 0; i < n; i++) {
+			if (assigned[i] != 0) { continue; }
+
+			assigned[i] = 1;
+			ArrayDeque<Integer> todo = new ArrayDeque<>();
+			todo.add(i);
+			while (!todo.isEmpty()) {
+				int curr = todo.poll();
+				int nColor = assigned[curr] == 1 ? 2 : 1;
+				for (int next : adj[curr]) {
+					if (assigned[next] != 0) {
+						if (assigned[next] != nColor) {
+							valid = false;
+							break search;
+						}
+					} else {
+						assigned[next] = nColor;
+						todo.push(next);
+					}
+				}
+			}
+		}
+
+		if (valid) {
+			for (int i = 0; i < n - 1; i++) { io.print(assigned[i] + " "); }
+			io.println(assigned[n - 1]);
+		} else {
+			io.println("IMPOSSIBLE");
+		}
+		io.close();
+	}
+
+	// CodeSnip{Kattio}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+from collections import deque
+
+n, m = map(int, input().split())
+
+adj = [[] for _ in range(n)]
+for _ in range(m):
+	a, b = map(int, input().split())
+	adj[a - 1].append(b - 1)
+	adj[b - 1].append(a - 1)
+
+assigned = [0 for _ in range(n)]
+valid = True
+for i in range(n):
+	if assigned[i] != 0:
+		continue
+
+	assigned[i] = 1
+	todo = deque([i])
+	while todo:
+		curr = todo.popleft()
+		n_color = 2 if assigned[curr] == 1 else 1
+		for next_ in adj[curr]:
+			if assigned[next_] != 0:
+				if assigned[next_] != n_color:
+					valid = False
+					break
+			else:
+				assigned[next_] = n_color
+				todo.append(next_)
+
+		if not valid:
+			break
+
+	if not valid:
+		break
+
+if valid:
+	print(*assigned)
+else:
+	print("IMPOSSIBLE")
+```
+
+</PySection>
+</LanguageSection>
+
+### Graph Two-Coloring Problems
+
+<Problems problems="bip" />
+
+## Quiz
+
+<Quiz>
+	<Quiz.Question>
+		What's the main difference between DFS and BFS?
+
+		<Quiz.Answer>
+			DFS is recursive, while BFS is iterative.
+
+			<Quiz.Explanation>
+				Not really. Both algorithms can be implemented in both recursive and iterative fashion.
+			</Quiz.Explanation>
+		</Quiz.Answer>
+		<Quiz.Answer correct>
+			BFS visits the nodes in order of distance from the start, while DFS follows one path and only backtracks when it needs to.
+
+			<Quiz.Explanation>
+				Correct!
+			</Quiz.Explanation>
+		</Quiz.Answer>
+		<Quiz.Answer>
+			DFS visits the nodes in order of distance from the start, while BFS follows one path and only backtracks when it needs to.
+
+			<Quiz.Explanation>
+				Incorrect. Perhaps you have the terms mixed up?
+			</Quiz.Explanation>
+		</Quiz.Answer>
+	</Quiz.Question>
+	<Quiz.Question>
+		What's the time complexity of these graph traversal algorithms, where $N$ is the number of nodes and $M$ is the number of edges?
+
+		<Quiz.Answer correct>
+			$\mathcal{O}(N+M)$
+
+			<Quiz.Explanation>
+				Correct! We have to iterate over every node and every edge to perform a full search.
+			</Quiz.Explanation>
+		</Quiz.Answer>
+		<Quiz.Answer>
+			$\mathcal{O}(N)$
+
+			<Quiz.Explanation>
+				Sure, we have to iterate over every node, but what about the edges?
+			</Quiz.Explanation>
+		</Quiz.Answer>
+		<Quiz.Answer>
+			$\mathcal{O}(M)$
+
+			<Quiz.Explanation>
+				Incorrect. Is there anything else we have to process besides the edges?
+			</Quiz.Explanation>
+		</Quiz.Answer>
+	</Quiz.Question>
+	<Quiz.Question>
+		What collection data structures should we use to implement iterative DFS and BFS?
+
+		<Quiz.Answer>
+			A deque and a stack respectively.
+
+			<Quiz.Explanation>
+				Almost. While a deque does work for DFS, BFS needs something other than a stack.
+			</Quiz.Explanation>
+		</Quiz.Answer>
+		<Quiz.Answer correct>
+			A stack and a queue respectively.
+
+			<Quiz.Explanation>
+				Correct!
+			</Quiz.Explanation>
+		</Quiz.Answer>
+		<Quiz.Answer>
+			Queues work for both algorithms.
+
+			<Quiz.Explanation>
+				Incorrect. Think about what each algorithm needs in terms of complexity.
+			</Quiz.Explanation>
+		</Quiz.Answer>
+	</Quiz.Question>
+	<Quiz.Question>
+		If a graph has $N$ nodes and $C$ connected components, how many times do we have to start DFS to traverse the entire graph?
+
+		<Quiz.Answer>
+			$N$
+
+			<Quiz.Explanation>
+				DFS does visit each *node* once, that's not what we're looking for.
+			</Quiz.Explanation>
+		</Quiz.Answer>
+		<Quiz.Answer>
+			$N-C$
+
+			<Quiz.Explanation>
+				Incorrect.
+			</Quiz.Explanation>
+		</Quiz.Answer>
+		<Quiz.Answer correct>
+			$C$
+
+			<Quiz.Explanation>
+				Correct! We have to run DFS once for each component.
+			</Quiz.Explanation>
+		</Quiz.Answer>
+	</Quiz.Question>
+</Quiz>

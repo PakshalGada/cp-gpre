@@ -1,0 +1,617 @@
+---
+id: intro-graphs
+title: Introduction to Graphs
+author: Darren Yao, Benjamin Qi
+contributors: Nathan Gong, Ryan Chou, Kevin Sheng, Nikhil Chatterjee
+description: 'What graphs are.'
+frequency: 2
+prerequisites:
+  - intro-ds
+---
+
+# Introduction
+
+Graphs can be used to represent many things, from images to wireless signals,
+but one of the simplest analogies is to a map. Consider a map with several
+cities and bidirectional roads connecting the cities. Some problems relating to
+graphs are:
+
+1.  Is city $A$ connected to city $B$? Consider a region to be a group of cities
+    such that each city in the group can reach any other city in said group, but
+    no other cities. How many regions are in this map, and which cities are in
+    which region? (USACO Silver)
+
+2.  What's the shortest distance I have to travel to get from city $A$ to city
+    $B$? (USACO Gold)
+
+For USACO Bronze, it suffices to learn the basics of how graphs are represented (usually **adjacency lists**).
+
+<Resources>
+	<Resource
+		source="CSA"
+		title="Introduction to Graphs"
+		url="introduction_to_graphs"
+		starred
+	>
+		interactive
+	</Resource>
+	<Resource
+		source="CSA"
+		title="Graph Representations"
+		url="graph_representation"
+		starred
+	>
+		interactive - adjacency lists and matrices
+	</Resource>
+  <Resource
+    source="CSA"
+		title="Graph Editor"
+    url="https://csacademy.com/app/graph_editor/"
+    starred
+  >
+    use this tool to visualize your own graphs
+  </Resource>
+	<Resource source="CPH" title="11 - Basics of Graphs" starred>
+		graph terminology, representation
+	</Resource>
+	<Resource source="IUSACO" title="10.1 to 10.3 - Graph Theory">
+		graph basics and representation, trees
+	</Resource>
+	<Resource source="PAPS" title="6.4 - Graphs">
+		adjacency matrices, lists, maps
+	</Resource>
+</Resources>
+
+# Constructing Adjacency Lists
+
+Graphs are often given as input in the following format:
+
+- The first line will contain the number of nodes $N$ and the number of edges $M$.
+- Then follow $M$ lines, each containing a pair of integers specifying an edge of the graph.
+
+For example, the undirected graph given in the [CSAcademy resource from above](https://csacademy.com/lesson/graph_representation) would be represented as the following input:
+
+```
+6 10
+2 4
+0 2
+0 4
+0 5
+5 3
+2 3
+1 3
+4 5
+4 1
+1 5
+```
+
+and could be visualized in the [CSAcademy graph editor](https://csacademy.com/app/graph_editor/):
+
+![](/content/2_Bronze/assets/csa_graph.png)
+
+The following code represents the graph using adjacency lists.
+Once we have the graph in this representation, it is easy to print the number of neighbors of a node, or iterate over the neighbors of a node.
+
+<LanguageSection>
+
+<CPPSection>
+
+```cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+	int N, M;
+	cin >> N >> M;
+	vector<vector<int>> adj(N);
+	for (int i = 0; i < M; ++i) {
+		int u, v;
+		cin >> u >> v;
+		adj.at(u).push_back(v);
+		adj.at(v).push_back(u);
+	}
+	{
+		int u = 1;
+		// print number of vertices adjacent to u
+		cout << "deg(u) = " << adj.at(u).size() << endl;
+		// print all edges with u as an endpoint
+		for (int v : adj.at(u)) cout << "{" << u << ", " << v << "}" << "\n";
+	}
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class Main {
+	public static void main(String[] args) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+		StringTokenizer s1 = new StringTokenizer(reader.readLine());
+		int N = Integer.parseInt(s1.nextToken());
+		int M = Integer.parseInt(s1.nextToken());
+
+		List<List<Integer>> adj = new ArrayList<>();
+		for (int i = 0; i < N; i++) { adj.add(new ArrayList<>()); }
+
+		for (int i = 0; i < M; i++) {
+			StringTokenizer s2 = new StringTokenizer(reader.readLine());
+			int u = Integer.parseInt(s2.nextToken());
+			int v = Integer.parseInt(s2.nextToken());
+			adj.get(u).add(v);
+			adj.get(v).add(u);
+		}
+
+		int u = 1;
+		// print number of vertices adjacent to u
+		System.out.println("deg(u) = " + adj.get(u).size());
+		// print all edges with u as an endpoint
+		for (int v : adj.get(u)) { System.out.println("{" + u + ", " + v + "}"); }
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+N, M = map(int, input().split())
+adj = [[] for _ in range(N)]
+
+for i in range(M):
+	u, v = map(int, input().split())
+	adj[u].append(v)
+	adj[v].append(u)
+
+u = 1
+# print number of vertices adjacent to u
+print("deg(u) =", len(adj[u]))
+# print all edges with u as an endpoint
+for v in adj[u]:
+	print("{" + str(u) + ", " + str(v) + "}")
+```
+</PySection>
+</LanguageSection>
+
+Output:
+
+```
+deg(u) = 3
+{1, 3}
+{1, 4}
+{1, 5}
+```
+
+# What Does a Bronze Graph Problem Look Like?
+
+All of the problems below fall into at least one of the following two
+categories:
+
+- The graph's structure is special (it's a tree, path, or a cycle).
+- To solve the problem, all you need to do is iterate over the adjacency list of
+  every vertex.
+
+In addition, knowledge of [Silver-level graph topics](/silver/graph-traversal) is usually helpful but not strictly required to solve the problem.
+
+# Livestock Lineup
+
+<FocusProblem problem="tutorial" />
+
+While the intended solution is to brute force all possible permutations of the cows in $\mathcal O(N\cdot C!)$ time, we can solve the problem in just $\mathcal{O}(C)$ time if we represent the constraints using a graph.
+
+## Solution Using Graphs
+
+<Warning>
+
+This explanation, and the implementation that follows, assume that all constraints
+in the input describe distinct pairs of cows. If this assumption did not hold,
+you would first need to remove duplicate constraints.
+
+</Warning>
+
+Notice that since the input is guaranteed to be valid, we're always going to end
+up with "chains" of cows that we can arrange as we please. Using the sample given
+in the problem, we'd get a "chain" representation like this:
+
+![Chains](/content/2_Bronze/assets/chains.png)
+
+Note that cows that are not part of any chain can be considered their own chains
+of length 1 for implementation purposes.
+
+With this representation in mind, we can iterate through the cows in
+lexicographical (alphabetical) order. When we visit a cow that could be a possible
+start of a chain (a cow that has at most one required neighbor),
+we repeatedly go through its neighbors, adding the cows we visit to the ordering, until we hit an end.
+
+## Implementation
+
+**Time Complexity:** $\mathcal{O}(C)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <algorithm>
+#include <fstream>
+#include <map>
+#include <string>
+#include <vector>
+
+using std::endl;
+using std::string;
+using std::vector;
+
+// BeginCodeSnip{Cow Names}
+//  Lambda expression - see /general/lambda-funcs
+const vector<string> COWS = []() {
+	vector<string> tmp{"Bessie", "Buttercup", "Belinda", "Beatrice",
+	                   "Bella",  "Blue",      "Betsy",   "Sue"};
+	// sort names lexicographically
+	std::sort(std::begin(tmp), std::end(tmp));
+	return tmp;
+}();
+// EndCodeSnip
+
+int main() {
+	std::map<string, int> cow_inds;
+	for (int i = 0; i < COWS.size(); i++) { cow_inds[COWS[i]] = i; }
+
+	std::ifstream read("lineup.in");
+	int req_num;
+	read >> req_num;
+	vector<vector<int>> neighbors(COWS.size());
+	for (int r = 0; r < req_num; r++) {
+		string cow1;
+		string cow2;
+		string trash;
+		read >> cow1 >> trash >> trash >> trash >> trash >> cow2;
+
+		// Convert the names to their index in the list
+		int c1 = cow_inds[cow1];
+		int c2 = cow_inds[cow2];
+		neighbors[c1].push_back(c2);
+		neighbors[c2].push_back(c1);
+	}
+
+	vector<int> order;
+	vector<bool> added(COWS.size());
+	for (int c = 0; c < COWS.size(); c++) {
+		if (!added[c] && neighbors[c].size() <= 1) {
+			added[c] = true;
+			order.push_back(c);
+
+			if (neighbors[c].size() == 1) {
+				int prev = c;
+				int at = neighbors[c][0];
+				while (neighbors[at].size() == 2) {
+					added[at] = true;
+					order.push_back(at);
+
+					int a = neighbors[at][0];
+					int b = neighbors[at][1];
+					int temp_at = a == prev ? b : a;
+					prev = at;
+					at = temp_at;
+				}
+				added[at] = true;
+				order.push_back(at);
+			}
+		}
+	}
+
+	std::ofstream out("lineup.out");
+	for (int c : order) { out << COWS[c] << endl; }
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class LineUp {
+	// Assumed to be in sorted order (which it is)
+	static final String[] COWS = new String[] {
+	    "Beatrice", "Belinda", "Bella", "Bessie", "Betsy", "Blue", "Buttercup", "Sue"};
+
+	public static void main(String[] args) throws IOException {
+		Map<String, Integer> cowInds = new HashMap<>();
+		for (int i = 0; i < COWS.length; i++) { cowInds.put(COWS[i], i); }
+
+		BufferedReader read = new BufferedReader(new FileReader("lineup.in"));
+		int reqNum = Integer.parseInt(read.readLine());
+
+		List<Integer>[] neighbors = new ArrayList[COWS.length];
+		for (int c = 0; c < COWS.length; c++) { neighbors[c] = new ArrayList<>(); }
+		for (int r = 0; r < reqNum; r++) {
+			String[] words = read.readLine().split(" ");
+
+			// Convert the names to their index in the list
+			int cow1 = cowInds.get(words[0]);
+			int cow2 = cowInds.get(words[words.length - 1]);
+			neighbors[cow1].add(cow2);
+			neighbors[cow2].add(cow1);
+		}
+
+		List<Integer> order = new ArrayList<>();
+		boolean[] added = new boolean[COWS.length];
+		for (int c = 0; c < COWS.length; c++) {
+			/*
+			 * Check that:
+			 * 1. This cow hasn't already been added yet.
+			 * 2. This cow could be the possible start of a chain.
+			 */
+			if (!added[c] && neighbors[c].size() <= 1) {
+				added[c] = true;
+				order.add(c);
+
+				// If the chain length > 1, we keep on going
+				if (neighbors[c].size() == 1) {
+					int prev = c;
+					int at = neighbors[c].get(0);
+					while (neighbors[at].size() == 2) {
+						added[at] = true;
+						order.add(at);
+
+						int a = neighbors[at].get(0);
+						int b = neighbors[at].get(1);
+						int temp_at = a == prev ? b : a;
+						prev = at;
+						at = temp_at;
+					}
+					// Add the final element
+					added[at] = true;
+					order.add(at);
+				}
+			}
+		}
+
+		PrintWriter out = new PrintWriter("lineup.out");
+		for (int c : order) { out.println(COWS[c]); }
+		out.close();
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+COWS = sorted(
+	["Bessie", "Buttercup", "Belinda", "Beatrice", "Bella", "Blue", "Betsy", "Sue"]
+)
+
+cow_inds = {c: i for i, c in enumerate(COWS)}
+
+neighbors = [[] for _ in range(len(COWS))]
+with open("lineup.in") as read:
+	for _ in range(int(read.readline())):
+		words = read.readline().strip().split()
+
+		# Convert the names to their index in the list
+		cow1 = cow_inds[words[0]]
+		cow2 = cow_inds[words[-1]]
+		neighbors[cow1].append(cow2)
+		neighbors[cow2].append(cow1)
+
+order = []
+added = [False for _ in range(len(COWS))]
+for c in range(len(COWS)):
+	"""
+	Check that:
+	1. This cow hasn't already been added yet.
+	2. This cow could be the possible start of a chain.
+	"""
+	if not added[c] and len(neighbors[c]) <= 1:
+		added[c] = True
+		order.append(c)
+
+		# If the chain length > 1, we keep on going
+		if len(neighbors[c]) == 1:
+			prev = c
+			at = neighbors[c][0]
+			while len(neighbors[at]) == 2:
+				added[at] = True
+				order.append(at)
+				a, b = neighbors[at]
+				at, prev = b if a == prev else a, at
+
+			# Add the final element
+			added[at] = True
+			order.append(at)
+
+with open("lineup.out", "w") as out:
+	for c in order:
+		print(COWS[c], file=out)
+```
+
+</PySection>
+</LanguageSection>
+
+# Check Your Understanding
+
+<Quiz>
+  <Quiz.Question>
+    How many connected components are in the following graph?
+    ![Graph](/content/2_Bronze/assets/graphs_quiz_1.png)
+    <Quiz.Answer>
+      1
+      <Quiz.Explanation>
+
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      2
+      <Quiz.Explanation>
+
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer correct>
+      3
+      <Quiz.Explanation>
+        Correct. The connected components consist of $\{0, 1\}, \{2, 3, 4, 5\}, \{6, 7, 8\}$
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      8
+      <Quiz.Explanation>
+        There are 8 nodes, but not 8 connected components.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+  </Quiz.Question>
+
+  <Quiz.Question>
+    How would we represent the following *directed* graph with an adjacency list?
+    ![Graph](/content/2_Bronze/assets/graphs_quiz_2.png)
+    <Quiz.Answer>
+      $
+      \begin{pmatrix}
+      1 & 1 & 0 & 0 & 0 & 1\\
+      1 & 1 & 0 & 0 & 0 & 0\\
+      0 & 0 & 1 & 1 & 1 & 0\\
+      0 & 0 & 0 & 1 & 0 & 1\\
+      0 & 0 & 0 & 0 & 1 & 1\\
+      0 & 0 & 0 & 0 & 0 & 1\\
+      \end{pmatrix}
+      $
+      <Quiz.Explanation>
+        Incorrect. This is an adjacency matrix representation of the graph, not an adjacency list.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      $0: [1, 5]$
+
+      $1: [0]$
+
+      $2: [3, 4]$
+
+      $3: [2, 5]$
+
+      $4: [2, 5]$
+
+      $5: [0, 3, 4]$
+      <Quiz.Explanation>
+        Incorrect. This adjacency list representation assumes that all edges are undirected, which isn't the case.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer correct>
+      $0: [1, 5]$
+
+      $1: [0]$
+
+      $2: [3, 4]$
+
+      $3: [5]$
+
+      $4: [5]$
+
+      $5: []$
+      <Quiz.Explanation>
+        Correct.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      $
+      \begin{pmatrix}
+      1 & 1 & 0 & 0 & 0 & 1\\
+      1 & 1 & 0 & 0 & 0 & 0\\
+      0 & 0 & 1 & 1 & 1 & 0\\
+      0 & 0 & 1 & 1 & 0 & 1\\
+      0 & 0 & 1 & 0 & 1 & 1\\
+      1 & 0 & 0 & 1 & 1 & 1\\
+      \end{pmatrix}
+      $
+      <Quiz.Explanation>
+        Incorrect. This is an adjacency matrix representation of the undirected version of the graph.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+  </Quiz.Question>
+  <Quiz.Question>
+    Which characteristic does a tree NOT have?
+    <Quiz.Answer>
+      There is one unique path between any pair of nodes.
+    </Quiz.Answer>
+    <Quiz.Answer>
+      There are $n-1$ edges, where $n$ is the total number of nodes in the tree.
+    </Quiz.Answer>
+    <Quiz.Answer>
+      It is fully connected.
+    </Quiz.Answer>
+    <Quiz.Answer correct>
+      It has at least one cycle.
+    <Quiz.Explanation>
+        Correct. Trees are always acyclic.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+  </Quiz.Question>
+  <Quiz.Question>
+    What is the space complexity for adjacency lists and adjacency matrices respectively? Let $n$ be the total number of nodes and $m$ be the total number of edges.
+    <Quiz.Answer correct>
+      $\mathcal{O}(n + m)$ and $\mathcal{O}(n^2)$
+      <Quiz.Explanation>
+        Correct. An adjacency list consists of $n$ dynamic arrays, where the total sum of their lengths is $m$. Thus, since there are $n$ references and $m$ total elements for each edge, it has a space complexity of $\mathcal{O}(n+m)$. An adjacency matrix is an $n \times n$ matrix, leading us to an $\mathcal{O}(n^2)$ space complexity.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      $\mathcal{O}(m^2)$ and $\mathcal{O}(n + m)$
+      <Quiz.Explanation>
+        See explanation for correct answer.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      $\mathcal{O}(n^2)$ and $\mathcal{O}(n + m)$
+      <Quiz.Explanation>
+        Incorrect. It's the other way around.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      $\mathcal{O}(m)$ and $\mathcal{O}(n^2)$
+      <Quiz.Explanation>
+        An adjacency list also contains $n$ references for each list, so its space complexity is $\mathcal{O}(n+m)$.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+  </Quiz.Question>
+  <Quiz.Question>
+    What is the degree of node 1 in the following graph?
+    ![Graph](/content/2_Bronze/assets/graphs_quiz_3.png)
+    <Quiz.Answer>
+      0
+    </Quiz.Answer>
+    <Quiz.Answer>
+      1
+    </Quiz.Answer>
+    <Quiz.Answer correct>
+      2
+      <Quiz.Explanation>
+        Correct. Node 1 is connected to 2 other nodes.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      3
+    </Quiz.Answer>
+  </Quiz.Question>
+  <Quiz.Question>
+    True or false: there is a cycle in the following graph.
+    ![Graph](/content/2_Bronze/assets/graphs_quiz_4.png)
+    <Quiz.Answer correct>
+      True
+      <Quiz.Explanation>
+        Correct. Nodes 0, 4, and 5 form a cycle. Nodes 4 and 5 also form a cycle.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      False
+    </Quiz.Answer>
+  </Quiz.Question>
+</Quiz>
+
+# Problems
+
+<Problems problems="general" />

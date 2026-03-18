@@ -1,0 +1,279 @@
+---
+id: stacks
+title: Stacks
+author: Darren Yao, Michael Cao
+contributors: George Pong
+description:
+  'A data structure that only allows insertion and deletion at one end.'
+prerequisites:
+  - intro-ds
+frequency: 1
+---
+
+<Resources>
+	<Resource source="CPH" title="4.5 - Stacks">
+		brief description of operations
+	</Resource>
+	<Resource
+		source="CSA"
+		title="Stack Introduction"
+		url="stack_introduction"
+		starred
+	>
+		Bracket Matching Application
+	</Resource>
+</Resources>
+
+<!-- <Resource source="PAPS" title="3.3, 6.2 - Stacks" />
+	<Resource
+		source="CP2"
+		title="2.2 - Data Structures with Built-in Libraries"
+	 />
+-->
+
+## Stacks
+
+A stack is a **Last In First Out** (LIFO) data structure that supports three
+operations, all in $\mathcal{O}(1)$ time. Think of it like a real-world stack of
+papers.
+
+<LanguageSection>
+
+<CPPSection>
+
+### [C++](http://www.cplusplus.com/reference/stack/stack/)
+
+- `push`: adds an element to the top of the stack
+- `pop`: removes an element from the top of the stack
+- `top`: retrieves the element at the top without removing it
+
+```cpp
+stack<int> s;
+s.push(1);                 // [1]
+s.push(13);                // [1, 13]
+s.push(7);                 // [1, 13, 7]
+cout << s.top() << endl;   // 7
+s.pop();                   // [1, 13]
+cout << s.size() << endl;  // 2
+```
+
+</CPPSection>
+
+<JavaSection>
+
+### Java
+
+- `push`: adds an element to the top of the stack
+- `pop`: removes an element from the top of the stack
+- `peek`: retrieves the element at the top without removing it
+
+```java
+Stack<Integer> s = new Stack<Integer>();
+s.push(1);                     // [1]
+s.push(13);                    // [1, 13]
+s.push(7);                     // [1, 13, 7]
+System.out.println(s.peek());  // 7
+s.pop();                       // [1, 13]
+System.out.println(s.size());  // 2
+```
+
+</JavaSection>
+
+<PySection>
+
+### Python
+
+Python does not have a built-in stack type, but a list can function
+like a stack.
+
+- `list.append()`: Appends an element to the end.
+- `list[-1]`: Retrieves the last element without removing it.
+- `list.pop()`: Removes the last element and returns it
+  (but you don't need to use the returned value).
+- `list.pop(n)`: Removes the nth element, 0-indexed. Note that removing
+  elements is an `O(n)` operation.
+
+```py
+stack = []  # []
+stack.append(1)  # [1]
+stack.append(2)  # [1, 2]
+stack.append(3)  # [1, 2, 3]
+v = stack[-1]  # stack = [1, 2, 3] (unchanged), v = 3
+stack.pop()  # [1, 2]
+v = stack.pop()  # stack = [1], v = 2
+stack.append(4)  # [1, 4]
+v = stack.pop(0)  # stack = [4], v = 1
+```
+
+</PySection>
+
+</LanguageSection>
+
+## Application - Nearest Smaller Element
+
+<FocusProblem problem="nearest" />
+
+Consider the following problem:
+
+> Given an array, $a$, of $N$ ($1 \le N \le 10^5$) integers, for every index
+> $i$, find the rightmost index $j$ such that $j < i$ and $a_i > a_j$.
+
+<Resources>
+	<Resource
+		source="CPH"
+		title="8.2 - Nearest Smaller Element"
+		starred
+	 />
+	<Resource
+		source="CSA"
+		title="Stack Application - Soldier's Row"
+		url="stack_application_soldiers_row"
+		starred
+	>
+		similar application w/ animation
+	</Resource>
+</Resources>
+
+<!-- 	<Resource
+		source="Medium"
+		title="Monotonic Stack"
+		url="https://medium.com/@vishnuvardhan623/monotonic-stack-e9dcc4fa8c3e"
+	 /> -->
+
+To solve this, let's store a stack of pairs of $value, index$ and iterate over
+the array from left to right. For some index $i$, we will compute
+$\texttt{ans}[i]$, the rightmost index for $i$, as follows:
+
+- Keep popping the top element off the stack as long as $value \ge a_i$. This is
+  because we know that the pair containing $value$ will never be the solution to
+  any index $j > i$, since $a_i$ is less than or equal to than $value$ and has
+  an index further to the right.
+- If $value < a_i$, set $\texttt{ans}[i]$ to $index$, because a stack stores the
+  most recently added values first (or in this case, the rightmost ones),
+  $index$ will contain the rightmost value which is less than $a_i$. Then, add
+  ($a_i, i$) to the stack.
+
+The stack we used is called a **monotonic stack** because we keep popping off
+the top element of the stack which maintains it's monotonicity (the same
+property needed for algorithms like binary search) because the elements in the
+stack are increasing.
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(N)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N;
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	cin >> N;
+	stack<pair<int, int>> stack;
+	stack.push({0, 0});
+
+	for (int i = 1; i <= N; ++i) {
+		int a;
+		cin >> a;
+		while (!stack.empty() && stack.top().first >= a) stack.pop();
+		cout << stack.top().second << " ";
+		stack.push({a, i});
+	}
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+
+/**
+ * author: Kai Wang
+ */
+
+import java.io.*;
+import java.util.*;
+public class NearestSmallestVals {
+
+	/**
+	 * We keep a stack of pairs (ind, value)
+	 * Traverse the array from left to right, use ans to store answers
+	 * If the value of the a_i> (stk.peek()=a_k) then I remove the top of the
+	 * stack. This is okay because for all j>k, a_j>=a_k, or (j,a_j) is in the
+	 * stack If a_k < a_i then we set ans[i]=k and insert (i,a_i) Note the stack
+	 * elements are sorted in order of index
+	 *
+	 */
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int N = Integer.parseInt(br.readLine());
+		int[] a = new int[N + 1];
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		for (int i = 1; i <= N; i++) { a[i] = Integer.parseInt(st.nextToken()); }
+		Stack<Integer> stk = new Stack<>();
+		stk.add(0);
+		stk.add(1);
+		int[] ans = new int[N + 1];
+		ans[1] = 0;
+		for (int i = 2; i <= N; i++) {
+			while (a[stk.peek()] >= a[i]) { stk.pop(); }
+			// stk.peek()<a[i]
+			// This exists because a[0]=0 and a[i]>0 for all i>0
+			ans[i] = stk.peek();
+			stk.push(i);
+		}
+		for (int i = 1; i <= N; i++) { System.out.print(ans[i] + " "); }
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+n = int(input())
+nums = list(map(int, input().split()))
+
+ans = []
+stack = []  # stores (a_i, i)
+for idx, num in enumerate(nums):
+	while stack and stack[-1][0] >= num:
+		stack.pop()
+
+	ans.append(0 if not stack else stack[-1][1] + 1)
+	stack.append((num, idx))
+
+print(*ans)
+```
+
+</PySection>
+</LanguageSection>
+
+## Problems
+
+<Problems problems="general" />
+
+<!--
+
+(actually go through these and check ...)
+
+### Stack
+
+  - UVa 00514 - Rails
+  - UVa 00732 - Anagram by Stack
+  - UVa 01062 - Containers
+
+### Queue / Deque
+
+  - UVa 10172 - The Lonesome Cargo
+  - UVa 10901 - Ferry Loading III
+  - UVa 11034 - Ferry Loading IV
+ -->

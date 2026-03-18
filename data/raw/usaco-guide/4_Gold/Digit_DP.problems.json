@@ -1,0 +1,85 @@
+{
+  "MODULE_ID": "digit-dp",
+  "focus": [
+    {
+      "uniqueId": "usaco-435",
+      "name": "Odometer",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=435",
+      "source": "Old Silver",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["DP"],
+      "solutionMetadata": {
+        "kind": "USACO",
+        "usacoId": "435"
+      }
+    }
+  ],
+  "Easier Problems": [
+    {
+      "uniqueId": "cf-100886G",
+      "name": "Maximum Product",
+      "url": "https://codeforces.com/gym/100886/problem/G",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["DP"],
+      "solutionMetadata": {
+        "kind": "internal",
+        "hasHints": true
+      }
+    },
+    {
+      "uniqueId": "spoj-DigitSum",
+      "name": "Digit Sum",
+      "url": "https://www.spoj.com/problems/PR003004/",
+      "source": "SPOJ",
+      "difficulty": "Easy",
+      "isStarred": true,
+      "tags": ["DP"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-628D",
+      "name": "Magic Numbers",
+      "url": "https://codeforces.com/contest/628/problem/D",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["DP"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    }
+  ],
+  "USACO": [
+    {
+      "uniqueId": "usaco-1307",
+      "name": "Piling Papers",
+      "url": "http://usaco.org/index.php?page=viewproblem2&cpid=1307",
+      "source": "Gold",
+      "difficulty": "Normal",
+      "isStarred": true,
+      "tags": ["DP"],
+      "solutionMetadata": {
+        "kind": "USACO",
+        "usacoId": "1307"
+      }
+    },
+    {
+      "uniqueId": "usaco-1115",
+      "name": "Count the Cows",
+      "url": "http://usaco.org/index.php?page=viewproblem2&cpid=1115",
+      "source": "Gold",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["DP"],
+      "solutionMetadata": {
+        "kind": "USACO",
+        "usacoId": "1115"
+      }
+    }
+  ]
+}

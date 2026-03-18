@@ -1,0 +1,214 @@
+{
+  "MODULE_ID": "tree-euler",
+  "sample": [
+    {
+      "uniqueId": "cses-1137",
+      "name": "Subtree Queries",
+      "url": "https://cses.fi/problemset/task/1137",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Euler Tour"],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "tree-euler"
+      }
+    }
+  ],
+  "lca": [
+    {
+      "uniqueId": "cses-1688",
+      "name": "Company Queries II",
+      "url": "https://cses.fi/problemset/task/1688",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["LCA"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    }
+  ],
+  "lca2": [
+    {
+      "uniqueId": "cses-1135",
+      "name": "Distance Queries",
+      "url": "https://cses.fi/problemset/task/1135",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["LCA"],
+      "solutionMetadata": {
+        "kind": "none"
+      }
+    }
+  ],
+  "rmqSample": [
+    {
+      "uniqueId": "ys-StaticRMQ",
+      "name": "Static RMQ",
+      "url": "https://judge.yosupo.jp/problem/staticrmq",
+      "source": "YS",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "tree-euler"
+      }
+    }
+  ],
+  "problems": [
+    {
+      "uniqueId": "cses-1139",
+      "name": "Distinct Colors",
+      "url": "https://cses.fi/problemset/task/1139",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Euler Tour", "PURS"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cses-1138",
+      "name": "Path Queries",
+      "url": "https://cses.fi/problemset/task/1138",
+      "source": "CSES",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Euler Tour", "PURS"],
+      "solutionMetadata": {
+        "kind": "internal",
+        "hasHints": true
+      }
+    },
+    {
+      "uniqueId": "usaco-921",
+      "name": "Cow Land",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=921",
+      "source": "Gold",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Euler Tour", "PURS", "HLD"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-970",
+      "name": "Milk Visits",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=970",
+      "source": "Gold",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Euler Tour", "LCA"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-696",
+      "name": "Promotion Counting",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=696",
+      "source": "Platinum",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Euler Tour", "PURS"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "ac-exactlyKSteps",
+      "name": "Exactly K Steps",
+      "url": "https://atcoder.jp/contests/abc267/tasks/abc267_f",
+      "source": "AC",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Euler Tour"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "AC"
+      }
+    },
+    {
+      "uniqueId": "cf-1051F",
+      "name": "The Shortest Statement",
+      "url": "https://codeforces.com/contest/1051/problem/F",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Euler Tour"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "ac-CountDescendants",
+      "name": "Count Descendants",
+      "url": "https://atcoder.jp/contests/abc202/tasks/abc202_e",
+      "source": "AC",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Euler Tour", "Binary Search"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "AC"
+      }
+    },
+    {
+      "uniqueId": "ac-distancequeries",
+      "name": "Distance Queries on a Tree",
+      "url": "https://atcoder.jp/contests/abc294/tasks/abc294_g",
+      "source": "AC",
+      "difficulty": "Normal",
+      "isStarred": true,
+      "tags": ["LCA", "PURS"],
+      "solutionMetadata": {
+        "kind": "internal",
+        "hasHints": true
+      }
+    },
+    {
+      "uniqueId": "ioi-09-regions",
+      "name": "2009 - Regions",
+      "url": "https://oj.uz/problem/view/IOI09_regions",
+      "source": "IOI",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Euler Tour", "Binary Search"],
+      "solutionMetadata": {
+        "kind": "internal",
+        "hasHints": true
+      }
+    },
+    {
+      "uniqueId": "usaco-973",
+      "name": "Bessie's Snow Cow",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=973",
+      "source": "Platinum",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Euler Tour", "PURS", "Lazy SegTree"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "dmopc-victortakesovercanada",
+      "name": "Victor Takes Over Canada",
+      "url": "https://dmoj.ca/problem/dmopc20c1p5",
+      "source": "DMOPC",
+      "difficulty": "Very Hard",
+      "isStarred": false,
+      "tags": ["Euler Tour", "PURS"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "DMOJ"
+      }
+    }
+  ]
+}

@@ -1,0 +1,437 @@
+---
+id: persistent
+title: 'Persistent Data Structures'
+author: Andi Qu, Benjamin Qi
+description: 'What if data structures could time travel?'
+prerequisites:
+  - sparse-segtree
+frequency: 1
+---
+
+## Overview
+A persistent data structure is a data structure that preserves the previous versions of itself when modified, allowing access to any historical version. In other words, once a change is made to the structure, both the original and modified versions remain accessible. This is particularly useful in scenarios where you need to keep track of the history of updates or backtrack to previous states of the data structure.
+
+## Persistent Array
+
+Persistent arrays are one of the simplest persistent data structures. A
+persistent array should be able to access and update its elements at given
+times.
+
+### Fat Nodes
+
+<LanguageSection>
+
+<CPPSection>
+
+In C++, one can implement this to run in $\mathcal O(\log N)$ time per query and
+$\mathcal O(1)$ time per update by using an array of `vector`s.
+
+```cpp
+vector<pair<int, int>> arr[100001];  // The persistent array
+
+int get_item(int index, int time) {
+	// Gets the array item at a given index and time
+	auto ub =
+	    upper_bound(arr[index].begin(), arr[index].end(), make_pair(time, INT_MAX));
+	return prev(ub)->second;
+}
+
+void update_item(int index, int value, int time) {
+	// Updates the array item at a given index and time
+	// Note that this only works if the time is later than all previous
+	// update times
+	assert(arr[index].back().first < time);
+	arr[index].push_back({time, value});
+}
+
+void init_arr(int n, int *init) {
+	// Initializes the persistent array, given an input array
+	for (int i = 0; i < n; i++) arr[i].push_back({0, init[i]});
+}
+```
+
+</CPPSection>
+
+</LanguageSection>
+
+This approach (i.e. storing multiple values at each index without erasing old
+values) is known as **fat nodes**.
+
+Although easy to implement, fat nodes are only **partially persistent**, meaning
+that only the latest version of the data structure can be modified.
+
+For most competitive programming problems involving persistent data structures,
+we use **path copying** instead.
+
+### Path Copying
+
+One can implement path copying to run in $\mathcal O(\log N)$ time per query and
+update by using a binary-tree-like structure where array elements are the
+leaves.
+
+This is very similar to a sparse segment tree. The key differences are that we
+have multiple roots and every time we "update" a node, we actually create a new
+node in its place (hence persistence).
+
+<LanguageSection>
+
+<CPPSection>
+
+```cpp
+struct Node {
+	int val;
+	Node *l, *r;
+
+	Node(ll x) : val(x), l(nullptr), r(nullptr) {}
+	Node(Node *ll, Node *rr) : val(0), l(ll), r(rr) {}
+};
+
+int n, a[100001];     // The initial array and its size
+Node *roots[100001];  // The persistent array's roots
+
+Node *build(int l = 0, int r = n - 1) {
+	if (l == r) return new Node(a[l]);
+	int mid = (l + r) / 2;
+	return new Node(build(l, mid), build(mid + 1, r));
+}
+
+Node *update(Node *node, int val, int pos, int l = 0, int r = n - 1) {
+	if (l == r) return new Node(val);
+	int mid = (l + r) / 2;
+	if (pos > mid) return new Node(node->l, update(node->r, val, pos, mid + 1, r));
+	else return new Node(update(node->l, val, pos, l, mid), node->r);
+}
+
+int query(Node *node, int pos, int l = 0, int r = n - 1) {
+	if (l == r) return node->val;
+	int mid = (l + r) / 2;
+	if (pos > mid) return query(node->r, pos, mid + 1, r);
+	return query(node->l, pos, l, mid);
+}
+
+int get_item(int index, int time) {
+	// Gets the array item at a given index and time
+	return query(roots[time], index);
+}
+
+void update_item(int index, int value, int prev_time, int curr_time) {
+	// Updates the array item at a given index and time
+	roots[curr_time] = update(roots[prev_time], index, value);
+}
+
+void init_arr(int nn, int *init) {
+	// Initializes the persistent array, given an input array
+	n = nn;
+	for (int i = 0; i < n; i++) a[i] = init[i];
+	roots[0] = build();
+}
+```
+
+</CPPSection>
+
+</LanguageSection>
+
+Path copying is **fully persistent**.
+
+## Persistent Segment Tree
+
+Since persistent arrays with path copying are so similar to sparse segment
+trees, it's relatively straightforward to convert one into a persistent segment
+tree - just add range queries!
+
+<FocusProblem problem="persistentSample" />
+
+### Resources
+
+<Resources>
+	<Resource
+		source="oml1111"
+		url="https://drive.google.com/file/d/0BwGLW04WRv0ITEZjRWlMSFc2bk0/view?usp=sharing&resourcekey=0-1Zvsu-oMrdNsCuCIU3xGNA"
+		title="PSeg Slides"
+		starred
+	/>
+	<Resource
+		source="Anudeep2011"
+		url="https://blog.anudeep2011.com/persistent-segment-trees-explained-with-spoj-problems/"
+		title="PSegs w/ SPOJ"
+	>
+		not great formatting
+	</Resource>
+	<Resource
+ 		source="cp-algo"
+ 		url="https://cp-algorithms.com/data_structures/segment_tree.html#preserving-the-history-of-its-values-persistent-segment-tree"
+ 		title="Persistent Segment Tree"
+ 	/>
+ 	<Resource
+ 		source="SecondThread"
+ 		url="https://youtu.be/m3uEG4NgJx8"
+ 		title="Persistent Data Structures"
+ 	>
+		good video on persistent data structures
+	</Resource>
+</Resources>
+
+<!-- - [Lazy Propagation](http://codeforces.com/blog/entry/47108?#comment-315047) -->
+
+<IncompleteSection />
+
+### Solution
+
+Since this problem involves range queries, we'll use some type of segment tree
+to solve it. (We can also use a Fenwick tree, but that's much harder to make
+persistent.)
+
+When dealing with problems involving multiple dimensions, it's often helpful to
+view one of those dimensions as time. In this problem, we'll view the index of
+each array as its time dimension.
+
+Using a persistent segment tree, we can then turn the problem into the
+following:
+
+- Type 1 queries involve a point update on the segment tree at some time.
+- Type 2 queries involve a range query on the segment tree at some time.
+- Type 3 queries involve copying the root of the segment tree at some time and
+  appending it to the array of segment tree roots.
+
+**Time Complexity:** $\mathcal{O}(N + Q\log{N})$
+
+#### Pointer Implementation
+
+<LanguageSection>
+<CPPSection>
+
+<Warning>
+
+This implementation is not garbage collected, so the tree nodes aren't deleted even if the instance of the segment tree is taken out of scope.
+
+</Warning>
+
+```cpp
+#include <bits/stdc++.h>
+typedef long long ll;
+using namespace std;
+
+struct Node {
+	ll val;
+	Node *l, *r;
+
+	Node(ll x) : val(x), l(nullptr), r(nullptr) {}
+	Node(Node *ll, Node *rr) {
+		l = ll, r = rr;
+		val = 0;
+		if (l) val += l->val;
+		if (r) val += r->val;
+	}
+	Node(Node *cp) : val(cp->val), l(cp->l), r(cp->r) {}
+};
+
+int n, cnt = 1;
+ll a[200001];
+Node *roots[200001];
+
+Node *build(int l = 1, int r = n) {
+	if (l == r) return new Node(a[l]);
+	int mid = (l + r) / 2;
+	return new Node(build(l, mid), build(mid + 1, r));
+}
+
+Node *update(Node *node, int val, int pos, int l = 1, int r = n) {
+	if (l == r) return new Node(val);
+	int mid = (l + r) / 2;
+	if (pos > mid) return new Node(node->l, update(node->r, val, pos, mid + 1, r));
+	else return new Node(update(node->l, val, pos, l, mid), node->r);
+}
+
+ll query(Node *node, int a, int b, int l = 1, int r = n) {
+	if (l > b || r < a) return 0;
+	if (l >= a && r <= b) return node->val;
+	int mid = (l + r) / 2;
+	return query(node->l, a, b, l, mid) + query(node->r, a, b, mid + 1, r);
+}
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	int q;
+	cin >> n >> q;
+	for (int i = 1; i <= n; i++) cin >> a[i];
+	roots[cnt++] = build();
+
+	while (q--) {
+		int t;
+		cin >> t;
+		if (t == 1) {
+			int k, i, x;
+			cin >> k >> i >> x;
+			roots[k] = update(roots[k], x, i);
+		} else if (t == 2) {
+			int k, l, r;
+			cin >> k >> l >> r;
+			cout << query(roots[k], l, r) << '\n';
+		} else {
+			int k;
+			cin >> k;
+			roots[cnt++] = new Node(roots[k]);
+		}
+	}
+	return 0;
+}
+```
+
+</CPPSection>
+</LanguageSection>
+
+#### Index Implementation
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+
+class PersistentSegtree {
+  private:
+	struct Node {
+		ll sum = 0;
+		int l = 0, r = 0;
+	};
+
+	const int n;
+	vector<Node> tree;
+	int timer = 1;
+
+	Node join(int l, int r) { return Node{tree[l].sum + tree[r].sum, l, r}; }
+
+	int build(int tl, int tr, const vector<int> &arr) {
+		if (tl == tr) {
+			tree[timer] = {arr[tl], 0, 0};
+			return timer++;
+		}
+
+		int mid = (tl + tr) / 2;
+		tree[timer] = join(build(tl, mid, arr), build(mid + 1, tr, arr));
+
+		return timer++;
+	}
+
+	int set(int v, int pos, int val, int tl, int tr) {
+		if (tl == tr) {
+			tree[timer] = {val, 0, 0};
+			return timer++;
+		}
+
+		int mid = (tl + tr) / 2;
+		if (pos <= mid) {
+			tree[timer] = join(set(tree[v].l, pos, val, tl, mid), tree[v].r);
+		} else {
+			tree[timer] = join(tree[v].l, set(tree[v].r, pos, val, mid + 1, tr));
+		}
+
+		return timer++;
+	}
+
+	ll range_sum(int v, int ql, int qr, int tl, int tr) {
+		if (qr < tl || tr < ql) { return 0ll; }
+		if (ql <= tl && tr <= qr) { return tree[v].sum; }
+
+		int mid = (tl + tr) / 2;
+		return range_sum(tree[v].l, ql, qr, tl, mid) +
+		       range_sum(tree[v].r, ql, qr, mid + 1, tr);
+	}
+
+  public:
+	PersistentSegtree(int n, int MX_NODES) : n(n), tree(MX_NODES) {}
+
+	int build(const vector<int> &arr) { return build(0, n - 1, arr); }
+
+	int set(int root, int pos, int val) { return set(root, pos, val, 0, n - 1); }
+
+	ll range_sum(int root, int l, int r) { return range_sum(root, l, r, 0, n - 1); }
+
+	int add_copy(int root) {
+		tree[timer] = tree[root];
+		return timer++;
+	}
+};
+
+int main() {
+	int n, q;
+	cin >> n >> q;
+	vector<int> a(n);
+	for (int &i : a) { cin >> i; }
+
+	const int MX_NODES = 2 * n + q * (2 + __lg(n));
+	PersistentSegtree st(n, MX_NODES);
+
+	vector<int> roots = {st.build(a)};
+
+	for (int t = 0; t < q; t++) {
+		int type, k;
+		cin >> type >> k;
+		k--;
+
+		if (type == 1) {
+			int pos, val;
+			cin >> pos >> val;
+			pos--;
+			roots[k] = st.set(roots[k], pos, val);
+		} else if (type == 2) {
+			int a, b;
+			cin >> a >> b;
+			a--, b--;
+			cout << st.range_sum(roots[k], a, b) << '\n';
+		} else if (type == 3) {
+			roots.push_back(st.add_copy(roots[k]));
+		}
+	}
+}
+```
+
+</CPPSection>
+</LanguageSection>
+
+Generally speaking, an index based implementation is faster than a pointer implementation.
+
+### Application 1 - Static 2D Range Sums on Large Grids
+
+Persistent segment trees can be used for online 2D static range sum queries in
+$\mathcal O(\log N)$ time (think of it like prefix sums).
+
+Note that 2D Fenwick trees with coordinate compression often also work for this
+(and are easier to implement), but it's still good to know this application.
+
+### Application 2 - Largest Interval Completely Inside a Range
+
+Consider the following problem:
+
+> Given $N$ intervals on the number line, answer $Q$ queries of the form "what
+> is the largest interval completely contained inside the range $[x, y]$?"
+>
+> $N, Q \leq 10^5$.
+
+Since each interval has two dimensions (i.e. left and right endpoints $l_i$ and
+$r_i$), we can view it as a _point_ on the number line at $l_i$ with "value"
+$r_i - l_i$ that was inserted at time $r_i$.
+
+Now, each query becomes "what is the most valuable point in the range $[x, y]$
+that was inserted at or before time $y$?" This is much easier to handle, so we
+can solve this problem in $\mathcal O(Q \log N)$ time.
+
+### Problems
+
+<Problems problems="segtree" />
+
+## Persistent Heap
+
+<Resources>
+	<Resource
+		source="Benq"
+		title="Leftist Heap"
+		url="https://github.com/bqi343/USACO/blob/master/Implementations/content/data-structures/LeftistHeap.h"
+	/>
+</Resources>
+
+<Problems problems="heap" />

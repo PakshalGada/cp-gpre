@@ -1,0 +1,183 @@
+{
+  "MODULE_ID": "persistent",
+  "persistentSample": [
+    {
+      "uniqueId": "cses-1737",
+      "name": "Range Queries and Copies",
+      "url": "https://cses.fi/problemset/task/1737",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "persistent"
+      }
+    }
+  ],
+  "segtree": [
+    {
+      "uniqueId": "cf-522D",
+      "name": "Closest Equals",
+      "url": "https://codeforces.com/problemset/problem/522/D",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Persistent Segtree"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "spoj-cot",
+      "name": "Count on a tree",
+      "url": "https://www.spoj.com/problems/COT/",
+      "source": "SPOJ",
+      "difficulty": "Easy",
+      "isStarred": true,
+      "tags": ["Persistent Segtree"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "spoj-got",
+      "name": "Gao on a tree",
+      "url": "https://www.spoj.com/problems/GOT/",
+      "source": "SPOJ",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Persistent Segtree"],
+      "solutionMetadata": {
+        "kind": "none"
+      }
+    },
+    {
+      "uniqueId": "spoj-pt07j",
+      "name": "Query on a tree III",
+      "url": "https://www.spoj.com/problems/PT07J/",
+      "source": "SPOJ",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Persistent Segtree"],
+      "solutionMetadata": {
+        "kind": "none"
+      }
+    },
+    {
+      "uniqueId": "spoj-mkthnum",
+      "name": "K-th Number",
+      "url": "https://www.spoj.com/problems/MKTHNUM/",
+      "source": "SPOJ",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Persistent Segtree"],
+      "solutionMetadata": {
+        "kind": "none"
+      }
+    },
+    {
+      "uniqueId": "coci-21-index",
+      "name": "2021 - Index",
+      "url": "https://qoj.ac/problem/13424",
+      "source": "COCI",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Persistent Segtree"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "noi-10-superpiano",
+      "name": "2010 - Super Piano",
+      "url": "https://dmoj.ca/problem/noi10p2",
+      "source": "NOI",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Persistent Segtree"],
+      "solutionMetadata": {
+        "kind": "none"
+      }
+    },
+    {
+      "uniqueId": "ceoi-20-potion",
+      "name": "2020 - The Potion of Great Power",
+      "url": "https://codeforces.com/contest/1403/problem/A",
+      "source": "CEOI",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Persistent Segtree", "Sqrt"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "apio-17-rainbow",
+      "name": "2017 - Land of the Rainbow Gold",
+      "url": "https://dmoj.ca/problem/apio17p1",
+      "source": "APIO",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Persistent Segtree", "Euler's Formula", "2DRQ"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "coci-20-specijacija",
+      "name": "2020 - Specijacija",
+      "url": "https://qoj.ac/problem/13409",
+      "source": "COCI",
+      "difficulty": "Very Hard",
+      "isStarred": false,
+      "tags": ["Persistent Segtree"],
+      "solutionMetadata": {
+        "kind": "link",
+        "url": "https://hsin.hr/coci/archive/2020_2021/contest3_solutions.zip"
+      }
+    },
+    {
+      "uniqueId": "ioi-15-teams",
+      "name": "2015 - Teams",
+      "url": "https://oj.uz/problem/view/IOI15_teams",
+      "source": "IOI",
+      "difficulty": "Very Hard",
+      "isStarred": true,
+      "tags": ["Persistent Segtree", "2DRQ"],
+      "solutionMetadata": {
+        "kind": "IOI",
+        "year": 2015
+      }
+    }
+  ],
+  "heap": [
+    {
+      "uniqueId": "wac-TimeTravellingSquirrels",
+      "name": "Time Travelling Squirrels",
+      "url": "https://dmoj.ca/problem/wac4p5",
+      "source": "Wesley's Anger Contest",
+      "difficulty": "Very Hard",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "DMOJ"
+      }
+    },
+    {
+      "uniqueId": "ys-KthShortestWalk",
+      "name": "K-th Shortest Walk",
+      "url": "https://judge.yosupo.jp/problem/k_shortest_walk",
+      "source": "YS",
+      "difficulty": "Very Hard",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "none"
+      }
+    }
+  ]
+}

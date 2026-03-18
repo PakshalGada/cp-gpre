@@ -1,0 +1,442 @@
+---
+id: eulerian-tours
+title: 'Eulerian Tours'
+author: Benjamin Qi, Mihnea Brebenel
+prerequisites:
+  - graph-traversal
+description: Visiting all edges of a graph exactly once.
+frequency: 0
+---
+
+<!-- Mentioned in USACO Training ... -->
+
+## Resources
+
+<Resources>
+	<Resource source="CPH" title="19.1 - Eulerian Tours" />
+	<Resource source="CP2" title="4.7.3 - Eulerian Graph" />
+</Resources>
+
+<FocusProblem problem = "sam1"/>
+
+## Explanation
+
+First, let's define what an **Eulerian path** is.
+
+> An Eulerian path is a path that goes through every edge once.
+
+Similarly, an **Eulerian cycle** is an Eulerian path that starts and ends
+with the same node.
+
+An important condition is that a graph can have an Eulerian cycle (not path!) if and only if every node has an even degree.
+
+Now, to find the Eulerian cycle we run a modified DFS.
+The DFS goes through only unvisited edges and the same edge can be processed multiple times throughout the DFS, so we remove it from the graph at the first visit.
+
+The algorithm described is [Hierholzer's Algorithm](https://en.wikipedia.org/wiki/Eulerian_path).
+
+## Implementation
+
+**Time Complexity:** $\mathcal{O}(E)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int n, m;
+vector<vector<pair<int, int>>> g;
+vector<int> path;
+vector<bool> seen;
+
+void dfs(int node) {
+	while (!g[node].empty()) {
+		auto [son, idx] = g[node].back();
+		g[node].pop_back();
+		if (seen[idx]) { continue; }
+		seen[idx] = true;
+		dfs(son);
+	}
+	path.push_back(node);
+}
+
+int main() {
+	cin >> n >> m;
+
+	vector<int> degree(n, 0);
+	g.resize(n);
+	degree.resize(n);
+	seen.resize(m);
+
+	for (int i = 0; i < m; i++) {
+		int x, y;
+		cin >> x >> y;
+		x--, y--;
+		g[x].emplace_back({y, i});
+		g[y].emplace_back({x, i});
+		degree[x]++;
+		degree[y]++;
+	}
+
+	for (int node = 0; node < n; node++) {
+		if (degree[node] % 2) {
+			cout << "IMPOSSIBLE" << endl;
+			return 0;
+		}
+	}
+
+	dfs(0);
+
+	if (path.size() != m + 1) {
+		cout << "IMPOSSIBLE";
+	} else {
+		for (int node : path) { cout << node + 1 << ' '; }
+	}
+	cout << endl;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+<Warning>
+
+Due to Java's constant factor, the below code may TLE on a couple of test cases.
+
+</Warning>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class EulerianCycle {
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int n = Integer.parseInt(st.nextToken());
+		int m = Integer.parseInt(st.nextToken());
+
+		List<int[]>[] g = new ArrayList[n];
+		for (int i = 0; i < n; i++) { g[i] = new ArrayList<>(); }
+		boolean[] seen = new boolean[m];
+		int[] degree = new int[n];
+		for (int i = 0; i < m; i++) {
+			st = new StringTokenizer(br.readLine());
+			int x = Integer.parseInt(st.nextToken()) - 1;
+			int y = Integer.parseInt(st.nextToken()) - 1;
+			g[x].add(new int[] {y, i});
+			g[y].add(new int[] {x, i});
+			degree[x]++;
+			degree[y]++;
+		}
+
+		// Check that all degrees are even
+		for (int d : degree) {
+			if ((d & 1) == 1) {
+				System.out.println("IMPOSSIBLE");
+				return;
+			}
+		}
+
+		ArrayDeque<Integer> stack = new ArrayDeque<>();
+		ArrayList<Integer> path = new ArrayList<>();
+		stack.push(0);
+		while (!stack.isEmpty()) {
+			int u = stack.peek();
+			while (!g[u].isEmpty() && seen[g[u].get(g[u].size() - 1)[1]]) {
+				g[u].remove(g[u].size() - 1);  // skip used edges
+			}
+			if (g[u].isEmpty()) {
+				path.add(u);
+				stack.pop();
+			} else {
+				int[] edge = g[u].remove(g[u].size() - 1);
+				int v = edge[0], idx = edge[1];
+				if (!seen[idx]) {
+					seen[idx] = true;
+					stack.push(v);
+				}
+			}
+		}
+
+		PrintWriter pw = new PrintWriter(System.out);
+		if (path.size() != m + 1) {
+			pw.println("IMPOSSIBLE");
+		} else {
+			for (int i = path.size() - 1; i >= 0; i--) {
+				pw.print((path.get(i) + 1) + " ");
+			}
+			pw.println();
+		}
+		pw.close();
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+n, m = map(int, input().split())
+
+g = [[] for _ in range(n)]
+seen = [0] * m
+degree = [0] * n
+for i in range(m):
+	x, y = [int(j) - 1 for j in input().split()]
+	g[x].append((y, i))
+	g[y].append((x, i))
+	degree[x] += 1
+	degree[y] += 1
+
+for node in range(n):
+	if degree[node] % 2 == 1:
+		print("IMPOSSIBLE")
+		exit()
+
+path = []
+stack = [0]
+while stack:
+	u = stack[-1]
+	if g[u]:
+		son, idx = g[u].pop()
+		if not seen[idx]:
+			seen[idx] = 1
+			stack.append(son)
+	else:
+		path.append(stack.pop())
+
+if len(path) != m + 1:
+	print("IMPOSSIBLE")
+else:
+	print(*[i + 1 for i in path])
+```
+
+</PySection>
+</LanguageSection>
+
+<FocusProblem problem = "sam2"/>
+
+## Explanation
+
+The condition of existence for an eulerian path in a directed graph is: At most one node has $out_i - in_i=1$ and at most one node has $in_i - out_i=1$.
+This property is because an Eulerian path or cycle leaves a node the same number of times it enters the node. In a directed
+graph the exception are the start node and the end node.
+
+## Implementation
+
+**Time Complexity:** $\mathcal{O}(E)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int n, m;
+vector<vector<int>> g;
+vector<int> in, out, path;
+
+void dfs(int node) {
+	while (!g[node].empty()) {
+		int son = g[node].back();
+		g[node].pop_back();
+		dfs(son);
+	}
+	path.push_back(node);
+}
+
+int main() {
+	cin >> n >> m;
+
+	g.resize(n + 1);
+	in.resize(n + 1);
+	out.resize(n + 1);
+
+	for (int i = 0; i < m; i++) {
+		int x, y;
+		cin >> x >> y;
+		g[x].push_back(y);
+		out[x]++;
+		in[y]++;
+	}
+
+	bool flag = true;
+	for (int node = 2; node < n && flag; node++) {
+		if (in[node] != out[node]) { flag = false; }
+	}
+	if (out[1] != in[1] + 1 || out[n] != in[n] - 1 || !flag) {
+		cout << "IMPOSSIBLE";
+		return 0;
+	}
+
+	dfs(1);
+
+	reverse(path.begin(), path.end());
+	if (path.size() != m + 1 || path.back() != n) {
+		cout << "IMPOSSIBLE";
+	} else {
+		for (auto node : path) { cout << node << ' '; }
+	}
+}
+```
+
+</CPPSection>
+<PySection>
+
+```py
+path = []
+
+
+def dfs(start: int):
+	stack = [start]
+	while stack:
+		node = stack[-1]
+		if g[node]:
+			son = g[node].pop()
+			stack.append(son)
+		else:
+			path.append(stack.pop())
+
+
+n, m = map(int, input().split())
+
+g = [[] for _ in range(n + 1)]
+in_degree = [0] * (n + 1)
+out_degree = [0] * (n + 1)
+
+for _ in range(m):
+	x, y = map(int, input().split())
+	g[x].append(y)
+	out_degree[x] += 1
+	in_degree[y] += 1
+
+flag = True
+for node in range(2, n):
+	if in_degree[node] != out_degree[node]:
+		flag = False
+		break
+
+if out_degree[1] != in_degree[1] + 1 or out_degree[n] != in_degree[n] - 1 or not flag:
+	print("IMPOSSIBLE")
+	exit()
+
+dfs(1)
+path.reverse()
+
+if len(path) != m + 1 or path[-1] != n:
+	print("IMPOSSIBLE")
+else:
+	print(*path)
+```
+
+</PySection>
+</LanguageSection>
+
+## De Bruijn Sequences
+
+<FocusProblem problem="de-bruijn-sequence" />
+
+A [De Bruijn sequence](https://en.wikipedia.org/wiki/De_Bruijn_sequence) is a string of minimum length that contains every string of length $n$ exactly once as a substring, for a fixed alphabet with $k$ letters.
+In our case $k=2$ because we only have $0$ and $1$.
+
+Let's take a look at some particular cases:
+1. $n=2$ $\rightarrow$ `00110`
+2. $n=3$ $\rightarrow$ `0001011100`
+
+We can visualize the transitions - adding $0$ or $1$ - using an oriented graph whose nodes contain a string of length $n-1$.
+
+<center>
+![de-bruijn](/content/6_Advanced/de-bruijn.png)
+<i> How the graph looks for $n=3$ </i>
+</center>
+
+An Eulerian path in the above graph represents a valid solution. The starting node has $n-1$ characters and there are $k^n$ edges that each add one more character, so the length of a De-Bruijn string is $k^n+n-1$.
+
+## Implementation
+
+**Time Complexity**: $\mathcal{O}(2^N)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	int n;
+	cin >> n;
+	if (n == 1) {
+		cout << "10" << endl;
+		return 0;
+	}
+
+	vector<vector<int>> adj(1 << (n - 1));
+	for (int node = 0; node < (1 << (n - 1)); node++) {
+		int son = (node << 1) % (1 << (n - 1));
+		adj[node].push_back(son);
+		adj[node].push_back(son | 1);
+	}
+
+	stack<int> todo;
+	todo.push(0);
+	vector<int> path;
+	while (!todo.empty()) {
+		int node = todo.top();
+		if (!adj[node].empty()) {
+			todo.push(adj[node].back());
+			adj[node].pop_back();
+		} else {
+			path.push_back(node & 1);
+			todo.pop();
+		}
+	}
+	for (int i = 0; i < n - 2; i++) { path.push_back(0); }
+
+	for (int digit : path) { cout << digit; }
+	cout << endl;
+}
+```
+
+</CPPSection>
+<PySection>
+
+```py
+n = int(input())
+
+if n == 1:
+	print("10")
+	exit()
+
+adj = [[] for _ in range(1 << (n - 1))]
+
+for node in range(1 << (n - 1)):
+	son = (node << 1) % (1 << (n - 1))
+	adj[node].append(son)
+	adj[node].append(son | 1)
+
+todo = [0]
+path = []
+while todo:
+	node = todo[-1]
+	if adj[node]:
+		todo.append(adj[node][-1])
+		adj[node].pop()
+	else:
+		path.append(node & 1)
+		todo.pop()
+
+path = path + [0] * (n - 2)
+print("".join(map(str, path)))
+```
+
+</PySection>
+</LanguageSection>
+
+## Problems
+
+<Problems problems="general" />

@@ -1,0 +1,611 @@
+---
+id: sp-neg
+title: 'Shortest Paths with Negative Edge Weights'
+author: Benjamin Qi, Andi Qu, Dong Liu, F. Bruno D. R.
+prerequisites:
+  - shortest-paths
+description: 'Returning to Bellman-Ford and Floyd-Warshall.'
+frequency: 0
+---
+
+## Bellman-Ford
+
+<Resources>
+	<Resource
+		source="cp-algo"
+		title="Bellman-Ford"
+		url="graph/bellman_ford.html"
+		starred
+	 />
+	<Resource
+		source="cp-algo"
+		title="Finding Negative Cycle"
+		url="graph/finding-negative-cycle-in-graph.html"
+		starred
+	>
+		with Bellman-Ford
+	</Resource>
+	<Resource
+		source="CP2"
+		title="4.4.4 - SSSP with Negative Weight Cycle"
+	 />
+</Resources>
+
+<!-- 	<Resource
+		source="TC"
+		title="Intro to Graphs Section 3"
+		url="introduction-to-graphs-and-their-data-structures-section-3/"
+	 /> -->
+
+### Shortest Paths
+
+<FocusProblem problem="bellSam" />
+
+#### Solution
+
+Although this is a Single Source Shortest Paths problem, we can not use the known
+Dijkstra's algorithm, because we have negative weights on edges. An alternative is
+to use the Bellman-Ford algorithm. The algorithm first considers all the paths
+which use 1 edge. Then it calculates all the paths with at most 2 edges, and so
+on. If the graph has no negative cycle, then the shortest path between the source
+and any other vertice should have at most $V-1$ edges, where $V$ stands for the number
+of vertices in the graph. Because of that, the algorithm iterates through at most
+all edges $V-1$ times. Hence, it runs in $O(E \cdot V)$.
+
+If the graph has a negative cycle, we can detect a vertice in this cycle by running
+another relaxation. In this problem, belonging to a negative cycle means the
+distance to that point is negative infinity. Notice that all points that are reachable
+from those will also have minus infinity cost. In the solution below, we detect
+all the negative cycles and save the point from which we detected the cycle. We then
+do a [BFS](/silver/graph-traversal) with those points as sources.
+
+#### Implementation
+
+**Time Complexity:** $\mathcal{O}(N \cdot M)$
+
+<LanguageSection>
+
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	int n, m, q, s;
+	cin >> n >> m >> q >> s;
+
+	while (!(n == 0 && m == 0 && q == 0 && s == 0)) {
+		vector<vector<pair<int, int>>> adj(n);
+		for (int i = 0; i < m; i++) {
+			int u, v, w;
+			cin >> u >> v >> w;
+			adj[u].emplace_back(v, w);
+		}
+
+		vector<int> dist(n, INT32_MAX);
+		dist[s] = 0;
+
+		for (int i = 0; i < n - 1; i++) {
+			for (int u = 0; u < n; u++) {
+				if (dist[u] == INT32_MAX) { continue; }
+				for (auto &[v, w] : adj[u]) { dist[v] = min(dist[v], dist[u] + w); }
+			}
+		}
+
+		queue<int> bfs_queue;
+
+		// one more iteration to detect negative cycles on graph
+		for (int u = 0; u < n; u++) {
+			if (dist[u] == INT32_MAX) { continue; }
+			for (auto &[v, w] : adj[u]) {
+				// the relaxed vertices belong to a negative cycle
+				if (dist[u] + w < dist[v]) { bfs_queue.push(v); }
+			}
+		}
+
+		vector<bool> is_negative_inf(n, false);
+
+		while (!bfs_queue.empty()) {
+			int u = bfs_queue.front();
+			bfs_queue.pop();
+			is_negative_inf[u] = true;
+			for (auto &[v, w] : adj[u]) {
+				if (is_negative_inf[v]) { continue; }
+				bfs_queue.push(v);
+			}
+		}
+
+		for (int i = 0; i < q; i++) {
+			int target;
+			cin >> target;
+			if (is_negative_inf[target]) {
+				cout << "-Infinity" << '\n';
+			} else if (dist[target] == INT32_MAX) {
+				cout << "Impossible" << '\n';
+			} else {
+				cout << dist[target] << '\n';
+			}
+		}
+
+		cin >> n >> m >> q >> s;
+	}
+}
+```
+
+</CPPSection>
+<PySection>
+
+```py
+import queue
+
+n, m, q, s = map(int, input().split())
+while True:
+	if n == 0 and m == 0 and q == 0 and s == 0:
+		break
+
+	adj = [[] for _ in range(n)]
+	for _ in range(m):
+		u, v, w = map(int, input().split())
+		adj[u].append((v, w))
+
+	dist = [float("inf")] * n
+	dist[s] = 0
+
+	for i in range(n - 1):
+		for u in range(n):
+			if dist[u] == float("inf"):
+				continue
+			for v, w in adj[u]:
+				dist[v] = min(dist[v], dist[u] + w)
+
+	bfs_queue = queue.Queue()
+
+	# one more iteration to detect negative cycles on graph
+	for u in range(n):
+		if dist[u] == float("inf"):
+			continue
+		for v, w in adj[u]:
+			# the relaxed vertices belong to a negative cycle
+			if dist[u] + w < dist[v]:
+				bfs_queue.put(v)
+
+	is_negative_inf = [False] * n
+	while not bfs_queue.empty():
+		u = bfs_queue.get()
+		is_negative_inf[u] = True
+		for v, w in adj[u]:
+			if is_negative_inf[v]:
+				continue
+			bfs_queue.put(v)
+
+	for _ in range(q):
+		target = int(input())
+		if is_negative_inf[target]:
+			print("-Infinity")
+		elif dist[target] == float("inf"):
+			print("Impossible")
+		else:
+			print(dist[target])
+
+	n, m, q, s = map(int, input().split())
+```
+
+</PySection>
+</LanguageSection>
+
+### Finding Negative Cycles
+
+<FocusProblem problem="bellSam2" />
+
+#### Solution
+
+As mentioned in
+[cp-algorithms](https://cp-algorithms.com/graph/finding-negative-cycle-in-graph.html),
+we relax the edges N times. If we perform an update on the $N$th iteration,
+there is an negative cycle.
+
+<LanguageSection>
+
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+struct Edge {
+	int from, to;
+	ll weight;
+};
+
+const int MAXN = 2505;
+
+int n, m, parent[MAXN];
+ll dist[MAXN];
+vector<Edge> graph;
+
+void bellman_ford(int source) {
+	fill(parent + 1, parent + n + 1, 0);
+	fill(dist + 1, dist + n + 1, 1e18);
+	dist[source] = 0;
+	int last_node_updated;
+	for (int i = 1; i <= n; i++) {
+		last_node_updated = -1;
+		for (Edge &e : graph) {
+			if (dist[e.from] + e.weight < dist[e.to]) {
+				dist[e.to] = dist[e.from] + e.weight;
+				parent[e.to] = e.from;
+				last_node_updated = e.to;
+			}
+		}
+	}
+	if (last_node_updated == -1) {
+		cout << "NO" << '\n';
+	} else {
+		cout << "YES" << '\n';
+		vector<int> cycle;
+		for (int i = 0; i < n - 1; i++) {
+			last_node_updated = parent[last_node_updated];
+		}
+		for (int x = last_node_updated;; x = parent[x]) {
+			cycle.push_back(x);
+			if (x == last_node_updated && cycle.size() > 1) break;
+		}
+		reverse(cycle.begin(), cycle.end());
+		for (int x : cycle) cout << x << ' ';
+		cout << '\n';
+	}
+}
+
+int main() {
+	cin.tie(0)->sync_with_stdio(0);
+
+	cin >> n >> m;
+	while (m--) {
+		int a, b;
+		ll c;
+		cin >> a >> b >> c;
+		graph.push_back({a, b, c});
+	}
+	bellman_ford(1);
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class CyclesFinding {
+	static final int MAX_N = 2500;
+	static int[] parent = new int[MAX_N + 1];
+	static long[] dist = new long[MAX_N + 1];
+	static List<Edge> graph = new ArrayList<>();
+
+	// CodeSnip{Edge}
+	static class Edge {
+		int from;
+		int to;
+		long weight;
+
+		public Edge(int from, int to, long weight) {
+			this.from = from;
+			this.to = to;
+			this.weight = weight;
+		}
+	}
+	// EndCodeSnip
+
+	public static void main(String[] args) {
+		Kattio io = new Kattio();
+		int n = io.nextInt();
+		int m = io.nextInt();
+		for (int i = 1; i <= m; i++) {
+			int a = io.nextInt();
+			int b = io.nextInt();
+			long c = (long)io.nextInt();
+			graph.add(new Edge(a, b, c));
+		}
+
+		List<Integer> cycle = bellmanFord(1, n);
+		if (cycle.size() == 0) {
+			io.println("NO");
+		} else {
+			io.println("YES");
+			for (int x : cycle) { io.print(x + " "); }
+		}
+
+		io.close();
+	}
+
+	private static List<Integer> bellmanFord(int source, int n) {
+		List<Integer> cycle = new ArrayList<>();
+		for (int i = 1; i <= n; i++) {
+			parent[i] = 0;
+			dist[i] = Long.MAX_VALUE / 2;
+		}
+
+		dist[source] = 0;
+		int lastNodeUpdated = -1;
+		for (int i = 1; i <= n; i++) {
+			lastNodeUpdated = -1;
+			for (Edge e : graph) {
+				if (dist[e.from] + e.weight < dist[e.to]) {
+					dist[e.to] = dist[e.from] + e.weight;
+					parent[e.to] = e.from;
+					lastNodeUpdated = e.to;
+				}
+			}
+		}
+
+		if (lastNodeUpdated == -1) {
+			return cycle;
+		} else {
+			for (int i = 0; i < n - 1; i++) {
+				lastNodeUpdated = parent[lastNodeUpdated];
+			}
+			do {
+				cycle.add(lastNodeUpdated);
+				lastNodeUpdated = parent[lastNodeUpdated];
+			} while (lastNodeUpdated != cycle.get(0));
+			cycle.add(lastNodeUpdated);
+			Collections.reverse(cycle);
+			return cycle;
+		}
+	}
+
+	// CodeSnip{Kattio}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+INF = 10**18  # float('inf') will result in WA for some test cases
+
+
+def bellman_ford(source: int):
+	dist[source] = 0
+	last_node_update = 0
+	for i in range(1, n + 1):
+		last_node_update = -1
+		for (u, v, w) in graph:
+			if dist[u] + w < dist[v]:
+				dist[v] = dist[u] + w
+				parent[v] = u
+				last_node_update = v
+
+	if last_node_update == -1:
+		print("NO")
+		exit()
+	else:
+		print("YES")
+		cycle = []
+		for i in range(1, n - 1):
+			last_node_update = parent[last_node_update]
+
+		x = last_node_update
+		while True:
+			cycle.append(x)
+			if x == last_node_update and len(cycle) > 1:
+				break
+			x = parent[x]
+
+		cycle.reverse()
+		print(*cycle)
+
+
+n, m = map(int, input().split())
+
+graph = []
+parent = [0] * (n + 1)
+dist = [INF] * (n + 1)
+for _ in range(m):
+	u, v, w = map(int, input().split())
+	graph.append((u, v, w))
+
+bellman_ford(1)
+```
+
+</PySection>
+</LanguageSection>
+
+### Simple Linear Programming
+
+You can also use shortest path algorithms to solve the following problem (a very
+simple [linear program](https://en.wikipedia.org/wiki/Linear_programming)).
+
+> Given variables $x_1,x_2,\ldots,x_N$ with constraints in the form
+> $x_i-x_j\ge c$, compute a feasible solution.
+
+#### Resources
+
+<Resources>
+	<Resource
+		source="MIT"
+		title="Slides from Intro to Algorithms"
+		url="https://www.cs.rit.edu/~spr/COURSES/ALG/MIT/lec18.pdf"
+	>
+		Linear Programming Trick
+	</Resource>
+</Resources>
+
+#### Problems
+
+Timeline (USACO Camp):
+
+- equivalent to
+  [Timeline (Gold)](http://www.usaco.org/index.php?page=viewproblem2&cpid=1017)
+  except $N,C\le 5000$ and negative values of $x$ are possible.
+
+<Problems problems="linear" />
+
+## Floyd-Warshall
+
+<FocusProblem problem="floydSam" />
+
+<IncompleteSection>
+
+(explanation)
+
+</IncompleteSection>
+
+### Implementation - APSP
+
+<LanguageSection>
+
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+using ll = long long;
+
+const int MAX_N = 150;
+ll dist[MAX_N][MAX_N], bad[MAX_N][MAX_N];
+
+int main() {
+	int n, m, q;
+	while (cin >> n >> m >> q) {
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				dist[i][j] = (i == j ? 0 : INT_MAX);
+				bad[i][j] = 0;
+			}
+		}
+
+		for (int i = 0; i < m; i++) {
+			int u, v, w;
+			cin >> u >> v >> w;
+			dist[u][v] = std::min(dist[u][v], (ll)w);
+		}
+
+		for (int k = 0; k < n; k++) {
+			for (int i = 0; i < n; i++) {
+				for (int j = 0; j < n; j++) {
+					if (dist[i][k] != INT_MAX && dist[k][j] != INT_MAX) {
+						dist[i][j] = std::min(dist[i][j], dist[i][k] + dist[k][j]);
+					}
+				}
+			}
+		}
+
+		for (int k = 0; k < n; k++) {
+			for (int i = 0; i < n; i++) {
+				for (int j = 0; j < n; j++) {
+					if (dist[i][k] != INT_MAX && dist[k][j] != INT_MAX &&
+					    dist[i][j] > dist[i][k] + dist[k][j]) {
+						bad[i][j] = 1;
+					}
+				}
+			}
+		}
+
+		for (int k = 0; k < n; k++) {
+			for (int i = 0; i < n; i++) {
+				for (int j = 0; j < n; j++) {
+					if (dist[i][k] < INT_MAX && bad[k][j]) { bad[i][j] = 1; }
+					if (dist[k][j] < INT_MAX && bad[i][k]) { bad[i][j] = 1; }
+				}
+			}
+		}
+
+		for (int i = 0; i < q; i++) {
+			int u, v;
+			cin >> u >> v;
+			if (bad[u][v]) {
+				cout << "-Infinity" << '\n';
+			} else if (dist[u][v] == INT_MAX) {
+				cout << "Impossible" << '\n';
+			} else {
+				cout << dist[u][v] << '\n';
+			}
+		}
+		cout << '\n';
+	}
+}
+```
+
+</CPPSection>
+<PySection>
+
+```py
+INF = 10**18  # Note: using float('inf') results in TLE
+
+n, m, q = map(int, input().split())
+while True:
+	if n == 0 and m == 0 and q == 0:
+		break
+
+	dist = [[INF] * n for _ in range(n)]
+	bad = [[0] * n for _ in range(n)]
+
+	for i in range(n):
+		dist[i][i] = 0
+
+	for _ in range(m):
+		u, v, w = map(int, input().split())
+		dist[u][v] = min(dist[u][v], w)
+
+	for k in range(n):
+		for i in range(n):
+			for j in range(n):
+				if dist[i][k] != INF and dist[k][j] != INF:
+					dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+
+	for k in range(n):
+		for i in range(n):
+			for j in range(n):
+				if (
+					dist[i][k] != INF
+					and dist[k][j] != INF
+					and dist[i][j] > dist[i][k] + dist[k][j]
+				):
+					bad[i][j] = 1
+
+	for k in range(n):
+		for i in range(n):
+			for j in range(n):
+				if dist[i][k] < INF and bad[k][j]:
+					bad[i][j] = 1
+				if dist[k][j] < INF and bad[i][k]:
+					bad[i][j] = 1
+
+	for _ in range(q):
+		u, v = map(int, input().split())
+		if bad[u][v]:
+			print("-Infinity")
+		elif dist[u][v] == INF:
+			print("Impossible")
+		else:
+			print(dist[u][v])
+
+	n, m, q = map(int, input().split())
+```
+
+</PySection>
+</LanguageSection>
+
+### Problems
+
+<Problems problems="floydProbs" />
+
+## Modified Dijkstra
+
+<!-- Can also use [Shortest Path Faster Algorithm](https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm) or  -->
+
+The Dijkstra code presented [earlier](/gold/shortest-paths#mathcalomlog-n-implementation)
+will still give correct results if there are no negative cycles. However, the
+same running time bound no longer applies, as demonstrated by subtasks 1-6 of
+the following problem.
+
+<Problems problems="dijk" />
+
+This problem forces you to analyze the inner workings of the three shortest-path
+algorithms we presented here. It also teaches you about how problemsetters could
+create hack cases!

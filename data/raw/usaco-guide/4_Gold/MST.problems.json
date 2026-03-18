@@ -1,0 +1,194 @@
+{
+  "MODULE_ID": "mst",
+  "standard": [
+    {
+      "uniqueId": "cses-1675",
+      "name": "Road Reparation",
+      "url": "https://cses.fi/problemset/task/1675",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["MST"],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "mst"
+      }
+    }
+  ],
+  "general": [
+    {
+      "uniqueId": "usaco-531",
+      "name": "Superbull",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=531",
+      "source": "Old Silver",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["MST"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-623",
+      "name": "Fenced In",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=623",
+      "source": "Gold",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["MST"],
+      "solutionMetadata": {
+        "kind": "internal",
+        "hasHints": true
+      }
+    },
+    {
+      "uniqueId": "cf-472D",
+      "name": "Design Tutorial: Inverse the Problem",
+      "url": "https://codeforces.com/contest/472/problem/D",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["MST"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1513D",
+      "name": "GCD and MST",
+      "url": "https://codeforces.com/problemset/problem/1513/D",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["MST", "Math"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "ac-choosetwo",
+      "name": "Choose Two and Eat One",
+      "url": "https://atcoder.jp/contests/abc282/tasks/abc282_e",
+      "source": "AC",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["DSU"],
+      "solutionMetadata": {
+        "kind": "none"
+      }
+    },
+    {
+      "uniqueId": "usaco-946",
+      "name": "I Would Walk 500 Miles",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=946",
+      "source": "Gold",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["MST"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "hr-SpanningTreeFraction",
+      "name": "Spanning Tree Fraction",
+      "url": "https://www.hackerrank.com/contests/w31/challenges/spanning-tree-fraction/problem",
+      "source": "HR",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["MST", "Binary Search"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "HR"
+      }
+    },
+    {
+      "uniqueId": "usaco-1211",
+      "name": "Moo Network",
+      "url": "http://usaco.org/index.php?page=viewproblem2&cpid=1211",
+      "source": "Gold",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["MST"],
+      "solutionMetadata": {
+        "kind": "internal",
+        "hasHints": true
+      }
+    },
+    {
+      "uniqueId": "joi-15-inheritance",
+      "name": "2015 - Inheritance",
+      "url": "https://qoj.ac/problem/1213",
+      "source": "JOI",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["MST", "Binary Search"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-1138",
+      "name": "Portals",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=1138",
+      "source": "Gold",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["MST"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-625",
+      "name": "Fenced In",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=625",
+      "source": "Platinum",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["MST"],
+      "solutionMetadata": {
+        "kind": "USACO",
+        "usacoId": "625"
+      }
+    },
+    {
+      "uniqueId": "coci-17-sirni",
+      "name": "Sirni",
+      "url": "https://oj.uz/problem/view/COCI17_sirni",
+      "source": "COCI",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["MST", "NT"],
+      "solutionMetadata": {
+        "kind": "internal",
+        "hasHints": true
+      }
+    },
+    {
+      "uniqueId": "ks-checksum",
+      "name": "Checksum",
+      "url": "https://zibada.guru/gcj/ks2021a/problems/#D",
+      "source": "Google Kickstart",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["MST"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "apio-13-toll",
+      "name": "2013 - Toll",
+      "url": "https://dmoj.ca/problem/apio13p2",
+      "source": "APIO",
+      "difficulty": "Insane",
+      "isStarred": false,
+      "tags": ["MST", "Bitmasks"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "DMOJ"
+      }
+    }
+  ]
+}

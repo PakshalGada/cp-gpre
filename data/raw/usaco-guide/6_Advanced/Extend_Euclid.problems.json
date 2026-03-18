@@ -1,0 +1,33 @@
+{
+  "MODULE_ID": "extend-euclid",
+  "kat": [
+    {
+      "uniqueId": "kattis-modulararithmetic",
+      "name": "Modular Arithmetic",
+      "url": "https://open.kattis.com/problems/modulararithmetic",
+      "source": "Kattis",
+      "difficulty": "N/A",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "extend-euclid"
+      }
+    }
+  ],
+  "CRT": [
+    {
+      "uniqueId": "kattis-chineseremainder",
+      "name": "Chinese Remainder",
+      "url": "https://open.kattis.com/problems/chineseremainder",
+      "source": "Kattis",
+      "difficulty": "N/A",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "extend-euclid"
+      }
+    }
+  ]
+}

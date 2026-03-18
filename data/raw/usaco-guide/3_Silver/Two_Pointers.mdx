@@ -1,0 +1,549 @@
+---
+id: two-pointers
+redirects:
+ - /silver/2P
+title: 'Two Pointers'
+author: Darren Yao, Qi Wang, Ryan Chou, David Zhou
+contributors: Aadit Ambadkar, Juheon Rhee
+prerequisites:
+  - intro-sorting
+description:
+  'Iterating two monotonic pointers across an array to search for a pair of
+  indices satisfying some condition in linear time.'
+frequency: 2
+---
+
+## Resources
+
+<Resources>
+	<Resource source="CPH" title="8.1 - Two Pointers" starred>
+		solutions to the problems above
+	</Resource>
+	<Resource source="IUSACO" title="14.1 - Two Pointers">
+		above + mention of max subarray sum
+	</Resource>
+	<Resource
+		source="CF EDU"
+		title="Two Pointers Method"
+		url="https://codeforces.com/edu/course/2/lesson/9"
+		starred
+	>
+		video explanation of two pointers
+	</Resource>
+</Resources>
+
+<YouTube id = "zmadiUuUeAA"/>
+
+## Two Pointers
+
+The **Two Pointers** method iterates two pointers across an array to track indices satisfying some condition. There are two common variations:
+1. Two pointers starting at different ends of the array and moving towards each other.
+2. Two pointers moving in the same direction at different speeds. This variation is known as the **Sliding Window** algorithm.
+
+## Sum of Two Values
+
+<FocusProblem problem="sample1" />
+
+### Solution - Sum of Two Values
+
+The "Opposite Ends" method allows us to find the target pair in linear time if the array is sorted. Instead of checking every possible pair (which would take $\mathcal{O}(N^2)$ time), we use the sorted property to narrow down the search space in a single pass.
+
+We want to find two indices $i$ and $j$ such that $a_i + a_j = x$.
+
+We can start by sorting the array. Then, we can initialize a left pointer at the beginning of the array ($l=0$) and a right pointer at the end ($r=N-1$).
+
+While $l < r$:
+1. If $a[l] + a[r] == x$, we have found the target sum.
+2. If $a[l] + a[r] < x$, the sum is too small. To increase the sum, we increment $l$.
+3. If $a[l] + a[r] > x$, the sum is too large. To decrease the sum, we decrement $r$.
+
+Since the array is sorted, moving the left pointer to the right will never decrease the sum, and moving the right pointer to the left will never increase the sum.
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(N \log N)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <utility>
+#include <vector>
+
+using namespace std;
+
+int main() {
+	int n, x;
+	cin >> n >> x;
+	vector<pair<int, int>> nums(n);
+	for (int i = 0; i < n; i++) {
+		cin >> nums[i].first;
+		nums[i].second = i;
+	}
+	sort(nums.begin(), nums.end());
+	int l = 0, r = n - 1;
+	while (l < r) {
+		int sum = nums[l].first + nums[r].first;
+		if (sum == x) {
+			cout << nums[l].second + 1 << " " << nums[r].second + 1 << endl;
+			return 0;
+		} else if (sum < x) {
+			l++;
+		} else if (sum > x) {
+			r--;
+		}
+	}
+	cout << "IMPOSSIBLE" << endl;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class Main {
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		int n = Integer.parseInt(st.nextToken());
+		int x = Integer.parseInt(st.nextToken());
+
+		List<int[]> nums = new ArrayList<>();
+		st = new StringTokenizer(br.readLine());
+		for (int i = 0; i < n; i++) {
+			nums.add(new int[] {Integer.parseInt(st.nextToken()), i});
+		}
+		nums.sort(Comparator.comparingInt(a -> a[0]));
+		int l = 0, r = n - 1;
+		while (l < r) {
+			int sum = nums.get(l)[0] + nums.get(r)[0];
+			if (sum == x) {
+				System.out.println((nums.get(l)[1] + 1) + " " + (nums.get(r)[1] + 1));
+				return;
+			} else if (sum < x) {
+				l++;
+			} else {
+				r--;
+			}
+		}
+
+		System.out.println("IMPOSSIBLE");
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+n, x = map(int, input().split())
+
+nums = [(int(val), i) for i, val in enumerate(input().split())]
+nums.sort()
+
+l = 0
+r = n - 1
+while l < r:
+	sum = nums[l][0] + nums[r][0]
+	if sum == x:
+		print(nums[l][1] + 1, nums[r][1] + 1)
+		exit()
+	elif sum < x:
+		l += 1
+	else:
+		r -= 1
+
+print("IMPOSSIBLE")
+```
+
+</PySection>
+</LanguageSection>
+
+## Sliding Window
+
+The **Sliding Window** method is a variation of the two pointers technique where two pointers move in the same direction to maintain a specific range or "window" of elements. While standard two pointers often move towards each other, the sliding window technique is used to find a contiguous subarray that satisfies a condition.
+
+<FocusProblem problem="sample2" />
+
+### Solution - Books
+
+We want to find the longest contiguous segment of books that can be read within $t$ minutes.
+
+To accomplish this, we can define $\texttt{left}$ and $\texttt{right}$ to represent the beginning and end of the segment. Both will start at the beginning of the array. These numbers can be thought of as pointers, hence the name "two pointers."
+
+For every value of $\texttt{left}$ in increasing order, let's increase $\texttt{right}$ until the total time for the segment is maximized while being less than or equal to $t$.
+
+$\texttt{ans}$ will store the maximum value of $\texttt{right} - \texttt{left}+1$ (segment size) that we have encountered so far.
+
+After incrementing $\texttt{left}$ by one, the time used decreases, hence the right pointer never has to move leftwards. Thus:
+
+**Since both pointers will move at most $N$ times, the overall time complexity is $\mathcal{O}(N)$.**
+
+As an example, consider the first case in the sample inputs:
+<center>
+<table>
+	<tbody>
+		<tr>
+			<td>Left Pointer</td>
+			<th className="bg-yellow-100 dark:bg-yellow-800"></th>
+			<th></th>
+			<th></th>
+			<th></th>
+		</tr>
+	</tbody>
+	<tbody>
+		<tr>
+			<td>$\texttt{arr}[i]$</td>
+			<td>3</td>
+			<td>1</td>
+			<td>2</td>
+			<td>1</td>
+		</tr>
+	</tbody>
+	<tbody>
+		<tr>
+			<td>Right Pointer</td>
+			<th className="bg-yellow-100 dark:bg-yellow-800"></th>
+			<th></th>
+			<th></th>
+			<th></th>
+		</tr>
+	</tbody>
+</table>
+</center>
+We can move the right pointer to index $1$:
+<center>
+<table>
+	<tbody>
+		<tr>
+			<td>Left Pointer</td>
+			<th className="bg-yellow-100 dark:bg-yellow-800"></th>
+			<th></th>
+			<th></th>
+			<th></th>
+		</tr>
+	</tbody>
+	<tbody>
+		<tr>
+			<td>$\texttt{arr}[i]$</td>
+			<td>3</td>
+			<td>1</td>
+			<td>2</td>
+			<td>1</td>
+		</tr>
+	</tbody>
+	<tbody>
+		<tr>
+			<td>Right Pointer</td>
+			<th></th>
+			<th className="bg-yellow-100 dark:bg-yellow-800"></th>
+			<th></th>
+			<th></th>
+		</tr>
+	</tbody>
+</table>
+</center>
+The sum of the values in this range is $4$, and there are $2$ values. So, the current maximum segment length is $\texttt{ans}=2$. By incrementing the left pointer by $1$, we can subtract $3$ from the sum of values to get $1$. The array then looks like:
+<center>
+<table>
+	<tbody>
+		<tr>
+			<td>Left Pointer</td>
+			<th></th>
+			<th className="bg-yellow-100 dark:bg-yellow-800"></th>
+			<th></th>
+			<th></th>
+		</tr>
+	</tbody>
+	<tbody>
+		<tr>
+			<td>$\texttt{arr}[i]$</td>
+			<td>3</td>
+			<td>1</td>
+			<td>2</td>
+			<td>1</td>
+		</tr>
+	</tbody>
+	<tbody>
+		<tr>
+			<td>Right Pointer</td>
+			<th></th>
+			<th className="bg-yellow-100 dark:bg-yellow-800"></th>
+			<th></th>
+			<th></th>
+		</tr>
+	</tbody>
+</table>
+</center>
+Now, we can move the right pointer to the end. This makes the sum of values $1+2+1=4$ and the length of the segment equal to $3$. So, $\texttt{ans}$ is now $3$.
+<center>
+<table>
+	<tbody>
+		<tr>
+			<td>Left Pointer</td>
+			<th></th>
+			<th className="bg-yellow-100 dark:bg-yellow-800"></th>
+			<th></th>
+			<th></th>
+		</tr>
+	</tbody>
+	<tbody>
+		<tr>
+			<td>$\texttt{arr}[i]$</td>
+			<td>3</td>
+			<td>1</td>
+			<td>2</td>
+			<td>1</td>
+		</tr>
+	</tbody>
+	<tbody>
+		<tr>
+			<td>Right Pointer</td>
+			<th></th>
+			<th></th>
+			<th></th>
+			<th className="bg-yellow-100 dark:bg-yellow-800"></th>
+		</tr>
+	</tbody>
+</table>
+</center>
+
+Since the right pointer has reached the end of the array, we are done at this point. This leaves us with $\texttt{ans}=3$.
+
+Here's an animation of the above example:
+<video width="960" height="720" controls>
+	<source src="/animations/two_pointers.mp4" type="video/mp4"/>
+</video>
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(N)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+
+	int N, T;
+	cin >> N >> T;
+	vector<int> A(N);
+	for (int &a : A) cin >> a;
+
+	int r = -1, sum = 0, ans = 0;
+	// sum stores sum of A[l ... r inclusive]
+	for (int l = 0; l < N; sum -= A[l++]) {
+		while (r + 1 < N && sum + A[r + 1] <= T) sum += A[++r];
+		ans = max(ans, r - l + 1);
+	}
+	cout << ans << "\n";
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class Books {
+	public static void main(String[] args) {
+		Kattio io = new Kattio();
+
+		int N = io.nextInt();
+		int T = io.nextInt();
+		int[] A = new int[N];
+		for (int i = 0; i < N; i++) { A[i] = io.nextInt(); }
+
+		int r = -1, sum = 0, ans = 0;
+		// sum stores sum of A[l ... r inclusive]
+		for (int l = 0; l < N; sum -= A[l++]) {
+			while (r + 1 < N && sum + A[r + 1] <= T) sum += A[++r];
+			ans = Math.max(ans, r - l + 1);
+		}
+
+		io.println(ans);
+		io.close();
+	}
+
+	// CodeSnip{Kattio}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+N, T = map(int, input().split())
+A = list(map(int, input().split()))
+
+r = -1
+window_sum = 0  # sum of A[l ... r inclusive]
+ans = 0
+
+for l in range(N):
+	while r + 1 < N and window_sum + A[r + 1] <= T:
+		r += 1
+		window_sum += A[r]
+	ans = max(ans, r - l + 1)
+	window_sum -= A[l]
+
+print(ans)
+```
+
+</PySection>
+</LanguageSection>
+
+## Problems
+
+<Problems problems="general" />
+
+## Quiz
+
+<Quiz>
+  <Quiz.Question>
+    What is the two pointers algorithm?
+    <Quiz.Answer>
+      Keeping track of two indices to find a subarray that satisfies some condition.
+      <Quiz.Explanation>
+        Incorrect. The indices don't necessarily have to represent a subarray, they could just represent elements in the array.
+
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer correct>
+      Keeping track of two indices to find a pair of indices that satisfy some condition.
+      <Quiz.Explanation>
+        Correct.
+
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      A way to answer range sum queries in $\mathcal{O}(1)$ time.
+      <Quiz.Explanation>
+        Incorrect. You might be thinking of [Prefix Sums](/silver/prefix-sums), another silver topic.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      A divide and conquer algorithm that splits an array into two halves to efficiently find an element satisfying a certain condition.
+      <Quiz.Explanation>
+        Incorrect.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+  </Quiz.Question>
+  <Quiz.Question>
+    What should go in place of `cond`?
+
+	<LanguageSection>
+		<CPPSection>
+
+			```cpp
+			/*
+			 * find two elements at distinct positions in an array
+			 * which add up to a target sum
+			 */
+			sort(begin(nums), end(nums));
+			int l = 0;
+			int r = n - 1;
+			while (cond) {
+				if (nums[l] + nums[r] == target) {
+					// found pair
+					break;
+				} else if (nums[l] + nums[r] > target) {
+					r--;
+				} else {
+					l++;
+				}
+			}
+			```
+		</CPPSection>
+		<JavaSection>
+		```java
+		/*
+		 * find two elements at distinct positions in an array
+		 * which add up to a target sum
+		 */
+		Arrays.sort(nums);
+		int l = 0;
+		int r = n - 1;
+		while (cond) {
+			if (nums[l] + nums[r] == target) {
+				// found pair
+				break;
+			} else if (nums[l] + nums[r] > target) {
+				r--;
+			} else {
+				l++;
+			}
+		}
+		```
+		</JavaSection>
+		<PySection>
+
+			```py
+			nums.sort()
+			l = 0
+			r = n - 1
+			while cond:
+				if nums[l] + nums[r] == target:
+					# found pair
+					break
+				elif nums[l] + nums[r] > target:
+					r -= 1
+				else:
+					l += 1
+			```
+		</PySection>
+	</LanguageSection>
+    <Quiz.Answer>
+      `nums[r] - nums[l] != 0`
+      <Quiz.Explanation>
+        Incorrect. We already have an exit condition in the loop and we're looking for two elements which add up to a target sum.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer correct>
+      `l < r`
+      <Quiz.Explanation>
+        Correct. When the pointers overlap, they're looking for another solution to test when it doesn't exist.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      `l < 0 || l >= n || r < 0 || r >= n`
+      <Quiz.Explanation>
+        Incorrect. The pointers are moving towards the middle of the array.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+  </Quiz.Question>
+  <Quiz.Question>
+    Which of the following isn't true?
+    <Quiz.Answer>
+      The time complexity of a standard two pointers algorithm is $\mathcal{O}(N)$ when not considering any other operations on the array.
+      <Quiz.Explanation>
+        Incorrect. Assuming that both pointers move one step at a time, both pointers would take a maximum of $N$ steps.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      The space complexity of a standard two pointers algorithm is $\mathcal{O}(1)$ when not considering the space taken up by the array.
+      <Quiz.Explanation>
+        Incorrect. Assuming that both pointers move one step at a time, there would be a constant space complexity.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer correct>
+      The two pointers algorithm is only useful in a sorted array.
+      <Quiz.Explanation>
+        Correct. The array doesn't necessarily have to be sorted, such as when looking for a valid subarray with two pointers.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+  </Quiz.Question>
+</Quiz>

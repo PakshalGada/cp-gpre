@@ -1,0 +1,496 @@
+---
+id: modular
+title: 'Modular Arithmetic'
+author: Darren Yao, Michael Cao, Andi Qu, Benjamin Qi, Andrew Wang
+contributors: Kevin Sheng, Mihnea Brebenel
+prerequisites:
+  - divisibility
+description: Working with remainders from division.
+frequency: 2
+---
+
+<!-- <Resource source="CF" title="CodeNCode - Number Theory Course" url="77137">lots of advanced stuff you don't need to know at this level</Resource>
+   -->
+
+<Resources>
+	<Resource
+		  source="AryanshS"
+		  title="The Art of Modular Arithmetic"
+		  url="https://aryansh-s.github.io/assets/pdf/The_Art_of_Modular_Arithmetic.pdf"
+		  starred
+	>
+		introduces modular arithmetic through numerous math-contest-level examples and problems
+	</Resource>
+	<Resource source="IUSACO" title="13.3 - Modular Arithmetic">
+		very brief, module is based off this
+	</Resource>
+	<Resource
+		source="David Altizio"
+		title="Modular Arithmetic"
+		url="https://davidaltizio.web.illinois.edu/ModularArithmetic.pdf"
+		starred
+	>
+		plenty of examples from math contests
+	</Resource>
+	<Resource source="CPH" title="21.2 - Modular Arithmetic" starred />
+	<Resource source="PAPS" title="16.4 - Modular Arithmetic" />
+	<Resource
+		source="CF"
+		title="Spheniscine - Modular Arithmetic for Beginners"
+		url="https://codeforces.com/blog/entry/72527"
+	>
+		some practice probs
+	</Resource>
+	<Resource
+		source="MONT"
+		sourceDescription="Modern Olympiad Number Theory"
+		title="2, 5 - Modular Arithmetic"
+		url="https://artofproblemsolving.com/community/c6h2344755"
+		starred
+	 />
+</Resources>
+
+# Introduction
+
+<!-- Some silver problems involve $10^9+7$, should this be introduced in silver? -->
+
+In **modular arithmetic**, instead of working with integers themselves, we work
+with their remainders when divided by $m$. We call this taking modulo $m$. For
+example, if we take $m = 23$, then instead of working with $x = 247$, we use
+$x \bmod 23 = 17$. Usually, $m$ will be a large prime, given in the problem; the
+two most common values are $10^9 + 7$ and $998\,244\,353=119\cdot 2^{23}+1$.
+Modular arithmetic is used to avoid dealing with numbers that overflow built-in
+data types, because we can take remainders, according to the following formulas:
+
+$$
+(a+b) \bmod m = (a \bmod m + b \bmod m) \bmod m
+$$
+
+$$
+(a-b) \bmod m = (a \bmod m - b \bmod m) \bmod m
+$$
+
+$$
+(a \cdot b) \pmod{m} = ((a \bmod m) \cdot (b \bmod m)) \bmod m
+$$
+
+$$
+a^b \bmod {m} = (a \bmod m)^b \bmod m
+$$
+
+# Modular Exponentiation
+
+<FocusProblem problem="expo" />
+
+### Resources
+
+<Resources>
+	<Resource
+		source="cp-algo"
+		title="Binary Exponentiation"
+		url="algebra/binary-exp.html"
+	/>
+</Resources>
+
+**Binary exponentiation** can be used to efficiently compute $x ^ n \mod m$. To
+do this, let's break down $x ^ n$ into binary components. For example,
+$5 ^ {10}$ = $5 ^ {1010_2}$ = $5 ^ 8 \cdot 5 ^ 2$. Then, if we know $x ^ y$ for
+all $y$ which are powers of two ($x ^ 1$, $x ^ 2$, $x ^ 4$, $\dots$ ,
+$x ^ {2^{\lfloor{\log_2n} \rfloor}}$, we can compute $x ^ n$ in
+$\mathcal{O}(\log n)$.
+
+To deal with $m$, observe that modulo doesn't affect multiplications, so we can
+directly implement the above "binary exponentiation" algorithm while adding a
+line to take results $\pmod m$.
+
+<!--
+Finally, since $x ^ y$ for some $y \neq 1$ equals $x ^ {y - 1}$, and $x$ otherwise, we can compute these sums efficiently.  -->
+
+## Solution - Exponentiation
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+
+ll exp(ll x, ll n, ll m) {
+	assert(n >= 0);
+	x %= m;  // note: m * m must be less than 2^63 to avoid ll overflow
+	ll res = 1;
+	while (n > 0) {
+		if (n % 2 == 1) { res = res * x % m; }
+		x = x * x % m;
+		n /= 2;
+	}
+	return res;
+}
+
+int main() {
+	int t;
+	cin >> t;
+	for (int i = 0; i < t; i++) {
+		int a, b;
+		cin >> a >> b;
+		cout << exp(a, b, 1e9 + 7) << "\n";
+	}
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class Exponentiation {
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		PrintWriter out = new PrintWriter(System.out);
+		int n = Integer.parseInt(br.readLine());
+		for (int i = 0; i < n; i++) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			long a = Long.parseLong(st.nextToken());
+			long b = Long.parseLong(st.nextToken());
+			out.println(exp(a, b, (long)1e9 + 7));
+		}
+		out.close();
+	}
+
+	public static long exp(long x, long n, long m) {
+		assert (n >= 0);
+		x %= m;  // note: m * m must be less than 2^63 to avoid ll overflow
+		long res = 1;
+		while (n > 0) {
+			if (n % 2 == 1) { res = res * x % m; }
+			x = x * x % m;
+			n /= 2;
+		}
+		return res;
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+We can use Python's builtin `pow` function to efficiently compute modulo powers.
+
+```py
+MOD = 10**9 + 7
+
+for _ in range(int(input())):
+	first, second = [int(i) for i in input().split()]
+	print(pow(first, second, MOD))
+```
+
+</PySection>
+</LanguageSection>
+
+# Modular Inverse
+
+The **modular inverse** is the equivalent of the reciprocal in real-number
+arithmetic; to divide $a$ by $b$, multiply $a$ by the modular inverse of $b$.
+We'll only consider prime moduli $p$ here.
+
+For example, the inverse of $2$ modulo $p=10^9+7$ is
+$i=\frac{p+1}{2}=5\cdot 10^8+4$. This means that for any integer $x$,
+
+$$
+(2x)\cdot i\equiv x\cdot (2i)\equiv x\pmod{10^9+7}.
+$$
+
+For example, $10i\equiv 5\pmod{10^9+7}$.
+
+<!-- #### Example: Sprinkers 2
+
+There aren't many good examples of Modular Inverses in USACO.
+One problem where it was useful was the platinum problem "Sprinkers 2".
+
+<FocusProblem problem="dp[2]" />
+
+We'll be skipping the other details of this problem to focus more on the modular arithmetic, so try to figure the other parts out yoruself first.
+
+In this problem, our DP transition relies on dividing our answer at some state by $2$, under a prime moduli.
+
+To perform this, we'll multiply by $500000004$ (the modular inverse of $2$), and take it under the prime moduli for the same result.
+ -->
+
+<!-- To find a modular inverse of some number modulo $p$, simply raise it to the power of $p-2$. -->
+
+<Resources>
+	<Resource
+		source="cp-algo"
+		title="Modular Multiplicative Inverse"
+		url="algebra/module-inverse.html"
+		starred
+	>
+		Various ways to take modular inverse, we'll only discuss the second here
+	</Resource>
+</Resources>
+
+## With Exponentiation
+
+[**Fermat's Little Theorem**](https://en.wikipedia.org/wiki/Fermat%27s_little_theorem)
+(not to be confused with Fermat's **Last** Theorem) states that all integers $a$
+not divisible by $p$ satisfy $a^{p - 1} \equiv 1 \pmod{p}$. Consequently,
+$a^{p-2} \cdot a \equiv 1 \pmod{p}$. Therefore, $a^{p - 2}$ is a modular inverse
+of $a$ modulo $p$.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+const int MOD = 1e9 + 7;
+
+int main() {
+	ll x = exp(2, MOD - 2, MOD);
+	cout << x << "\n";  // 500000004
+	assert(2 * x % MOD == 1);
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+public class Main {
+	public static final int MOD = (int)Math.pow(10, 9) + 7;
+	public static void main(String[] args) throws IOException {
+		long x = exp(2, MOD - 2, MOD);
+		System.out.println(x);  // 500000004
+		assert (2 * x % MOD == 1);
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+MOD = 10**9 + 7
+
+x = pow(2, MOD - 2, MOD)
+print(x)  # 500000004
+assert 2 * x % MOD == 1
+```
+
+</PySection>
+</LanguageSection>
+
+## With Euclidean Division
+
+We can also find modular inverses through Euclidean Division.
+Given the prime modulus $m > a$ we have:
+
+$$
+m = k \cdot a + r
+$$
+
+where $k = \lfloor \frac{m}{a} \rfloor$ and $r = m \mod a$. Then:
+
+$$
+\begin{align*}
+         & 0 = k \cdot a + r \mod m        \\
+  \iff{} & r = -k \cdot a \mod m           \\
+  \iff{} & r \cdot a^{-1} = -k \mod m      \\
+  \iff{} & a^{-1} = -k \cdot r^{-1} \mod m
+\end{align*}
+$$
+
+Here is a short recursive implementation of the above formula:
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+int inv(int x) { return x <= 1 ? x : MOD - MOD / x * inv(MOD % x) % MOD; }
+```
+
+</CPPSection>
+<JavaSection>
+
+```
+static int inv(int x) {
+	return x <= 1 ? x : MOD - MOD / x * inv(MOD % x) % MOD;
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+def inv(x: int) -> int:
+	return x if x <= 1 else MOD - MOD // x * inv(MOD % x) % MOD
+```
+
+</PySection>
+</LanguageSection>
+
+The advantage of this approach is that we can precompute the inverse modular of numbers in the range $[1, MOD)$ in $\mathcal{O}(MOD)$.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+inv[1] = 1;  // assume we already defined this array
+for (int i = 2; i < MOD; i++) { inv[i] = MOD - MOD / i * inv[MOD % i] % MOD; }
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+inv[1] = 1;  // assume we already defined this array
+for (int i = 2; i < MOD; i++) { inv[i] = MOD - MOD / i * inv[MOD % i] % MOD; }
+```
+
+</JavaSection>
+<PySection>
+
+```py
+inv[1] = 1  # assume we already defined this array
+for i in range(2, MOD):
+	inv[i] = MOD - MOD / i * inv[MOD % i] % MOD
+```
+
+</PySection>
+</LanguageSection>
+
+Because it takes $\mathcal{O}(\log p)$ time to compute a modular inverse modulo
+$p$, frequent use of division inside a loop can significantly increase the
+running time of a program. If the modular inverse of the same number(s) is/are
+being used many times, it is a good idea to precalculate it.
+
+Also, one must always ensure that they do not attempt to divide by 0. Be aware
+that after applying modulo, a nonzero number can become zero, so be very careful
+when dividing by non-constant values.
+
+<Optional title="Another Way to Compute Modular Inverses">
+
+We can also use the extended Euclidean algorithm. See the module in the
+[Advanced](/adv/extend-euclid) section.
+
+</Optional>
+
+<CPPOnly>
+
+# Templates
+
+Here are some templates that implement integer types that automatically
+wrap around when they exceed a certain modulus:
+
+<Resources>
+	<Resource
+		source="Benq"
+		title="ModInt"
+		url="https://github.com/bqi343/USACO/blob/master/Implementations/content/number-theory%20(11.1)/Modular%20Arithmetic/ModInt.h"
+	/>
+	<Resource
+		source="Benq"
+		title="ModIntShort"
+		url="https://github.com/bqi343/USACO/blob/master/Implementations/content/number-theory%20(11.1)/Modular%20Arithmetic/ModIntShort.h"
+	>
+		feasible to type up during a contest
+	</Resource>
+	<Resource
+		source="AtCoder"
+		title="ModInt"
+		url="https://atcoder.jp/posts/518"
+	>
+		contains a `modint.hpp` file
+	</Resource>
+	<Resource
+		source="AtCoder"
+		title="ModInt Documentation"
+		url="https://atcoder.github.io/ac-library/production/document_en/modint.html"
+	/>
+</Resources>
+
+Here's an example using Benq's template:
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MOD = 1e9 + 7;
+
+// BeginCodeSnip{ModInt}
+struct mi {
+	int v;
+	explicit operator int() const { return v; }
+	mi() { v = 0; }
+	mi(long long _v) : v(_v % MOD) { v += (v < 0) * MOD; }
+};
+mi &operator+=(mi &a, mi b) {
+	if ((a.v += b.v) >= MOD) a.v -= MOD;
+	return a;
+}
+mi &operator-=(mi &a, mi b) {
+	if ((a.v -= b.v) < 0) a.v += MOD;
+	return a;
+}
+mi operator+(mi a, mi b) { return a += b; }
+mi operator-(mi a, mi b) { return a -= b; }
+mi operator*(mi a, mi b) { return mi((long long)a.v * b.v); }
+mi &operator*=(mi &a, mi b) { return a = a * b; }
+mi pow(mi a, long long p) {
+	assert(p >= 0);
+	return p == 0 ? 1 : pow(a * a, p / 2) * (p & 1 ? a : 1);
+}
+mi inv(mi a) {
+	assert(a.v != 0);
+	return pow(a, MOD - 2);
+}
+mi operator/(mi a, mi b) { return a * inv(b); }
+// EndCodeSnip
+
+int main() {
+	{
+		int a = 1e8, b = 1e8, c = 1e8;
+		cout << (long long)a * b % MOD * c % MOD << "\n";  // 49000000
+	}
+	{
+		mi a = 1e8, b = 1e8, c = 1e8;
+		// cout << a * b * c << "\n";  // Errors- we have to cast this an an int
+		cout << (int)(a * b * c) << "\n";  // 49000000
+	}
+}
+```
+
+And one using AtCoder's:
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+// https://atcoder.github.io/ac-library/document_en/modint.html
+// (included in atcoder grading)
+#include <atcoder/modint>
+using mint = atcoder::modint;
+
+const int MOD = 1e9 + 7;
+
+int main() {
+	// Set a global modulus
+	mint::set_mod(MOD);
+
+	// Scientific notation doesn't work with AtCoder's class
+	mint a = 100000000;
+	mint b = 100000000;
+	mint c = 100000000;
+
+	mint res = a * b * c;
+	cout << res.val() << endl;  // Same result
+}
+```
+
+</CPPOnly>
+
+## Problems
+
+<Problems problems="general" />

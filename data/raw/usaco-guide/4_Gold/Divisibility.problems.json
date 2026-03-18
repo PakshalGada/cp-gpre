@@ -1,0 +1,183 @@
+{
+  "MODULE_ID": "divisibility",
+  "sample": [
+    {
+      "uniqueId": "cses-1713",
+      "name": "Counting Divisors",
+      "url": "https://cses.fi/problemset/task/1713",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "divisibility"
+      }
+    }
+  ],
+  "gcdex": [
+    {
+      "uniqueId": "gcdex",
+      "name": "GCDEX - GCD Extreme",
+      "url": "https://www.spoj.com/problems/GCDEX/",
+      "source": "SPOJ",
+      "difficulty": "Hard",
+      "isStarred": true,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "divisibility"
+      }
+    }
+  ],
+  "general": [
+    {
+      "uniqueId": "ac-DivGame",
+      "name": "Div Game",
+      "url": "https://atcoder.jp/contests/abc169/tasks/abc169_d",
+      "source": "AC",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Prime Factorization"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1514C",
+      "name": "Product 1 Modulo N",
+      "url": "https://codeforces.com/problemset/problem/1514/C",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Divisibility", "Modular Arithmetic"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1225D",
+      "name": "Power Products",
+      "url": "https://codeforces.com/contest/1225/problem/D",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["NT"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1536C",
+      "name": "Diluc and Kaeya",
+      "url": "https://codeforces.com/problemset/problem/1536/C",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Divisibility"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cses-3398",
+      "name": "Permutation Rounds",
+      "url": "https://cses.fi/problemset/task/3398",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": true,
+      "tags": ["Functional Graph", "Prime Factorization"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cses-1081",
+      "name": "Common Divisors",
+      "url": "https://cses.fi/problemset/task/1081",
+      "source": "CSES",
+      "difficulty": "Normal",
+      "isStarred": true,
+      "tags": ["Divisibility"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1349A",
+      "name": "Orac and LCM",
+      "url": "https://codeforces.com/contest/1349/problem/A",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Prime Factorization"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cc-ksizegcd",
+      "name": "Maximum of GCDs",
+      "url": "https://www.codechef.com/problems/KSIZEGCD",
+      "source": "CC",
+      "difficulty": "Normal",
+      "isStarred": true,
+      "tags": ["Divisibility"],
+      "solutionMetadata": {
+        "kind": "internal",
+        "hasHints": true
+      }
+    },
+    {
+      "uniqueId": "cses-1082",
+      "name": "Sum of Divisors",
+      "url": "https://cses.fi/problemset/task/1082",
+      "source": "CSES",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Divisibility"],
+      "solutionMetadata": {
+        "kind": "internal",
+        "hasHints": true
+      }
+    },
+    {
+      "uniqueId": "spoj-lcmsum",
+      "name": "LCM Sum",
+      "url": "https://www.spoj.com/problems/LCMSUM/",
+      "source": "SPOJ",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Divisibility", "LCM", "Euler Totient"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1499D",
+      "name": "The Number of Pairs",
+      "url": "https://codeforces.com/contest/1499/problem/D",
+      "source": "CF",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Divisibility"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "ac-abc420G",
+      "name": "sqrt(n²+n+X)",
+      "url": "https://atcoder.jp/contests/abc420/tasks/abc420_g",
+      "source": "AC",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Divisibility"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "AC"
+      }
+    }
+  ]
+}

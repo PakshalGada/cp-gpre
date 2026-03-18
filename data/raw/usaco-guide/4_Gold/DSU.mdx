@@ -1,0 +1,414 @@
+---
+id: dsu
+title: Disjoint Set Union
+author: Benjamin Qi, Andrew Wang, Nathan Gong
+contributors: Michael Cao
+prerequisites:
+  - graph-traversal
+description:
+  'The Disjoint Set Union (DSU) data structure, which allows you to add edges to a
+   graph and test whether two vertices of the graph are
+  connected.'
+frequency: 3
+---
+
+<FocusProblem problem="sample" />
+
+## Resources
+
+<Resources>
+	<Resource
+		source="CF EDU"
+		title="DSU"
+		url="https://codeforces.com/edu/course/2/lesson/7"
+		starred
+	>
+		video explanation + problems for DSU
+	</Resource>
+	<Resource
+		source="CSA"
+		title="Disjoint Data Sets"
+		url="disjoint_data_sets"
+		starred
+	>
+		both optimizations, diagrams
+	</Resource>
+	<Resource source="PAPS" title="11.1 - Disjoint Sets" starred>
+		both optimizations, no diagrams
+	</Resource>
+	<Resource source="CPH" title="15.2 - Union-Find">
+		small to large, diagrams
+	</Resource>
+	<Resource source="IUSACO" title="10.6 - Disjoint-Set Data Structure">
+		path compression, diagrams
+	</Resource>
+	<Resource
+		source="TC"
+		title="Disjoint Set Data Structures"
+		url="disjoint-set-data-structures"
+	>
+		diagrams
+	</Resource>
+</Resources>
+
+<!--
+	<Resource
+		source="CPC"
+		title="3 - Data Structures"
+		url="03_data_structures"
+	 /> -->
+
+<Optional title="DSU Complexity Proofs">
+
+- [$\underline{\log^* n}$](<https://en.wikipedia.org/wiki/Proof_of_O(log*n)_time_complexity_of_union%E2%80%93find>)
+- [$\underline{\alpha (m,n)}$](https://dl.acm.org/doi/pdf/10.1145/321879.321884)
+
+</Optional>
+
+## Implementation
+
+<LanguageSection>
+<CPPSection>
+
+<Resources>
+	<Resource
+		source="Benq (from KACTL)"
+		url="https://github.com/bqi343/USACO/blob/master/Implementations/content/graphs%20(12)/DSU/DSU%20(7.6).h"
+		title="DSU"
+	/>
+</Resources>
+
+Below is an implementation of a DSU. It utilizes
+small-to-large merging and path compression
+to quickly perform union find. `sizes[x]` stores the size of $x$'s component,
+and `parents[x]` stores the parent of $x$ (equal to $x$ if it is the representative).
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+class DisjointSets {
+  private:
+	vector<int> parents;
+	vector<int> sizes;
+
+  public:
+	DisjointSets(int size) : parents(size), sizes(size, 1) {
+		for (int i = 0; i < size; i++) { parents[i] = i; }
+	}
+
+	/** @return the "representative" node in x's component */
+	int find(int x) { return parents[x] == x ? x : (parents[x] = find(parents[x])); }
+
+	/** @return whether the merge changed connectivity */
+	bool unite(int x, int y) {
+		int x_root = find(x);
+		int y_root = find(y);
+		if (x_root == y_root) { return false; }
+
+		if (sizes[x_root] < sizes[y_root]) { swap(x_root, y_root); }
+		sizes[x_root] += sizes[y_root];
+		parents[y_root] = x_root;
+		return true;
+	}
+
+	/** @return whether x and y are in the same connected component */
+	bool connected(int x, int y) { return find(x) == find(y); }
+};
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.util.*;
+
+public class DisjointSets {
+	int[] parents;
+	int[] sizes;
+
+	public DisjointSets(int size) {
+		parents = new int[size];
+		sizes = new int[size];
+		for (int i = 0; i < size; i++) {
+			parents[i] = i;
+			sizes[i] = 1;
+		}
+	}
+
+	/** @return the "representative" node in x's component */
+	public int find(int x) {
+		return parents[x] == x ? x : (parents[x] = find(parents[x]));
+	}
+
+	/** @return whether the merge changed connectivity */
+	public boolean unite(int x, int y) {
+		int xRoot = find(x);
+		int yRoot = find(y);
+		if (xRoot == yRoot) { return false; }
+
+		if (sizes[xRoot] < sizes[yRoot]) { return unite(yRoot, xRoot); }
+		parents[yRoot] = xRoot;
+		sizes[xRoot] += sizes[yRoot];
+		return true;
+	}
+
+	/** @return whether x and y are in the same connected component */
+	public boolean connected(int x, int y) { return find(x) == find(y); }
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+class DisjointSets:
+	def __init__(self, size: int) -> None:
+		self.parents = [i for i in range(size)]
+		self.sizes = [1 for _ in range(size)]
+
+	def find(self, x: int) -> int:
+		""":return: the "representative" node in x's component"""
+		if self.parents[x] == x:
+			return x
+		self.parents[x] = self.find(self.parents[x])
+		return self.parents[x]
+
+	def unite(self, x: int, y: int) -> bool:
+		""":return: whether the merge changed connectivity"""
+		x_root = self.find(x)
+		y_root = self.find(y)
+		if x_root == y_root:
+			return False
+
+		if self.sizes[x_root] < self.sizes[y_root]:
+			x_root, y_root = y_root, x_root
+
+		self.parents[y_root] = x_root
+		self.sizes[x_root] += self.sizes[y_root]
+		return True
+
+	def connected(self, x: int, y: int) -> bool:
+		""":return: whether x and y are in the same connected component"""
+		return self.find(x) == self.find(y)
+```
+
+</PySection>
+</LanguageSection>
+
+As the implementation is quite simple, you may prefer to use this in place of
+DFS for computing connected components.
+
+## Solution - Focus Problem
+
+Without union find, we would have to represent the graph with an adjacency list
+and use [flood fill](/silver/flood-fill) to calculate connected components. This
+approach takes $\mathcal{O}(NQ)$ time, which is too slow, motivating us to use
+**union find**.
+
+By representing the graph with the union find data structure that was just
+implemented above, we can use its methods to both _unite_ vertices and check
+if two vertices $u_i$ and $v_i$ are in the same connected component using only
+$\mathcal{O}(\alpha(N))$ amortized time.
+
+This reduces the overall time complexity to $\mathcal{O}(Q \alpha(N))$, which
+is a substantial improvement and allows us to pass all test cases.
+
+## Implementation
+
+**Time Complexity:** $\mathcal{O}(Q \alpha(N))$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+// BeginCodeSnip{DSU}
+class DisjointSets {
+  private:
+	vector<int> parents;
+	vector<int> sizes;
+
+  public:
+	DisjointSets(int size) : parents(size), sizes(size, 1) {
+		for (int i = 0; i < size; i++) { parents[i] = i; }
+	}
+
+	/** @return the "representative" node in x's component */
+	int find(int x) { return parents[x] == x ? x : (parents[x] = find(parents[x])); }
+
+	/** @return whether the merge changed connectivity */
+	bool unite(int x, int y) {
+		int x_root = find(x);
+		int y_root = find(y);
+		if (x_root == y_root) { return false; }
+
+		if (sizes[x_root] < sizes[y_root]) { swap(x_root, y_root); }
+		sizes[x_root] += sizes[y_root];
+		parents[y_root] = x_root;
+		return true;
+	}
+
+	/** @return whether x and y are in the same connected component */
+	bool connected(int x, int y) { return find(x) == find(y); }
+};
+// EndCodeSnip
+
+int main() {
+	int node_num, query_num;
+	cin >> node_num >> query_num;
+
+	DisjointSets dsu(node_num);
+	for (int i = 0; i < query_num; i++) {
+		int type, u, v;
+		cin >> type >> u >> v;
+		if (type == 0) {
+			dsu.unite(u, v);
+		} else {
+			cout << dsu.connected(u, v) << endl;
+		}
+	}
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class Main {
+	public static void main(String[] args) {
+		Kattio io = new Kattio();
+		int size = io.nextInt();
+		int queryNum = io.nextInt();
+
+		DisjointSets dsu = new DisjointSets(size);
+		for (int i = 0; i < queryNum; i++) {
+			int type = io.nextInt();
+			int u = io.nextInt();
+			int v = io.nextInt();
+			if (type == 0) {
+				dsu.unite(u, v);
+			} else {
+				if (dsu.connected(u, v)) {
+					io.println(1);
+				} else {
+					io.println(0);
+				}
+			}
+		}
+		io.close();
+	}
+
+	// CodeSnip{Kattio}
+}
+
+// BeginCodeSnip{DSU}
+class DisjointSets {
+	int[] parents;  // 0-indexed
+	int[] sizes;
+
+	public DisjointSets(int size) {
+		parents = new int[size];
+		sizes = new int[size];
+		for (int i = 0; i < size; i++) {
+			parents[i] = i;
+			sizes[i] = 1;
+		}
+	}
+
+	/** @return the "representative" node in x's component */
+	public int find(int x) {
+		return parents[x] == x ? x : (parents[x] = find(parents[x]));
+	}
+
+	/** @return whether the merge changed connectivity */
+	public boolean unite(int x, int y) {
+		int xRoot = find(x);
+		int yRoot = find(y);
+		if (xRoot == yRoot) { return false; }
+
+		if (sizes[xRoot] < sizes[yRoot]) { return unite(yRoot, xRoot); }
+		parents[yRoot] = xRoot;
+		sizes[xRoot] += sizes[yRoot];
+		return true;
+	}
+
+	/** @return whether x and y are in the same connected component */
+	public boolean connected(int x, int y) { return find(x) == find(y); }
+}
+// EndCodeSnip
+```
+
+</JavaSection>
+<PySection>
+
+```py
+# BeginCodeSnip{DSU}
+class DisjointSets:
+	def __init__(self, size: int) -> None:
+		self.parents = [i for i in range(size)]
+		self.sizes = [1 for _ in range(size)]
+
+	def find(self, x: int) -> int:
+		""":return: the "representative" node in x's component"""
+		if self.parents[x] == x:
+			return x
+		self.parents[x] = self.find(self.parents[x])
+		return self.parents[x]
+
+	def unite(self, x: int, y: int) -> bool:
+		""":return: whether the merge changed connectivity"""
+		x_root = self.find(x)
+		y_root = self.find(y)
+		if x_root == y_root:
+			return False
+
+		if self.sizes[x_root] < self.sizes[y_root]:
+			x_root, y_root = y_root, x_root
+
+		self.parents[y_root] = x_root
+		self.sizes[x_root] += self.sizes[y_root]
+		return True
+
+	def connected(self, x: int, y: int) -> bool:
+		""":return: whether x and y are in the same connected component"""
+		return self.find(x) == self.find(y)
+
+
+# EndCodeSnip
+
+
+size, query_num = [int(i) for i in input().split()]
+
+dsu = DisjointSets(size)
+for _ in range(query_num):
+	q_type, u, v = [int(i) for i in input().split()]
+	if q_type == 0:
+		dsu.unite(u, v)
+	else:
+		print(1 if dsu.connected(u, v) else 0)
+```
+
+</PySection>
+</LanguageSection>
+
+## Problems
+
+### Standard
+
+You should already be familiar with the DFS / Binary Search solutions to
+"Wormhole Sort" and "Moocast."
+
+<Problems problems="general" />
+
+### Harder
+
+Don't worry about solving these if this is the first time you've encountered
+DSU.
+
+<Problems problems="harder" />

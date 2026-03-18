@@ -1,0 +1,494 @@
+{
+  "MODULE_ID": "silver-conclusion",
+  "problems": [
+    {
+      "uniqueId": "cses-1650",
+      "name": "Range XOR Queries",
+      "url": "https://cses.fi/problemset/task/1650",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Prefix Sums"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1359C",
+      "name": "Mixing Water",
+      "url": "https://codeforces.com/problemset/problem/1359/C",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Binary Search"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "ceoi-12-JobScheduling",
+      "name": "2012 - Job Scheduling",
+      "url": "https://oj.uz/problem/view/CEOI12_jobs",
+      "source": "CEOI",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Binary Search"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-803D",
+      "name": "Magazine Ad",
+      "url": "https://codeforces.com/contest/803/problem/D",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Binary Search", "Greedy", "2P"],
+      "solutionMetadata": {
+        "kind": "internal",
+        "hasHints": true
+      }
+    },
+    {
+      "uniqueId": "cf-1077D",
+      "name": "Cutting Out",
+      "url": "https://codeforces.com/contest/1077/problem/D",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Binary Search"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-2060E",
+      "name": "Graph Composition",
+      "url": "https://codeforces.com/contest/2060/problem/E",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Connected Components", "DSU"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-404C",
+      "name": "Restore Graph",
+      "url": "https://codeforces.com/contest/404/problem/C",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["BFS"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1873E",
+      "name": " Building an Aquarium",
+      "url": "https://codeforces.com/contest/1873/problem/E",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["Binary Search"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1223C",
+      "name": "Save the Nature",
+      "url": "https://codeforces.com/problemset/problem/1223/C",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Binary Search", "Sorting"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "ac-pond",
+      "name": "Pond",
+      "url": "https://atcoder.jp/contests/abc203/tasks/abc203_d?lang=en",
+      "source": "AC",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Binary Search", "Prefix Sums"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "AC"
+      }
+    },
+    {
+      "uniqueId": "ccc-firehose",
+      "name": "Firehose",
+      "url": "https://dmoj.ca/problem/ccc10s3",
+      "source": "CCC",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Binary Search"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-1255",
+      "name": "Circular Barn - The Game",
+      "url": "http://usaco.org/index.php?page=viewproblem2&cpid=1255",
+      "source": "Silver",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Game Theory", "NT"],
+      "solutionMetadata": {
+        "kind": "USACO",
+        "usacoId": "1255"
+      }
+    },
+    {
+      "uniqueId": "usaco-419",
+      "name": "Sabotage",
+      "url": "http://usaco.org/index.php?page=viewproblem2&cpid=419",
+      "source": "Old Gold",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Binary Search", "Prefix Sums"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1468D",
+      "name": "Firecrackers",
+      "url": "https://codeforces.com/contest/1468/problem/D",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Binary Search", "Sorting"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "usaco-1112",
+      "name": "Just Green Enough",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=1112",
+      "source": "Silver",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Prefix Sums"],
+      "solutionMetadata": {
+        "kind": "USACO",
+        "usacoId": "1112"
+      }
+    },
+    {
+      "uniqueId": "cf-1792C",
+      "name": "Min Max Sort",
+      "url": "https://codeforces.com/contest/1792/problem/C",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Binary search", "Two pointers"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cf-51C",
+      "name": "Three Base Stations",
+      "url": "https://codeforces.com/contest/51/problem/C",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Binary Search, 2P"],
+      "solutionMetadata": {
+        "kind": "internal",
+        "hasHints": true
+      }
+    },
+    {
+      "uniqueId": "cf-1856C",
+      "name": "To Become Max",
+      "url": "https://codeforces.com/contest/1856/problem/C",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Binary Search"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1638D",
+      "name": "Big Brush",
+      "url": "https://codeforces.com/contest/1638/problem/D",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Ad Hoc", "Greedy", "DFS"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1620E",
+      "name": "Replace the Numbers",
+      "url": "https://codeforces.com/contest/1620/problem/E",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Sorting"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1775D",
+      "name": "Friendly Spiders",
+      "url": "https://codeforces.com/contest/1775/problem/D",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Number Theory", "Graphs", "BFS", "Shortest Path"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1722E",
+      "name": "Counting Rectangles",
+      "url": "https://codeforces.com/problemset/problem/1722/E",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Prefix Sums"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1690G",
+      "name": "Count the Trains",
+      "url": "https://codeforces.com/problemset/problem/1690/G",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Sorted Set"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cf-1108E2",
+      "name": "Array and Segments",
+      "url": "https://codeforces.com/contest/1108/problem/E2",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Sorted Set"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cf-1622C",
+      "name": "Set Or Decrease",
+      "url": "https://codeforces.com/contest/1622/problem/C",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Binary Search", "Prefix Sums"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cf-2021C2",
+      "name": "Adjust The Presentation",
+      "url": "https://codeforces.com/problemset/problem/2021/C2",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Greedy"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cf-2044G2",
+      "name": "Medium Demon Problem (hard version)",
+      "url": "https://codeforces.com/contest/2044/problem/G2",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Functional Graphs"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cf-2044G1",
+      "name": "Medium Demon Problem (easy version)",
+      "url": "https://codeforces.com/contest/2044/problem/G1",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Functional Graphs"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cf-2181M",
+      "name": "Medical Parity",
+      "url": "https://codeforces.com/contest/2181/problem/M",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Greedy", "Prefix", "Bitwise"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cfgym-105822B",
+      "name": "Kites",
+      "url": "https://codeforces.com/gym/105822/problem/B",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Prefix Sums"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cf-700B",
+      "name": "Connecting Universities",
+      "url": "https://codeforces.com/contest/700/problem/B",
+      "source": "CF",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["DFS"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cf-1288D",
+      "name": "Minimax Problem",
+      "url": "https://codeforces.com/contest/1288/problem/D",
+      "source": "CF",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Binary Search", "Bitmasks"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "ac-fennecvssnuke",
+      "name": "Fennec VS. Snuke",
+      "url": "https://atcoder.jp/contests/arc078/tasks/arc078_b",
+      "source": "AC",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Trees", "Game Theory"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-412D",
+      "name": "Giving Awards",
+      "url": "https://codeforces.com/contest/412/problem/D",
+      "source": "CF",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["DFS"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cf-2064D",
+      "name": "Eating",
+      "url": "https://codeforces.com/problemset/problem/2064/D",
+      "source": "CF",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["2D Prefix Sums", "Bitmasking", "DP"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "other-13-dreaming",
+      "name": "2013 - Dreaming",
+      "url": "https://oj.uz/problem/view/IOI13_dreaming",
+      "source": "IOI",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Tree"],
+      "solutionMetadata": {
+        "kind": "IOI",
+        "year": 2013
+      }
+    },
+    {
+      "uniqueId": "usaco-1523",
+      "name": "OohMoo Milk",
+      "url": "https://usaco.org/index.php?page=viewproblem2&cpid=1523",
+      "source": "Gold",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["Binary Search", "Sorting"],
+      "solutionMetadata": {
+        "kind": "USACO",
+        "usacoId": "1523"
+      }
+    },
+    {
+      "uniqueId": "cf-1943C",
+      "name": "Tree Compass",
+      "url": "https://codeforces.com/contest/1943/problem/C",
+      "source": "CF",
+      "difficulty": "Very Hard",
+      "isStarred": false,
+      "tags": ["Tree"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "cf-1428E",
+      "name": "Carrots for rabbits",
+      "url": "https://codeforces.com/contest/1428/problem/E",
+      "source": "CF",
+      "difficulty": "Very Hard",
+      "isStarred": false,
+      "tags": ["Priority queue", "math"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    }
+  ]
+}

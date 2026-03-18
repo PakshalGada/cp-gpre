@@ -1,0 +1,1250 @@
+---
+id: combo
+title: 'Combinatorics'
+author: Jesse Choe, Aadit Ambadkar, Dustin Miao, Mihnea Brebenel, Peng Bai
+prerequisites:
+  - divisibility
+  - modular
+description: How to count.
+frequency: 2
+---
+
+If you've never encountered any **combinatorics** before, AoPS is a good place
+to start.
+
+<Resources>
+	<Resource
+		source="AoPS"
+		title="Alcumus"
+		url="https://artofproblemsolving.com/alcumus/problem"
+		starred
+	>
+		practice problems; set focus to Counting and Probability for module topics
+	</Resource>
+	<Resource
+		source="AoPS"
+		title="Intro to Counting and Probability"
+		url="https://artofproblemsolving.com/store/book/intro-counting"
+	>
+		good book
+	</Resource>
+</Resources>
+
+## Resources
+
+<Resources>
+	<Resource source="CPH" title="22 - Combinatorics" url = "https://usaco.guide/CPH.pdf#page=217" starred>
+		module is based off of this
+	</Resource>
+	<Resource source="cp-algo" title="Combinatorics" url = "https://cp-algorithms.com/algebra/factorial-divisors.html">
+
+	</Resource>
+	<Resource source="HE" title="Basics of Combinatorics" url = "https://www.hackerearth.com/practice/math/combinatorics/basics-of-combinatorics/tutorial/">
+		teaches fundamental combinatorics with a practice problem at the end
+	</Resource>
+	<Resource source="AoPS" title="Introductory Combinatorics" url = "https://artofproblemsolving.com/wiki/index.php/Combinatorics/Introduction" starred>
+		teaches basic combinatorics concepts
+	</Resource>
+	<Resource source="AoPS" title="Intermediate Combinatorics" url = "https://artofproblemsolving.com/wiki/index.php/Combinatorics/Intermediate">
+		teaches more advanced combinatorics concepts
+	</Resource>
+	<Resource source="CF" title="Inclusion-Exclusion Principle" url = "https://codeforces.com/blog/entry/64625">
+		a good blog about the inclusion-exclusion principle
+	</Resource>
+</Resources>
+
+If you prefer watching videos instead, here are some options:
+
+<Resources>
+	<Resource source="YouTube" title="Deep Dive into Combinatorics" url = "https://www.youtube.com/playlist?list=PLDcSwjT2BF_W7hSCiSAVk1MmeGLC3xYGg">
+		playlist by mathemaniac
+	</Resource>
+	<Resource source="YouTube" title="MIT 6.042J" url = "https://www.youtube.com/playlist?list=PLB7540DEDD482705B">
+		lectures 16-23
+	</Resource>
+	<Resource source="YouTube" title="Sums and Expected Value #1" url = "https://www.youtube.com/watch?v=U_h3IjreRek">
+		Errichto video regarding expected value and sums of subsets
+	</Resource>
+</Resources>
+
+## Binomial Coefficients
+
+<FocusProblem problem="sample1" />
+
+The **binomial coefficient** $\binom{n}{k}$ (pronounced as "$n$ choose $k$" or
+sometimes written as ${}_nC_k$) represents the number of ways to choose a subset
+of $k$ elements from a set of $n$ elements. For example, $\binom{4}{2} = 6$,
+because the set $\{1,2,3,4\}$ has $6$ subsets of $2$ elements:
+
+$$
+\{1, 2\}, \{1, 3\}, \{1, 4\}, \{2, 3\}, \{2, 4\}, \{3, 4\}
+$$
+
+There are two ways to calculate binomial coefficients:
+
+### Method 1: Pascal's Triangle (Dynamic Programming) - $\mathcal{O}(n^2)$
+
+Binomial coefficients can be recursively calculated as follows:
+
+$$
+	\binom{n}{k} = \binom{n - 1}{k - 1} + \binom{n - 1}{k}
+$$
+
+The intuition behind this is to fix an element $x$ in the set and choose $k − 1$
+elements from $n − 1$ elements if $x$ is included in the set or choose $k$
+elements from $n − 1$ elements, otherwise.
+
+The base cases for the recursion are:
+
+$$
+	\binom{n}{0} = \binom{n}{n}  = 1
+$$
+
+because there is always exactly one way to construct an empty subset and a
+subset that contains all the elements.
+
+This recursive formula is commonly known as [Pascal's
+Triangle](https://brilliant.org/wiki/pascals-triangle/).
+
+A naive implementation of this would use a recursive formula, like below:
+
+<LanguageSection>
+<CPPSection>
+
+
+```cpp
+/** @return nCk mod p using naive recursion */
+int binomial(int n, int k, int p) {
+	if (k == 0 || k == n) { return 1; }
+	return (binomial(n - 1, k - 1, p) + binomial(n - 1, k, p)) % p;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+/** @return nCk mod p using naive recursion */
+public static int binomial(int n, int k, int p) {
+	if (k == 0 || k == n) { return 1; }
+	return (binomial(n - 1, k - 1, p) + binomial(n - 1, k, p)) % p;
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+def binomial(n: int, k: int, p: int) -> int:
+	""":return: nCk mod p using naive recursion"""
+	if k == 0 or k == n:
+		return 1
+	return (binomial(n - 1, k - 1, p) + binomial(n - 1, k, p)) % p
+```
+
+</PySection>
+</LanguageSection>
+
+Additionally, we can optimize this from $\mathcal{O}(2^n)$ to $\mathcal{O}(n^2)$
+using [dynamic programming](/gold/intro-dp) (DP) by caching the values of
+smaller binomials to prevent recalculating the same values over and over again.
+The code below shows a bottom-up implementation of this.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+/** @return nCk mod p using dynamic programming */
+int binomial(int n, int k, int p) {
+	// dp[i][j] stores iCj
+	vector<vector<int>> dp(n + 1, vector<int>(k + 1, 0));
+
+	// base cases described above
+	for (int i = 0; i <= n; i++) {
+		/*
+		 * i choose 0 is always 1 since there is exactly one way
+		 * to choose 0 elements from a set of i elements
+		 * (don't choose anything)
+		 */
+		dp[i][0] = 1;
+		/*
+		 * i choose i is always 1 since there is exactly one way
+		 * to choose i elements from a set of i elements
+		 * (choose every element in the set)
+		 */
+		if (i <= k) { dp[i][i] = 1; }
+	}
+
+	for (int i = 0; i <= n; i++) {
+		for (int j = 1; j <= min(i, k); j++) {
+			if (i != j) {  // skips over the base cases
+				// uses the recurrence relation above
+				dp[i][j] = (dp[i - 1][j - 1] + dp[i - 1][j]) % p;
+			}
+		}
+	}
+
+	return dp[n][k];  // returns nCk modulo p
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+/** @return nCk mod p using dynamic programming */
+public static int binomial(int n, int k, int p) {
+	// dp[i][j] stores iCj
+	int[][] dp = new int[n + 1][k + 1];
+
+	// base cases described above
+	for (int i = 0; i <= n; i++) {
+		/*
+		 * i choose 0 is always 1 since there is exactly one way
+		 * to choose 0 elements from a set of i elements
+		 * (don't choose anything)
+		 */
+		dp[i][0] = 1;
+		/*
+		 * i choose i is always 1 since there is exactly one way
+		 * to choose i elements from a set of i elements
+		 * (choose every element in the set)
+		 */
+		if (i <= k) { dp[i][i] = 1; }
+	}
+
+	for (int i = 0; i <= n; i++) {
+		for (int j = 1; j <= Math.min(i, k); j++) {
+			if (i != j) {  // skips over the base cases
+				// uses the recurrence relation above
+				dp[i][j] = (dp[i - 1][j - 1] + dp[i - 1][j]) % p;
+			}
+		}
+	}
+
+	return dp[n][k];  // returns nCk modulo p
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+def binomial(n: int, k, p):
+	""":return: nCk mod p using dynamic programming"""
+	# dp[i][j] stores iCj
+	dp = [[0] * (k + 1) for _ in range(n + 1)]
+
+	# base cases described above
+	for i in range(n + 1):
+		"""
+		i choose 0 is always 1 since there is exactly one way
+		to choose 0 elements from a set of i elements
+		(don't choose anything
+		"""
+		dp[i][0] = 1
+		"""
+		i choose i is always 1 since there is exactly one way
+		to choose i elements from a set of i elements
+		(choose every element in the set)
+		"""
+		if i <= k:
+			dp[i][i] = 1
+
+	for i in range(n + 1):
+		for j in range(1, min(i, k) + 1):
+			if i != j:  # skips over the base cases
+				# uses the recurrence relation above
+				dp[i][j] = (dp[i - 1][j - 1] + dp[i - 1][j]) % p
+
+	return dp[n][k]  # returns nCk modulo p
+```
+
+</PySection>
+</LanguageSection>
+
+### Method 2: Factorial Definition (Modular Inverses) - $\mathcal{O}(n + \log MOD)$
+
+Define $n!$ as $n \times (n - 1) \times (n - 2) \times \ldots 1$. $n!$
+represents the number of permutations of a set of $n$ elements. See [this AoPS
+Article](https://artofproblemsolving.com/wiki/index.php/Factorial) for more
+details.
+
+Another way to calculate binomial coefficients is as follows:
+
+$$
+	\binom{n}{k} = \frac{n!}{k!(n-k)!}
+$$
+
+Recall that $\binom{n}{k}$ also represents the number of ways to choose $k$
+elements from a set of $n$ elements. One strategy to get all such combinations
+is to go through all possible permutations of the $n$ elements, and only pick
+the first $k$ elements out of each permutation. There are $n!$ ways to do so.
+However, note the the order of the elements inside and outside the subset does
+not matter, so the result is divided by $k!$ and $(n − k)!$.
+
+Since these binomial coefficients are large, problems typically require us to
+output the answer modulo a large prime $p$ such as $10^9 + 7$. Fortunately, we
+can use [modular inverses](/gold/modular) to divide $n!$ by $k!$ and $(n - k)!$
+modulo $p$ for any prime $p$. Computing inverse factorials **online** can be
+very time-consuming. Instead, we can **precompute** all factorials in
+$\mathcal{O}(n)$ time and inverse factorials in $\mathcal{O}(n + \log MOD)$.
+First, we compute the modular inverse of the largest factorial using binary
+exponentiation. For the rest, we use the fact that $(n!)^{-1} \equiv
+(n!)^{-1}\times (n+1)^{-1} \times (n+1) \equiv ((n+1)!)^{-1}\times (n+1)$. See
+the code below for the implementation.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+const int MAXN = 1e6;
+
+long long fac[MAXN + 1];
+long long inv[MAXN + 1];
+
+/** @return x^n modulo m in O(log p) time. */
+long long exp(long long x, long long n, long long m) {
+	x %= m;  // note: m * m must be less than 2^63 to avoid ll overflow
+	long long res = 1;
+	while (n > 0) {
+		if (n % 2 == 1) { res = res * x % m; }
+		x = x * x % m;
+		n /= 2;
+	}
+	return res;
+}
+
+/** Precomputes n! from 0 to MAXN. */
+void factorial(long long p) {
+	fac[0] = 1;
+	for (int i = 1; i <= MAXN; i++) { fac[i] = fac[i - 1] * i % p; }
+}
+
+/**
+ * Precomputes all modular inverse factorials
+ * from 0 to MAXN in O(n + log p) time
+ */
+void inverses(long long p) {
+	inv[MAXN] = exp(fac[MAXN], p - 2, p);
+	for (int i = MAXN; i >= 1; i--) { inv[i - 1] = inv[i] * i % p; }
+}
+
+/** @return nCr mod p */
+long long choose(long long n, long long r, long long p) {
+	return fac[n] * inv[r] % p * inv[n - r] % p;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.util.*;
+
+public class BinomialCoefficients {
+	private static final int MAXN = (int)1e6;
+	private static long[] fac = new long[MAXN + 1];
+	private static long[] inv = new long[MAXN + 1];
+
+	/** @return x^n modulo m in O(log p) time. */
+	private static long exp(long x, long n, long m) {
+		x %= m;  // note: m * m must be less than 2^63 to avoid ll overflow
+		long res = 1;
+		while (n > 0) {
+			if (n % 2 == 1) { res = res * x % m; }
+			x = x * x % m;
+			n /= 2;
+		}
+		return res;
+	}
+
+	/** Precomputes n! from 0 to MAXN with a certain modulo. */
+	private static void factorial(long p) {
+		fac[0] = 1;
+		for (int i = 1; i <= MAXN; i++) { fac[i] = fac[i - 1] * i % p; }
+	}
+
+	/**
+	 * Precomputes all modular inverse factorials
+	 * from 0 to MAXN in O(n + log p) time
+	 */
+	private static void inverses(long p) {
+		inv[MAXN] = exp(fac[MAXN], p - 2, p);
+		for (int i = MAXN; i >= 1; i--) { inv[i - 1] = inv[i] * i % p; }
+	}
+
+	/** @return nCr mod p */
+	private static long choose(long n, long r, long p) {
+		return fac[(int)n] * inv[(int)r] % p * inv[(int)(n - r)] % p;
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+MAXN = 10**6
+
+fac = [0] * (MAXN + 1)
+inv = [0] * (MAXN + 1)
+
+
+def exp(x: int, n: int, m: int) -> int:
+	""":return: x^n modulo m in O(log p) time."""
+	x %= m  # note: m * m must be less than 2^63 to avoid ll overflow
+	res = 1
+	while n > 0:
+		if n % 2 == 1:
+			res = (res * x) % m
+		x = (x * x) % m
+		n //= 2
+	return res
+
+
+def factorial(p: int):
+	"""Precomputes n! from 0 to MAXN."""
+	global fac
+	fac[0] = 1
+	for i in range(1, MAXN + 1):
+		fac[i] = (fac[i - 1] * i) % p
+
+
+def inverses(p: int):
+	"""
+	Precomputes all modular inverse factorials from 0 to MAXN in O(n + log p) time
+	"""
+	global inv
+	inv[MAXN] = exp(fac[MAXN], p - 2, p)
+	for i in range(MAXN, 0, -1):
+		inv[i - 1] = (inv[i] * i) % p
+
+
+def choose(n: int, r: int, p: int):
+	""":return: nCr mod p"""
+	return fac[n] * inv[r] % p * inv[n - r] % p
+```
+
+</PySection>
+</LanguageSection>
+
+### Solution - Binomial Coefficients
+
+The first method for calculating binomial factorials is too slow for this
+problem since the constraints on $a$ and $b$ are $(1 \leq b \leq a \leq 10^6)$
+(recall that the first implementation runs in $\mathcal{O}(n^2)$ time
+complexity). However, we can use the second method to answer each of the $n$
+queries in constant time by precomputing factorials and their modular inverses.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <iostream>
+using namespace std;
+using ll = long long;
+
+const int MAXN = 1e6;
+const int MOD = 1e9 + 7;
+
+ll fac[MAXN + 1];
+ll inv[MAXN + 1];
+
+// BeginCodeSnip{Counting functions}
+ll exp(ll x, ll n, ll m) {
+	x %= m;
+	ll res = 1;
+	while (n > 0) {
+		if (n % 2 == 1) { res = res * x % m; }
+		x = x * x % m;
+		n /= 2;
+	}
+	return res;
+}
+
+void factorial() {
+	fac[0] = 1;
+	for (int i = 1; i <= MAXN; i++) { fac[i] = fac[i - 1] * i % MOD; }
+}
+
+void inverses() {
+	inv[MAXN] = exp(fac[MAXN], MOD - 2, MOD);
+	for (int i = MAXN; i >= 1; i--) { inv[i - 1] = inv[i] * i % MOD; }
+}
+
+ll choose(int n, int r) { return fac[n] * inv[r] % MOD * inv[n - r] % MOD; }
+// EndCodeSnip
+
+int main() {
+	factorial();
+	inverses();
+	int n;
+	cin >> n;
+	for (int i = 0; i < n; i++) {
+		int a, b;
+		cin >> a >> b;
+		cout << choose(a, b) << '\n';
+	}
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class BinomialCoeffs {
+	private static final int MAXN = (int)1e6;
+	private static final int MOD = (int)1e9 + 7;
+	private static long[] fac = new long[MAXN + 1];
+	private static long[] inv = new long[MAXN + 1];
+
+	public static void main(String[] args) {
+		factorial();
+		inverses();
+		Kattio io = new Kattio();
+		int n = io.nextInt();
+		for (int i = 0; i < n; i++) {
+			int a = io.nextInt();
+			int b = io.nextInt();
+			System.out.println(choose(a, b));
+		}
+	}
+
+	// BeginCodeSnip{Counting Functions}
+	private static long exp(long x, long n, long m) {
+		x %= m;
+		long res = 1;
+		while (n > 0) {
+			if (n % 2 == 1) { res = (res * x) % m; }
+			x = (x * x) % m;
+			n /= 2;
+		}
+		return res;
+	}
+
+	private static void factorial() {
+		fac[0] = 1;
+		for (int i = 1; i <= MAXN; i++) { fac[i] = (fac[i - 1] * i) % MOD; }
+	}
+
+	private static void inverses() {
+		inv[MAXN] = exp(fac[MAXN], MOD - 2, MOD);
+		for (int i = MAXN; i >= 1; i--) { inv[i - 1] = (inv[i] * i) % MOD; }
+	}
+
+	private static long choose(int n, int r) {
+		return (((fac[n] * inv[r]) % MOD) * inv[n - r]) % MOD;
+	}
+	// EndCodeSnip
+
+	// CodeSnip{Kattio}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+MAXN = 10**6
+MOD = 10**9 + 7
+
+fac = [0] * (MAXN + 1)
+inv = [0] * (MAXN + 1)
+
+
+# BeginCodeSnip{Counting Functions}
+def exp(x: int, n: int, m: int) -> int:
+	x %= m
+	res = 1
+	while n > 0:
+		if n % 2 == 1:
+			res = res * x % m
+		x = x * x % m
+		n //= 2
+	return res
+
+
+def factorial():
+	fac[0] = 1
+	for i in range(1, MAXN + 1):
+		fac[i] = fac[i - 1] * i % MOD
+
+
+def inverses():
+	inv[MAXN] = exp(fac[MAXN], MOD - 2, MOD)
+	for i in range(MAXN, 0, -1):
+		inv[i - 1] = inv[i] * i % MOD
+
+
+def choose(n: int, r: int):
+	return fac[n] * inv[r] % MOD * inv[n - r] % MOD
+
+
+# EndCodeSnip
+
+
+factorial()
+inverses()
+n = int(input())
+for _ in range(n):
+	a, b = map(int, input().split())
+	print(choose(a, b))
+```
+
+</PySection>
+</LanguageSection>
+
+## Derangements
+
+<FocusProblem problem="sample2" />
+
+The number of derangements of $n$ numbers, expressed as $!n$, is the number of
+permutations such that no element appears in its original position. Informally,
+it is the number of ways $n$ hats can be returned to $n$ people such that no
+person receives their own hat.
+
+### Method 1: Principle of Inclusion-Exclusion
+
+Suppose we had events $E_1, E_2, \dots, E_n$, where event $E_i$ corresponds to
+person $i$ receiving their own hat. We would like to calculate $n! - \lvert E_1
+\cup E_2 \cup \dots \cup E_n \rvert$.
+
+We subtract from $n!$ the number of ways for each event to occur; that is,
+consider the quantity $n! - \lvert E_1 \rvert - \lvert E_2 \rvert - \dots -
+\lvert E_n \rvert$. This undercounts, as we are subtracting cases where more
+than one event occurs too many times. Specifically, for a permutation where at
+least two events occur, we undercount by one. Thus, add back the number of ways
+for two events to occur. We can continue this process for every size of subsets
+of indices. The expression is now of the form:
+
+$$
+n! - \lvert E_1 \cup E_2 \cup \dots \cup E_n \rvert = \sum_{k = 1}^n (-1)^k \cdot (\text{number of permutations with $k$ fixed points})
+$$
+
+For a set size of $k$, the number of permutations with at least $k$ indices can
+be computed by choosing a set of size $k$ that are fixed, and permuting the
+other indices. In mathematical terms:
+
+$$
+{n \choose k}(n-k)! = \frac{n!}{k!(n-k)!}(n-k)! = \frac{n!}{k!}
+$$
+
+Thus, the problem now becomes computing
+
+$$
+n!\sum_{k=0}^n\frac{(-1)^k}{k!}
+$$
+
+which can be done in linear time.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <atcoder/modint>
+#include <bits/stdc++.h>
+
+using namespace std;
+using mint = atcoder::modint;
+
+int main() {
+	int n, m;
+	cin >> n >> m;
+	mint::set_mod(m);
+
+	mint c = 1;
+	for (int i = 1; i <= n; i++) {
+		c = (c * i) + (i % 2 == 1 ? -1 : 1);
+		cout << c.val() << ' ';
+	}
+	cout << endl;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.util.Scanner;
+
+public class Main {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		int n = scanner.nextInt();
+		int m = scanner.nextInt();
+
+		long c = 1;
+		for (int i = 1; i <= n; i++) {
+			c = (c * i) + (i % 2 == 1 ? -1 : 1);
+			c %= m;
+			c += m;
+			c %= m;
+			System.out.print(c + " ");
+		}
+		System.out.println();
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+n, m = map(int, input().split())
+c = 1
+for i in range(1, n + 1):
+	c = (c * i) + (-1 if i % 2 == 1 else 1)
+	c %= m
+	c += m
+	c %= m
+	print(c, end=" ")
+
+print()
+```
+
+</PySection>
+</LanguageSection>
+
+### Method 2: Dynamic Programming
+
+Suppose person 1 received person $i$'s hat. There are two cases:
+
+1. If person $i$ receives person 1's hat, then the problem is reduced to a
+   subproblem of size $n - 2$. There are $n - 1$ possibilities for $i$ in this
+   case, so we add to the current answer $(n - 1)\cdot !(n - 2)$.
+2. If person $i$ does not receive person 1's hat, then we can reassign person
+   1's hat to be person $i$'s hat (if they received person 1's hat, then this
+   would become first case). Thus, this becomes a subproblems with size $n - 1$,
+   are there $n - 1$ ways to choose $i$.
+
+Thus, we have
+
+$$
+!n = (n - 1)(!(n - 2) + !(n - 1))
+$$
+
+which can be computed in linear time with DP. The base cases are that
+$!0 = 1$ and $!1 = 0$.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <atcoder/modint>
+#include <bits/stdc++.h>
+
+using namespace std;
+using mint = atcoder::modint;
+
+int main() {
+	int n, m;
+	cin >> n >> m;
+	mint::set_mod(m);
+
+	mint a = 1, b = 0;
+	cout << 0 << ' ';
+
+	for (int i = 2; i <= n; i++) {
+		mint c = (i - 1) * (a + b);
+		cout << c.val() << ' ';
+		a = b;
+		b = c;
+	}
+	cout << endl;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.util.Scanner;
+
+public class Main {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		int n = scanner.nextInt();
+		int m = scanner.nextInt();
+
+		int a = 1;
+		int b = 0;
+
+		System.out.print("0 ");
+		for (int i = 2; i <= n; i++) {
+			int c = (int)(((long)(i - 1) * (a + b)) % m);
+			System.out.print(c + " ");
+			a = b;
+			b = c;
+		}
+		System.out.println();
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+n, m = map(int, input().split())
+a, b = 1, 0
+
+print(0, end=" ")
+for i in range(2, n + 1):
+	c = (i - 1) * (a + b) % m
+	print(c, end=" ")
+	a, b = b, c
+
+print()
+```
+
+</PySection>
+</LanguageSection>
+
+## Stars and Bars
+
+<Resources>
+	<Resource
+		source="cp-algo"
+		title="Stars and bars"
+		url="https://cp-algorithms.com/combinatorics/stars_and_bars.html"
+		starred
+	>
+	</Resource>
+	<Resource
+		source="Medium"
+		title="The Stars and Bars Formula"
+		url="https://medium.com/statistics-theory/the-stars-and-bars-formula-b1c09c2b27b4"
+	>
+		Well documented article.
+	</Resource>
+</Resources>
+
+[Stars and Bars](https://en.wikipedia.org/wiki/Stars_and_bars_(combinatorics)) is a useful method in combinatorics that involves
+grouping indistinguishable objects into distinguishable boxes. The number of ways to put $n$ indistinguishable objects into
+$k$ distinguishable boxes is:
+
+$$
+\binom{n+k-1}{n}=\binom{n+k-1}{k-1}
+$$
+
+The second binomial coefficient from above can be derived from the property of binomial coefficients: $\binom{n}{k}=\binom{n}{n-k}$.
+
+Let's take a look at a particular example for $n=3$ and $k=2$ that has $4$ possibilities. As the name implies, the visualization is usually done with stars
+separated into groups by bars:
+
+$$
+||\bigstar \bigstar \bigstar  \\
+|\bigstar |\bigstar \bigstar  \\
+|\bigstar \bigstar| \bigstar  \\
+\bigstar \bigstar \bigstar ||  \\
+$$
+
+As you've probably noticed, there can be empty boxes - when we put all the stars in the first or second box. There may be cases in
+which the all the boxes should be non-empty. In that case, the number of ways to put $n$ indistinguishable objects into $k$
+distinguishable **non-empty** boxes is: $\binom{n-1}{k-1}$
+
+<FocusProblem problem="sample4" />
+
+### Explanation
+
+For this problem we should think the other way around: let's say that the $k$ colors from which we choose are in fact boxes and instead of choosing $n$ marbles we put them
+in the respective boxes. The problem has the restriction that we should pick at least one marble of all kinds, which means in our new perspective that all the boxes should be
+non-empty. Thus, the answer is obtained by the second formula: $\binom{n-1}{k-1}$
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(T \cdot K)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <iostream>
+
+/** @return n choose k, computed naively since the problem has no overflow */
+long long comb(int n, int k) {
+	if (k > n - k) { k = n - k; }
+	long long ret = 1;
+	for (int i = 0; i < k; i++) {
+		// this is done instead of *= for divisibility issues
+		ret = ret * (n - i) / (i + 1);
+	}
+	return ret;
+}
+
+int main() {
+	int test_num;
+	std::cin >> test_num;
+	for (int t = 0; t < test_num; t++) {
+		int marble_num;
+		int color_num;
+		std::cin >> marble_num >> color_num;
+		std::cout << comb(marble_num - 1, color_num - 1) << '\n';
+	}
+}
+```
+</CPPSection>
+<PySection>
+
+```py
+from math import comb
+
+ans = []
+for _ in range(int(input())):
+	marble_num, color_num = [int(i) for i in input().split()]
+	ans.append(str(comb(marble_num - 1, color_num - 1)))
+
+print("\n".join(ans))
+```
+
+</PySection>
+</LanguageSection>
+
+## Expected Value
+
+<Resources>
+	<Resource
+		source="Brilliant"
+		title="Expected Value"
+		url="https://brilliant.org/wiki/expected-value/"
+	>
+		lots of pure math examples of expected value + explanations
+	</Resource>
+	<Resource
+		source="Brilliant"
+		title="Linearity of Expectation"
+		url="https://brilliant.org/wiki/linearity-of-expectation/"
+	>
+		lots of pure math examples of linearity of expectation + explanations
+	</Resource>
+	<Resource source="CF" title="Expected Value" url = "https://codeforces.com/blog/entry/62690">
+		a good blog about the expected value
+	</Resource>
+</Resources>
+
+An expected value is the theoretical mean of a probability distribution. A **random variable** is used to represent a possible probability distribution. Let $X$ be a random variable and $P(X = x)$ be the probability that the result of the random variable $X$ is $x$. Then, the expected value of $X$, denoted as $E[X]$, is
+$$
+\sum_x x \cdot P(X = x)
+$$
+
+For example, let $X$ be the probability distribution of a fair 6-sided die. $P(X = x)$ is $\frac{1}{6}$ for $1 \leq x \leq 6$. Using the formula, we get $E[X] = \frac{21}{6} = \frac{7}{2}$.
+
+<FocusProblem problem="sample5" />
+
+### Explanation
+
+Let $X$ represent the probability distribution of the maximum number of candies a child gets. To get $E[X]$, we need $P(X = x)$ for $1 \leq x \leq k$. $(\frac{x}{k})^n$ is the probability that each child gets at most $x$ candies. To get $P(X = x)$, we must subtract out the probability that each child gets strictly less than $x$ candies, which is $(\frac{x - 1}{k})^n$.
+
+Therefore, $P(X = x) = (\frac{x}{k})^n - (\frac{x - 1}{k})^n$, allowing us to calculate $E[X]$.
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(k)$ (assuming power runs in constant time).
+
+<Warning>
+
+To pass all the test cases on CSES, we need to handle one of the test cases
+specially: specifically, $(n,k)=(7,10)$.
+
+Usually, you do **not** need to worry about this,
+since problems asking for a floating point number as output will often
+accept any answer sufficiently close to the correct one. Thus, reading
+the explanation hidden in the spoiler is optional.
+
+</Warning>
+
+<Spoiler title="(Optional) Why does one case need to be handled specially?">
+
+Consider the following code snippet:
+
+```cpp
+#include <iomanip>
+#include <iostream>
+
+int main() {
+	double ans = 9.1919575;
+	std::cout << std::fixed << std::setprecision(6) << ans << "\n";
+}
+
+// Output: 9.191957
+```
+
+Why is the number $9.1919575$ seemingly rounding down when it's supposed to
+round up? The reason is that it can't be represented exactly
+in a double, so $ans$ is instead storing the closest double to it, and that
+double happens to be less than it.
+Indeed, if we increase the precision from 6 to 15 when printing, we get the
+following output: $9.191957499999999$.
+
+In general, a fraction $a/b$ cannot be represented exactly in a double
+unless $b$ is a power of two.
+
+Let's print out all cases where this could potentially be a problem.
+In the following code, $dif$ is the difference between the
+answer computed by our solution and the closest number
+of the form `x.xxxxxx5`.
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+double solve_orig(int n, int k) {
+	double expect_max = 0;
+	for (int i = 1; i <= k; i++) {
+		expect_max += i * (pow((double)i / k, n) - pow((double)(i - 1) / k, n));
+	}
+	return expect_max;
+}
+
+int main() {
+	vector<pair<double, pair<int, int>>> by_dif;
+	for (int n = 1; n <= 100; ++n)
+		for (int k = 1; k <= 100; ++k) {
+			double a = solve_orig(n, k);
+			double b = 1e6 * a - 0.5;
+			double dif = abs(b - round(b)) / 1e6;
+			by_dif.push_back({dif, {n, k}});
+		}
+	sort(begin(by_dif), end(by_dif));
+	by_dif.resize(10);
+
+	for (auto [d, p] : by_dif) {
+		cout << "dif = " << d << " n = " << p.first << " " << "k = " << p.second
+		     << "\n";
+
+		stringstream ss;
+		ss << fixed << setprecision(15) << solve_orig(p.first, p.second);
+		cout << ss.str() << "\n\n";
+	}
+}
+```
+
+Output:
+
+```
+dif = 0 n = 2 k = 64
+43.164062500000000
+
+dif = 0 n = 3 k = 32
+24.492187500000000
+
+dif = 0 n = 4 k = 4
+3.617187500000000
+
+dif = 0 n = 7 k = 2
+1.992187500000000
+
+dif = 0 n = 7 k = 10
+9.191957499999999
+
+dif = 1.86265e-15 n = 4 k = 20
+16.483337500000001
+
+dif = 3.12328e-11 n = 33 k = 62
+60.632305500031237
+
+dif = 1.14784e-10 n = 64 k = 98
+96.938251499885212
+
+dif = 1.89349e-10 n = 27 k = 71
+68.932663499810644
+
+dif = 2.14219e-10 n = 53 k = 17
+16.958418499785783
+```
+
+If we look at the smallest few differences, we note that
+$(n,k)\in \{(7,10), (4,20)\}$ are the first two cases where the answer
+cannot be represented exactly in a double. $(4,20)$ happens not to be an issue,
+but $(7,10)$ is.
+
+</Spoiler>
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <cmath>
+#include <iomanip>
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
+int main() {
+	int n;
+	int k;
+	std::cin >> n >> k;
+
+	double expect_max = 0;
+	for (int i = 1; i <= k; i++) {
+		expect_max += i * (pow((double)i / k, n) - pow((double)(i - 1) / k, n));
+	}
+
+	if (n == 7 && k == 10) expect_max += 1e-12;  // fix rounding for edge case
+
+	cout << std::setprecision(6) << std::fixed;  // set output precision
+	cout << expect_max << endl;
+}
+```
+
+</CPPSection>
+<PySection>
+
+```py
+n, k = [int(i) for i in input().split()]
+
+expected_max = 0
+for c in range(1, k + 1):
+	expected_max += c * ((c / k) ** n - ((c - 1) / k) ** n)
+
+if n == 7 and k == 10:
+	expected_max += 1e-12
+
+print(f"{expected_max:.6f}")
+```
+
+</PySection>
+</LanguageSection>
+
+## Linearity of Expectation
+
+Linearity of expectation states that $E[X + Y] = E[X] + E[Y]$ no matter if $X$ and $Y$ are independent of each other. For example, if on a certain day Alice goes to the gym with a probability of $\frac{1}{10}$ and her husband Bob goes to the gym with a probability of $\frac{3}{10}$, the expected number of visits to the gym on a certain day amongst the couple is $\frac{1}{10} + \frac{3}{10} = \frac{2}{5}$. This works even though the decisions of one person may affect the other.
+
+This can be generalized to a sequence of random variables $X_1, X_2, \dots, X_n$ and arbitrary constants $c_1, c_2, \dots, c_n$:
+$$
+E\left[\sum_{i = 1}^{n} c_iX_i \right] = \sum_{i = 1}^{n}c_i \cdot E[ X_i]
+$$
+
+<FocusProblem problem="sample6" />
+
+### Explanation
+
+While this may seem impossible at first glance given the amount of different sequences of operations, linearity of expectation allows us to break down the expected value into the sum of smaller parts.
+
+We can break this down by decomposing the initial random variable into the sums
+of various *indicator* random variables.
+Let $X_u$ be a variable that indicates whether node $u$ was explicitly marked for removal.
+Since it's basically a boolean, it can only take on either $0$ or $1$,
+which also means that the probability that it's $1$ is equal to its expected value.
+
+Now, let's consider how an operation affects node $u$.
+1. Either it chooses a node that can't reach $u$, and nothing happens as far as $u$ is concerned.
+2. It chooses $u$ itself, making the indicator variable $1$.
+3. It chooses another node that can reach $u$, making the indicator variable $0$.
+Since all nodes have an equal chance of being chosen, the chance that $X_u=1$
+is $\frac{1}{a_u}$, where $a_u$ is the number of nodes that can reach $u$ *including $u$ itself*.
+
+We put the expected values of all the indicator variables back together, giving us our final answer.
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(N^3)$ using a naive DFS or BFS.
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <iomanip>
+#include <iostream>
+#include <vector>
+
+using std::cout;
+using std::endl;
+using std::vector;
+
+int main() {
+	int n;
+	std::cin >> n;
+	vector<vector<int>> adj(n, vector<int>(n));
+	for (int n1 = 0; n1 < n; n1++) {
+		for (int n2 = 0; n2 < n; n2++) {
+			char connected;
+			std::cin >> connected;
+			adj[n1][n2] = connected == '1';
+		}
+	}
+
+	// reach_from[i] = the # of nodes that have a path to i
+	vector<int> reach_from(n);
+	for (int start = 0; start < n; start++) {
+		vector<int> todo{start};
+		vector<bool> visited(n, false);
+		visited[start] = true;
+		while (!todo.empty()) {
+			int curr = todo.back();
+			todo.pop_back();
+			for (int i = 0; i < n; i++) {
+				if (!visited[i] && adj[curr][i]) {
+					visited[i] = true;
+					reach_from[i]++;
+					todo.push_back(i);
+				}
+			}
+		}
+	}
+
+	double expected_ops = 0;
+	for (int i : reach_from) { expected_ops += 1.0 / (i + 1); }
+
+	cout << std::setprecision(15) << expected_ops << endl;
+}
+```
+
+</CPPSection>
+<PySection>
+
+```py
+n = int(input())
+
+adj = [[] for _ in range(n)]
+for i in range(n):
+	for v, c in enumerate(input()):
+		if c == "1":
+			adj[i].append(v)
+
+# reach_from[i] = the # of nodes that have a path to i
+reach_from = [0 for _ in range(n)]
+for start in range(n):
+	todo = [start]
+	visited = [False for _ in range(n)]
+	visited[start] = True
+	while todo:
+		curr = todo.pop()
+		for next_ in adj[curr]:
+			if not visited[next_]:
+				visited[next_] = True
+				reach_from[next_] += 1
+				todo.append(next_)
+
+expected_ops = 0
+for i in reach_from:
+	expected_ops += 1 / (i + 1)
+
+print(expected_ops)
+```
+
+</PySection>
+</LanguageSection>
+
+## Expected Products
+
+Linearity of expectation deals with $E[X + Y]$, but what about $E[X \cdot Y]$?
+
+$E[X \cdot Y] = E[X] \cdot E[Y]$ if $X$ and $Y$ are independent from each other.
+We can reconsider the example of a fair 6-sided die to show that $E[X^2] \neq E[X]^2$.
+We know that $E[X] = \frac{7}{2}$, so $E[X]^2 = \frac{7}{2} \cdot \frac{7}{2} = \frac{49}{4}$.
+
+On the other hand,
+$$
+E[X^2] = \sum_x x^2 \cdot P(X = x) = \frac{1 + 4 + 9 + 16 + 25 + 36}{6} = \frac{91}{6}.
+$$
+
+## Problems
+
+<Problems problems="general" />

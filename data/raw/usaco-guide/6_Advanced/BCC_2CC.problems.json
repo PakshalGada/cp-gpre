@@ -1,0 +1,166 @@
+{
+  "MODULE_ID": "BCC-2CC",
+  "sam2": [
+    {
+      "uniqueId": "ys-TwoEdgeConnectedComponents",
+      "name": "Two-Edge-Connected Components",
+      "url": "https://judge.yosupo.jp/problem/two_edge_connected_components",
+      "source": "YS",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["2CC"],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "BCC-2CC"
+      }
+    }
+  ],
+  "submerge": [
+    {
+      "uniqueId": "spoj-submerge",
+      "name": "SUBMERGE - Submerging Islands",
+      "url": "https://www.spoj.com/problems/SUBMERGE/",
+      "source": "SPOJ",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["BCC", "Articulation Points"],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "BCC-2CC"
+      }
+    }
+  ],
+  "disrupt": [
+    {
+      "uniqueId": "usaco-842",
+      "name": "Disruption",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=842",
+      "source": "Platinum",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["Merging"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    }
+  ],
+  "probs2": [
+    {
+      "uniqueId": "ceoi-17-OneWayStreets",
+      "name": "2017 - One-Way Streets",
+      "url": "https://qoj.ac/contest/193/problem/789",
+      "source": "CEOI",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["BCC"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "QOJ"
+      }
+    }
+  ],
+  "bccSam": [
+    {
+      "uniqueId": "cses-1705",
+      "name": "Forbidden Cities",
+      "url": "https://cses.fi/problemset/task/1705",
+      "source": "CSES",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["BCC"],
+      "solutionMetadata": {
+        "kind": "in-module",
+        "moduleId": "BCC-2CC"
+      }
+    }
+  ],
+  "gen": [
+    {
+      "uniqueId": "cses-2177",
+      "name": "Strongly Connected Edges",
+      "url": "https://cses.fi/problemset/task/2177",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": ["BCC"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "poi-08-blockade",
+      "name": "2008 - Blockade",
+      "url": "https://szkopul.edu.pl/problemset/problem/eDt8w290owtatmCjad0O0ywk/site/?key=statement",
+      "source": "POI",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["BCC"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "apio-18-duathlon",
+      "name": "2018 - Duathlon",
+      "url": "https://oj.uz/problem/view/APIO18_duathlon",
+      "source": "APIO",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["BCC"],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "poi-16-AmusingJourneys",
+      "name": "2016 - Amusing Journeys",
+      "url": "https://szkopul.edu.pl/problemset/problem/YY6-3ua-C1rt7q-97laWc0UP/site/",
+      "source": "POI",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": ["BCC"],
+      "solutionMetadata": {
+        "kind": "none"
+      }
+    },
+    {
+      "uniqueId": "tle-investment",
+      "name": "Investment",
+      "url": "https://dmoj.ca/problem/tle17c1p6",
+      "source": "TLE",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["BCC"],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "DMOJ"
+      }
+    },
+    {
+      "uniqueId": "ceoi-15-pipes",
+      "name": "2015 - Pipes",
+      "url": "https://qoj.ac/problem/261",
+      "source": "CEOI",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": ["BCC"],
+      "solutionMetadata": {
+        "kind": "link",
+        "url": "https://archive.org/download/oi-ted-ceoi-archive/CEOI/2015/"
+      }
+    },
+    {
+      "uniqueId": "usaco-769",
+      "name": "Push a Box",
+      "url": "http://www.usaco.org/index.php?page=viewproblem2&cpid=769",
+      "source": "Platinum",
+      "difficulty": "Very Hard",
+      "isStarred": false,
+      "tags": ["BCC"],
+      "solutionMetadata": {
+        "kind": "USACO",
+        "usacoId": "769"
+      }
+    }
+  ]
+}

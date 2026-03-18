@@ -1,0 +1,242 @@
+---
+id: intro-greedy
+title: Introduction to Greedy Algorithms
+author: Darren Yao, Benjamin Qi
+contributors: Ryan Chou
+description:
+  'Problems that can be solved by selecting the choice that seems to be the best at the moment at every step.'
+frequency: 3
+---
+
+<Warning>
+
+Although the [USACO website](https://usaco.org/index.php?page=details) says
+that greedy algorithms start appearing in [Silver](/silver/greedy-sorting), many Bronze problems can
+also be solved using greedy algorithms.
+
+</Warning>
+
+<Resources>
+	<Resource source="CPH" title="6.1 - Coin Problem" starred>
+		other examples are outside scope of bronze
+	</Resource>
+</Resources>
+
+From the above:
+
+> A **greedy** algorithm constructs a solution to the problem by always making a
+> choice that looks the best at the moment. A greedy algorithm never takes back
+> its choices, but directly constructs the final solution. For this reason,
+> greedy algorithms are usually very efficient.
+
+**Greedy** does not refer to a single algorithm, but rather a way of thinking
+that is applied to problems; there's no one way to do greedy algorithms. Hence,
+we use a selection of well-known examples to help you understand the greedy
+paradigm.
+
+<FocusProblem problem="tutorial" />
+
+## Solution - Mad Scientist
+
+<Spoiler title="Solution">
+
+In this problem, the correct greedy solution is to continually flip the longest
+possible ranges of mismatching cows.
+
+Mad Scientist has an excellent
+[editorial](http://www.usaco.org/current/data/sol_breedflip_bronze_feb20.html)
+with a video solution and intuitive proof.
+
+It is highly recommended you read it to gain a better understanding of the
+greedy algorithm.
+
+### Implementation
+
+**Time Complexity:** $\mathcal{O}(N)$
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <fstream>
+#include <iostream>
+#include <vector>
+
+using std::cout;
+using std::endl;
+using std::vector;
+
+int main() {
+	int cow_num;
+	std::ifstream read("breedflip.in");
+	read >> cow_num;
+	vector<char> a(cow_num);
+	for (char &c : a) { read >> c; }
+	vector<char> b(cow_num);
+	for (char &c : b) { read >> c; }
+
+	// diff[i] is true if the cows differ at the ith position
+	// notice that there's an extra false at the beginning
+	vector<bool> diff(cow_num + 1);
+	for (int i = 0; i < cow_num; i++) { diff[i + 1] = a[i] != b[i]; }
+
+	/*
+	 * count the number of times [false, true] occurs in diff
+	 * this is equivalent to the number of continous segments of trues
+	 * that extra false at the beginning comes in handy here,
+	 * since if we didn't have it we've have to have an edge case for
+	 * the first segment that doesn't have a preceding false
+	 */
+	int min_flips = 0;
+	for (int i = 0; i < cow_num; i++) {
+		if (!diff[i] && diff[i + 1]) { min_flips++; }
+	}
+
+	std::ofstream("breedflip.out") << min_flips << endl;
+}
+```
+
+</CPPSection>
+<JavaSection>
+
+```java
+import java.io.*;
+import java.util.*;
+
+public class BreedFlip {
+	public static void main(String[] args) throws IOException {
+		BufferedReader read = new BufferedReader(new FileReader("breedflip.in"));
+		int cowNum = Integer.parseInt(read.readLine());
+		String a = read.readLine();
+		String b = read.readLine();
+
+		// diff[i] is true if the cows differ at the ith position
+		// notice that there's an extra false at the beginning
+		boolean[] diff = new boolean[cowNum + 1];
+		for (int i = 0; i < cowNum; i++) { diff[i + 1] = a.charAt(i) != b.charAt(i); }
+
+		/*
+		 * count the number of times [false, true] occurs in diff
+		 * this is equivalent to the number of continous segments of trues
+		 * that extra false at the beginning comes in handy here,
+		 * since if we didn't have it we've have to have an edge case for
+		 * the first segment that doesn't have a preceding false
+		 */
+		int minFlips = 0;
+		for (int i = 0; i < cowNum; i++) {
+			if (!diff[i] && diff[i + 1]) { minFlips++; }
+		}
+
+		PrintWriter written = new PrintWriter(new FileWriter("breedflip.out"));
+		written.println(minFlips);
+		written.close();
+	}
+}
+```
+
+</JavaSection>
+<PySection>
+
+```py
+with open("breedflip.in") as f:
+	cow_num = int(f.readline())
+	a = f.readline().strip()
+	b = f.readline().strip()
+
+# diff[i] is true if the cows differ at the ith position
+# notice that there's an extra false at the beginning
+diff = [False for _ in range(cow_num + 1)]
+for i in range(cow_num):
+	diff[i + 1] = a[i] != b[i]
+
+"""
+count the number of times [false, true] occurs in diff
+this is equivalent to the number of continous segments of trues
+that extra false at the beginning comes in handy here,
+since if we didn't have it we've have to have an edge case for
+the first segment that doesn't have a preceding false
+"""
+min_flips = 0
+for i in range(cow_num):
+	if not diff[i] and diff[i + 1]:
+		min_flips += 1
+
+print(min_flips, file=open("breedflip.out", "w"))
+```
+
+</PySection>
+</LanguageSection>
+
+</Spoiler>
+
+Note: it often is not obvious whether a greedy algorithm is
+correct or not. If it is the intended solution, problem authors are expected to
+be able to prove its correctness. However, as a contestant, if the algorithm is
+easy to implement, one option is to just code it and see whether it passes.
+Competitive programmers refer to this as "Proof by AC," or "Proof by Accepted."
+
+## Problems
+
+<Problems problems="general" />
+
+## Quiz
+
+<Quiz>
+  <Quiz.Question>
+    What is a greedy algorithm?
+    <Quiz.Answer>
+      An algorithm that backtracks in order to find the most optimal solution.
+      <Quiz.Explanation>
+        Incorrect. Greedy algorithms do not backtrack.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer correct>
+      An algorithm that makes the locally optimal choice at each stage.
+      <Quiz.Explanation>
+        Correct. This allows a greedy algorithm to be very efficient and often easier to code.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      An algorithm that tries every possible combination in order to find the most optimal outcome.
+      <Quiz.Explanation>
+        Incorrect. This is known as [complete search](/bronze/intro-complete) or [brute force](/bronze/intro-complete).
+      </Quiz.Explanation>
+    </Quiz.Answer>
+  </Quiz.Question>
+  <Quiz.Question>
+    Why would a greedy algorithm be preferred over a complete search algorithm when faced with a large input size?
+    <Quiz.Answer correct>
+      Since greedy algorithms directly construct an answer, greedy algorithms are generally more efficient.
+      <Quiz.Explanation>
+        Correct.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      Since finding an optimal choice is often easier than doing casework for all pairs, greedy algorithms are easier to implement.
+      <Quiz.Explanation>
+        Incorrect. This varies for every problem.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer>
+      Greedy algorithms are much easier to debug.
+      <Quiz.Explanation>
+        Incorrect. This varies for every problem.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+  </Quiz.Question>
+  <Quiz.Question>
+    Why should you learn how to greedily think about problems?
+    <Quiz.Answer correct>
+      It provides a new outlook on a problem, and could help you solve a problem much faster!
+      <Quiz.Explanation>
+        Correct. All of these are viable answers.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+    <Quiz.Answer correct>
+      It can be a substitute for some algorithms.
+      <Quiz.Explanation>
+        Correct. All of these are viable answers.
+      </Quiz.Explanation>
+    </Quiz.Answer>
+  </Quiz.Question>
+</Quiz>

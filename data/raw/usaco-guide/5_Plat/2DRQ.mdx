@@ -1,0 +1,584 @@
+---
+id: 2DRQ
+title: '2D Range Queries'
+author: Benjamin Qi, Andi Qu
+contributors: Daniel Zhu, Justin Ji
+prerequisites:
+  - sparse-segtree
+description: 'Extending Range Queries to 2D (and beyond).'
+frequency: 1
+---
+
+## 2D RMQ
+
+<Resources>
+	<Resource source="CF" title="retrograd - Multi-Dimensional RMQ" url="53810" />
+</Resources>
+
+Quite rare, I've only needed this once.
+
+<!-- - GP of Serbia 2020 B -->
+
+## 2D BIT
+
+<FocusProblem problem="bitSam" />
+
+### Tutorial
+
+<Resources>
+	<Resource
+		source="GFG"
+		title="2D BIT"
+		url="two-dimensional-binary-indexed-tree-or-fenwick-tree"
+	/>
+	<Resource
+		source="TC"
+		title="Binary Indexed Trees"
+		url="binary-indexed-trees"
+	/>
+</Resources>
+
+### Implementation
+
+Essentially, we just nest the loops that one would find in a 1D BIT to get
+N-dimensional BITs. We can then use
+[PIE](https://brilliant.org/wiki/principle-of-inclusion-and-exclusion-pie/) to
+query subrectangles.
+
+<LanguageSection>
+
+<CPPSection>
+
+```cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+/**
+ * 2D Fenwick Tree implementation.
+ * Note that all cell locations are zero-indexed
+ * in this implementation.
+ */
+template <typename T> class BIT2D {
+  private:
+	const int n, m;
+	vector<vector<T>> bit;
+
+  public:
+	BIT2D(int n, int m) : n(n), m(m), bit(n + 1, vector<T>(m + 1)) {}
+
+	/** adds val to the point (r, c) */
+	void add(int r, int c, T val) {
+		r++, c++;
+		for (; r <= n; r += r & -r) {
+			for (int i = c; i <= m; i += i & -i) { bit[r][i] += val; }
+		}
+	}
+
+	/** @returns sum of points with row in [0, r] and column in [0, c] */
+	T rect_sum(int r, int c) {
+		r++, c++;
+		T sum = 0;
+		for (; r > 0; r -= r & -r) {
+			for (int i = c; i > 0; i -= i & -i) { sum += bit[r][i]; }
+		}
+		return sum;
+	}
+
+	/** @returns sum of points with row in [r1, r2] and column in [c1, c2] */
+	T rect_sum(int r1, int c1, int r2, int c2) {
+		return rect_sum(r2, c2) - rect_sum(r2, c1 - 1) - rect_sum(r1 - 1, c2) +
+		       rect_sum(r1 - 1, c1 - 1);
+	}
+};
+
+int main() {
+	int n, q;
+	cin >> n >> q;
+	BIT2D<int> bit(n, n);
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			char c;
+			cin >> c;
+			if (c == '*') { bit.add(i, j, 1); }
+		}
+	}
+
+	for (int i = 0; i < q; i++) {
+		int type;
+		cin >> type;
+		if (type == 1) {
+			int r, c;
+			cin >> r >> c;
+			r--, c--;
+			if (bit.rect_sum(r, c, r, c) == 1) {
+				bit.add(r, c, -1);
+			} else {
+				bit.add(r, c, 1);
+			}
+		} else if (type == 2) {
+			int r1, c1, r2, c2;
+			cin >> r1 >> c1 >> r2 >> c2;
+			r1--, c1--, r2--, c2--;
+			cout << bit.rect_sum(r1, c1, r2, c2) << '\n';
+		}
+	}
+}
+```
+
+### Alternative Implementation
+
+Using the multidimensional implementation mentioned
+[here](/gold/PURS/#resources-1).
+
+```cpp
+template <class T, int... Ns> struct BIT {
+	T val = 0;
+	void upd(T v) { val += v; }
+	T query() { return val; }
+};
+
+template <class T, int N, int... Ns> struct BIT<T, N, Ns...> {
+	BIT<T, Ns...> bit[N + 1];
+	template <typename... Args> void upd(int pos, Args... args) {
+		for (; pos <= N; pos += (pos & -pos)) bit[pos].upd(args...);
+	}
+	template <typename... Args> T sum(int r, Args... args) {
+		T res = 0;
+		for (; r; r -= (r & -r)) res += bit[r].query(args...);
+		return res;
+	}
+	template <typename... Args> T query(int l, int r, Args... args) {
+		return sum(r, args...) - sum(l - 1, args...);
+	}
+};  // BIT<int,10,10> gives a 2D BIT
+
+BIT<int, 1000, 1000> B;
+int n, q;
+
+int main() {
+	setIO();
+	re(n, q);
+	F0R(i, n) {
+		string s;
+		re(s);
+		F0R(j, n) if (s[j] == '*') B.upd(i + 1, j + 1, 1);
+	}
+	F0R(i, q) {
+		int t;
+		re(t);
+		if (t == 1) {
+			int y, x;
+			re(y, x);
+			if (B.query(y, y, x, x)) B.upd(y, x, -1);
+			else B.upd(y, x, 1);
+		} else {
+			int y1, x1, y2, x2;
+			re(y1, x1, y2, x2);
+			ps(B.query(y1, y2, x1, x2));
+		}
+	}
+}
+```
+
+</CPPSection>
+
+</LanguageSection>
+
+Also see
+[Benq's implementations](<https://github.com/bqi343/USACO/tree/master/Implementations/content/data-structures/2D%20Range%20Queries%20(15.2)>).
+
+### Problems
+
+<Problems problems="bit" />
+
+<Optional title="Range Update and Range Query in Higher Dimensions">
+
+Lazy propagation on segment trees does not extend to higher dimensions. However,
+you can extend the 1D BIT solution to solve range increment range sum in higher
+dimensions as well! See [this paper](https://arxiv.org/pdf/1311.6093.pdf) for
+details.
+
+{/* - USACO Camp - "Cows Play Global Thermonuclear War" (2D case) */}
+
+</Optional>
+
+<FocusProblem problem="offSam" />
+
+## Offline 2D BIT
+
+The intended complexity is $\mathcal{O}(N\log^2 N)$ with a good constant factor.
+This requires updating points and querying rectangle sums $N$ times for points
+with coordinates in the range $[1,N]$. However, the 2D BITs mentioned above use
+$\mathcal{O}(N^2)$ memory, which is too much.
+
+Since we know all of the updates and queries beforehand, we can reduce the
+memory usage while maintaining a decent constant factor.
+
+We could use an unordered map instead of a 2D array, but this gives
+$\mathcal{O}(N\log^2N)$ memory and time and the constant factors for both are
+terrible; a better solution is to compress the points to be updated so that you only need
+$\mathcal{O}(N\log N)$ memory.
+
+The idea is to first figure out which BIT values **along one dimension** each update will affect.
+In the below table, the updates are $(1, 1), (3, 3),$ and $(4, 2)$, and the cells they affect are blue, red, and green respectively.
+
+<center>
+<table className="text-center">
+	<tbody>
+		<tr>
+			<td className="bg-blue-400 dark:bg-blue-600">(1, 1)</td>
+			<td>(1, 2)</td>
+			<td>(1, 3)</td>
+			<td>(1, 4)</td>
+		</tr>
+		<tr>
+			<td className="bg-blue-200 dark:bg-blue-900">(2, 1)</td>
+			<td>(2, 2)</td>
+			<td>(2, 3)</td>
+			<td className="bg-green-400 dark:bg-green-700">(2, 4)</td>
+		</tr>
+		<tr>
+			<td>(3, 1)</td>
+			<td>(3, 2)</td>
+			<td className="bg-red-400 dark:bg-red-700">(3, 3)</td>
+			<td>(3, 4)</td>
+		</tr>
+		<tr>
+			<td className="bg-blue-200 dark:bg-blue-900">(4, 1)</td>
+			<td>(4, 2)</td>
+			<td className="bg-red-200 dark:bg-red-900">(4, 3)</td>
+			<td className="bg-green-200 dark:bg-green-900">(4, 4)</td>
+		</tr>
+	</tbody>
+</table>
+</center>
+
+We can now compress each row in the same fashion as an offline 1D BIT (remember, each row in a 2D BIT is another 1D BIT)!
+For example, we can compress the second row to a BIT of size 2, and map range queries $[1, y)$ with $y \in [1, 4)$ to a range query of $[1, 2)$,
+and queries with $y \in [4, \infty)$ to a range query of $[1, 3)$.
+
+Similarly, for row 4 (which becomes a BIT of size 3):
+- $y \in [1, 3)$ -> range query $[1, 2)$
+- $y \in [3, 4)$ -> range query $[1, 3)$
+- $y \in [4, \infty)$ -> range query $[1, 4)$
+
+This only requires knowing the updates beforehand, not the queries!
+
+### Implementation
+
+- [Benq's 1D offline BIT](<https://github.com/bqi343/USACO/blob/master/Implementations/content/data-structures/1D%20Range%20Queries%20(9.2)/BIToff.h>)
+- [Benq's 2D offline BIT](<https://github.com/bqi343/USACO/blob/master/Implementations/content/data-structures/2D%20Range%20Queries%20(15.2)/BIT2DOff%20(15.2).h>)
+
+Here's an implementation of the offline 2D BIT presented above that may be
+easier to understand, albeit significantly slower due to a high constant factor:
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <algorithm>
+#include <array>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+/**
+ * Offline 2D Fenwick Tree implementation.
+ * Note that all the update and query indices
+ * are zero-indexed, and that the rows are not
+ * coordinate compressed in this implementation.
+ */
+template <typename T> class OfflineBIT2D {
+  private:
+	const int n;
+	vector<vector<int>> vals;
+	vector<vector<T>> bit;
+
+	/** @return the first index i such that v[i] <= x */
+	int ind(const vector<int> &v, int x) {
+		return upper_bound(begin(v), end(v), x) - begin(v) - 1;
+	}
+
+  public:
+	OfflineBIT2D(int n, vector<array<int, 2>> &todo) : n(n), vals(n + 1), bit(n + 1) {
+		sort(begin(todo), end(todo),
+		     [](const array<int, 2> &a, const array<int, 2> &b) -> bool {
+			     return a[1] < b[1];
+		     });
+
+		for (int i = 1; i <= n; i++) { vals[i].push_back(0); }
+		for (auto [r, c] : todo) {
+			r++, c++;
+			for (; r <= n; r += r & -r) {
+				if (vals[r].back() != c) { vals[r].push_back(c); }
+			}
+		}
+		for (int i = 1; i <= n; i++) { bit[i].resize(vals[i].size()); }
+	}
+
+	/** adds val to the point (r, c) */
+	void add(int r, int c, T val) {
+		r++, c++;
+		for (; r <= n; r += r & -r) {
+			int i = ind(vals[r], c);
+			for (; i < bit[r].size(); i += i & -i) { bit[r][i] += val; }
+		}
+	}
+
+	/** @returns sum of points with row in [0, r] and column in [0, c] */
+	T rect_sum(int r, int c) {
+		r++, c++;
+		T sum = 0;
+		for (; r > 0; r -= r & -r) {
+			int i = ind(vals[r], c);
+			for (; i > 0; i -= i & -i) { sum += bit[r][i]; }
+		}
+		return sum;
+	}
+
+	/** @returns sum of points with row in [r1, r2] and column in [c1, c2] */
+	T rect_sum(int r1, int c1, int r2, int c2) {
+		return rect_sum(r2, c2) - rect_sum(r2, c1 - 1) - rect_sum(r1 - 1, c2) +
+		       rect_sum(r1 - 1, c1 - 1);
+	}
+};
+```
+
+</CPPSection>
+</LanguageSection>
+
+And you might use it like so:
+
+<LanguageSection>
+<CPPSection>
+
+```cpp
+#include <algorithm>
+#include <array>
+#include <iostream>
+#include <vector>
+using namespace std;
+using ll = long long;
+
+// BeginCodeSnip{Offline 2D BIT}
+template <typename T> class OfflineBIT2D {
+  private:
+	const int n;
+	vector<vector<int>> vals;
+	vector<vector<T>> bit;
+
+	int ind(const vector<int> &v, int x) {
+		return upper_bound(begin(v), end(v), x) - begin(v) - 1;
+	}
+
+  public:
+	OfflineBIT2D(int n, vector<array<int, 2>> &todo) : n(n), vals(n + 1), bit(n + 1) {
+		sort(begin(todo), end(todo),
+		     [](const array<int, 2> &a, const array<int, 2> &b) -> bool {
+			     return a[1] < b[1];
+		     });
+
+		for (int i = 1; i <= n; i++) { vals[i].push_back(0); }
+		for (auto [r, c] : todo) {
+			r++, c++;
+			for (; r <= n; r += r & -r) {
+				if (vals[r].back() != c) { vals[r].push_back(c); }
+			}
+		}
+		for (int i = 1; i <= n; i++) { bit[i].resize(vals[i].size()); }
+	}
+
+	void add(int r, int c, T val) {
+		r++, c++;
+		for (; r <= n; r += r & -r) {
+			int i = ind(vals[r], c);
+			for (; i < bit[r].size(); i += i & -i) { bit[r][i] += val; }
+		}
+	}
+
+	T rect_sum(int r, int c) {
+		r++, c++;
+		T sum = 0;
+		for (; r > 0; r -= r & -r) {
+			int i = ind(vals[r], c);
+			for (; i > 0; i -= i & -i) { sum += bit[r][i]; }
+		}
+		return sum;
+	}
+
+	T rect_sum(int r1, int c1, int r2, int c2) {
+		return rect_sum(r2, c2) - rect_sum(r2, c1 - 1) - rect_sum(r1 - 1, c2) +
+		       rect_sum(r1 - 1, c1 - 1);
+	}
+};
+// EndCodeSnip
+
+int main() {
+	int n;
+	cin >> n;
+	vector<int> a(n), p(n);
+	for (int &i : a) { cin >> i; }
+	for (int &i : p) { cin >> i, i--; }
+
+	vector<array<int, 2>> upd(n);
+	for (int i = 0; i < n; i++) { upd[i] = {p[i], a[p[i]]}; }
+	OfflineBIT2D<ll> bit(n, upd);
+
+	ll res = 0;
+	const int mx = *max_element(begin(a), end(a));
+	for (int i = 0; i < n; i++) {
+		res += bit.rect_sum(0, a[p[i]] + 1, p[i] - 1, mx);
+		res += bit.rect_sum(p[i] + 1, 0, n - 1, a[p[i]] - 1);
+		cout << res << '\n';
+		bit.add(p[i], a[p[i]], 1);
+	}
+}
+```
+
+</CPPSection>
+</LanguageSection>
+
+<Warning title="Implementation Note">
+
+As mentioned earlier, the above `OfflineBIT2D` implementation is significantly slower than Benq's `OffBIT2D` and, in fact, will get TLE on the Soriya's Programming Project.
+
+</Warning>
+
+It's a bit difficult to pass the above problem within the time limit. Make sure to use fast input (and not `endl`)!
+
+- [thecodingwizard's implementation with 2D offline BIT above](https://github.com/thecodingwizard/competitive-programming/blob/master/DMOJ/Soriyas%20Programming%20Project.cpp)
+
+##  1D BIT + Divide & Conquer
+
+The fastest way.
+
+- mentioned in
+  [this article](https://robert1003.github.io/2020/01/31/cdq-divide-and-conquer.html)
+- [thecodingwizard's (messy) implementation](https://github.com/thecodingwizard/competitive-programming/blob/master/DMOJ/Soriya%20Programming%20Project%201d%20BIT%20cdq%20dnc.cpp)
+  based off above
+
+### Problems
+
+<Problems problems="off" />
+
+<!--
+## Sparse Segment Tree
+
+We can also use a sparse segment tree to handle subrectangle sums on a large grid (up to $2 \cdot 10^5 \times 2 \cdot 10^5$) with not very many (up to $2 \cdot 10^5$) non-zero cells! (E.g. in [APIO 2017 Rainbow](https://oj.uz/problem/view/APIO17_rainbow))
+
+The main idea is to store prefix sums of the rows. Since there are few non-zero cells, we update the prefix sums very few times.
+
+Here is an implementation of the above idea:
+
+<LanguageSection>
+
+<CPPSection>
+
+const int MAXN = 2e5, MAXSEG = (6e5 + 9) * 19 + 1;
+
+int cnt = 1, segtree[MAXSEG], left_c[MAXSEG], right_c[MAXSEG];
+
+struct Segtree {
+	set<int> data[MAXN + 1];
+	int roots[MAXN + 2];
+
+	void add(int x, int y) { data[x].insert(y); }
+
+	void build() {
+		for (int i = 1; i <= MAXN; i++) {
+			roots[i + 1] = roots[i];
+			for (int j : data[i]) update(j, roots[i + 1]);
+		}
+	}
+
+	void update(int pos, int &node, int l = 1, int r = MAXN) {
+		segtree[cnt] = segtree[node] + 1;
+		left_c[cnt] = left_c[node];
+		right_c[cnt] = right_c[node];
+		node = cnt++;
+
+		if (l == r) return;
+		int mid = (l + r) / 2;
+		if (pos > mid) update(pos, right_c[node], mid + 1, r);
+		else update(pos, left_c[node], l, mid);
+	}
+
+	int query(int l1, int r1, int l2, int r2) {
+		if (l2 > r2) return 0;
+		return query(l2, r2, roots[r1 + 1], 1, MAXN) -
+		       query(l2, r2, roots[l1], 1, MAXN);
+	}
+	int query(int a, int b, int node, int l, int r) {
+		if (a > r || b < l) return 0;
+		if (a <= l && b >= r) return segtree[node];
+		int mid = (l + r) / 2;
+		return query(a, b, left_c[node], l, mid) +
+		       query(a, b, right_c[node], mid + 1, r);
+	}
+};
+```
+
+</CPPSection>
+
+</LanguageSection> -->
+
+## 2D Segment Tree
+
+A segment tree of (maybe sparse) segment trees.
+
+<Info title="Pro Tip">
+
+This is **not** the same as [Quadtree](https://en.wikipedia.org/wiki/Quadtree).
+If the coordinates go up to $C$, then 2D segment tree queries run in
+$\mathcal{O}(\log^2C)$ time each but some queries make Quadtree take $\Theta(C)$
+time!
+
+</Info>
+
+<Resources>
+	<Resource source="CPH" title="28.2 (Sparse SegTree), 28.4 (2D)">
+		Brief description
+	</Resource>
+</Resources>
+
+### Implementation
+
+<Resources>
+	<Resource
+		source="USACO"
+		title="Analysis - Mowing the Field"
+		url="http://www.usaco.org/current/data/sol_mowing_platinum_jan16.html"
+	>
+		Code
+	</Resource>
+	<Resource
+		source="cp-algo"
+		title="Simple 2D Segment Tree"
+		url="https://cp-algorithms.com/data_structures/segment_tree.html#toc-tgt-11"
+		starred
+	>
+		More code
+	</Resource>
+</Resources>
+
+### Note - Memory Usage
+
+Naively, inserting $N$ elements into a sparse segment tree requires
+$\mathcal{O}(N\log C)$ memory, giving a bound of $\mathcal{O}(N\log^2C)$ on 2D
+segment tree memory. This is usually too much for $N=C=10^5$ and 256 MB
+(although it sufficed for "Mowing the Field" due to the 512MB memory limit).
+Possible ways to get around this:
+
+- Use arrays of fixed size rather than pointers.
+- Reduce the memory usage of sparse segment tree to $\mathcal{O}(N)$ while
+  maintaining the same $\mathcal{O}(N\log C)$ insertion time (see the solution
+  for IOI Game below for details).
+- Use [BBSTs](/adv/treaps) instead of sparse segment trees. $\mathcal{O}(N)$
+  memory, $\mathcal{O}(N\log N)$ insertion time.
+
+### Problems
+
+Can also try the USACO problems from above.
+
+<Problems problems="seg" />

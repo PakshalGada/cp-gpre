@@ -1,0 +1,133 @@
+{
+  "MODULE_ID": "dp-more",
+  "knuth_optimization": [
+    {
+      "uniqueId": "cf-1101F",
+      "name": "Trucks and Cities",
+      "url": "https://codeforces.com/contest/1101/problem/F",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": true,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "spoj-breaking-strings",
+      "name": "Breaking Strings",
+      "url": "https://www.spoj.com/problems/BRKSTRNG/",
+      "source": "SPOJ",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "none"
+      }
+    },
+    {
+      "uniqueId": "uva-gain-battle-power",
+      "name": "Gain Battle Power",
+      "url": "https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=4701",
+      "source": "onlinejudge.org",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "none"
+      }
+    },
+    {
+      "uniqueId": "optimal-binary-search-tree",
+      "name": "Optimal Binary Search Tree",
+      "url": "https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&page=show_problem&problem=1245",
+      "source": "onlinejudge.org",
+      "difficulty": "Hard",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "link",
+        "url": "https://www.geeksforgeeks.org/optimal-binary-search-tree-dp-24/"
+      }
+    }
+  ],
+  "connected_component": [
+    {
+      "uniqueId": "cses-1075",
+      "name": "Permutations II",
+      "url": "https://cses.fi/problemset/task/1075",
+      "source": "CSES",
+      "difficulty": "Easy",
+      "isStarred": true,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1886D",
+      "name": "Monocarp and the Set",
+      "url": "https://codeforces.com/contest/1886/problem/D",
+      "source": "CF",
+      "difficulty": "Easy",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "ceoi-16-kangaroo",
+      "name": "2016 - Kangaroo",
+      "url": "https://qoj.ac/contest/1107/problem/5532",
+      "source": "CEOI",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "QOJ"
+      }
+    },
+    {
+      "uniqueId": "cf-2R",
+      "name": "MCO - Magical Teleporter",
+      "url": "https://codeforces.com/group/R2SERIff4f/contest/213171/problem/R",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    },
+    {
+      "uniqueId": "joi-16-skyscraper",
+      "name": "2016 - Skyscraper",
+      "url": "https://oj.uz/problem/view/JOI16_skyscraper",
+      "source": "JOI",
+      "difficulty": "Normal",
+      "isStarred": true,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "internal"
+      }
+    },
+    {
+      "uniqueId": "cf-1515E",
+      "name": "Phoenix and Computers",
+      "url": "https://codeforces.com/contest/1515/problem/E",
+      "source": "CF",
+      "difficulty": "Normal",
+      "isStarred": false,
+      "tags": [],
+      "solutionMetadata": {
+        "kind": "autogen-label-from-site",
+        "site": "CF"
+      }
+    }
+  ]
+}
