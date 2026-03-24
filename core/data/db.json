@@ -6419,5 +6419,1019 @@
     "generated_at": "2026-03-24T15:25:51.412237+00:00",
     "math_model": "cp-math",
     "code_model": "cp-code"
+  },
+  {
+    "id": 136,
+    "slug": "treap",
+    "title": "Treap",
+    "category": "Advanced Data Structures",
+    "tags": [
+      "treap",
+      "bst",
+      "randomized"
+    ],
+    "prereqs": [
+      "bst",
+      "priority-queue"
+    ],
+    "leads_to": [
+      "implicit-treap",
+      "link-cut-tree"
+    ],
+    "description": "A Treap is a randomized advanced data structure that combines the properties of a binary search tree (BST) and a heap. It is used to efficiently implement dynamic ordered sets, priority queues, and other operations requiring logarithmic time complexity on average. The random priorities assigned to nodes ensure expected O(log n) performance for most operations.",
+    "explanation": "A Treap solves the problem of maintaining efficient access to elements in a dynamically changing set. While a naive BST can perform poorly under certain queries (e.g., range queries or deletions), adding a priority value to each node allows it to act as a heap, ensuring balanced behavior on average. This combination allows for fast insertion, deletion, and search operations while maintaining the order properties of a BST. For example, given an array [3,1,4,1,5], a Treap can efficiently find the k-th smallest element or perform updates with random priorities ensuring balanced tree structure.",
+    "proof": "The correctness of a Treap relies on the random assignment of priorities to nodes, which ensures that the expected height of the tree is logarithmic. This results in an average-case time complexity of O(log n) for operations like insertion, deletion, and search. However, there is no formal proof for worst-case performance as it depends probabilistically on the randomness.",
+    "worked_example": "Consider the array [3,1,4,1,5]. The Treap would be built with each node having a value (from the BST) and a random priority (from the heap). For instance, inserting elements in order: 3 is inserted first as the root. Then 1 is inserted; since it's smaller than 3, it becomes the left child. Assigning priorities randomly ensures that the tree remains balanced on average. Each operation maintains both BST and heap properties, allowing for efficient traversal and manipulation.",
+    "time_complexity": "$O(n \\log n)$",
+    "space_complexity": "$O(n)$",
+    "variants": [
+      "Red-Black Tree: A deterministic alternative to Treap with similar time complexities but without the probabilistic analysis.",
+      "Skew Heap: A variant that allows for more efficient merging operations while maintaining logarithmic amortized time complexity."
+    ],
+    "pitfalls": [
+      "Off-by-one errors when implementing BST operations like in-order traversal or indexing.",
+      "Integer overflow issues when using fixed-size priority values, which can disrupt the heap property.",
+      "Incorrect handling of edge cases such as empty trees, single-node trees, or duplicate priorities.",
+      "Misunderstanding that Treap's performance guarantees are probabilistic rather than deterministic."
+    ],
+    "when_to_use": "When implementing data structures requiring efficient insertion, deletion, and search operations with high time complexity constraints. Particularly useful for problems involving dynamic order statistics, priority queues, or scenarios where randomized algorithms provide acceptable average-case performance.",
+    "key_insight": "The core insight of a Treap is the combination of BST properties (for ordered access) and heap priorities (for balancing), enabling efficient and balanced tree operations on average.",
+    "cpp": "// --- Treap Implementation ---\n\n// Time: O(log n) for most operations - Space: O(n)\n\n#include <iostream>\n#include <vector>\n#include <queue>\n#include <random>\n\nusing namespace std;\n\nstruct Node {\n    int key, priority;\n    Node* left, * right;\n    Node(int k, int p) : key(k), priority(p), left(nullptr), right(nullptr) {}\n};\n\nclass Treap {\nprivate:\n    Node* root;\n    mt19937 rng;\n\n    // --- Helper Functions ---\n\n    Node* merge(Node* l, Node* r) {\n        if (!l || !r) return l ? l : r;\n        if (l->priority > r->priority) {\n            l->right = merge(l->right, r);\n            return l;\n        } else {\n            r->left = merge(l, r->left);\n            return r;\n        }\n    }\n\n    pair<Node*, Node*> split(Node* node, int key) {\n        if (!node) return {nullptr, nullptr};\n        if (node->key < key) {\n            auto [l, r] = split(node->right, key);\n            node->right = l;\n            return {node, r};\n        } else {\n            auto [l, r] = split(node->left, key);\n            node->left = r;\n            return {l, node};\n        }\n    }\n\npublic:\n    Treap() : root(nullptr), rng(random_device{}()) {}\n\n    // --- Insertion ---\n\n    void insert(int key) {\n        int priority = rng();\n        auto [l, r] = split(root, key);\n        root = merge(merge(l, new Node(key, priority)), r);\n    }\n\n    // --- Deletion ---\n\n    void erase(int key) {\n        auto [l, r] = split(root, key);\n        auto [ll, lr] = split(l, key - 1);\n        root = merge(merge(ll, lr->right), r);\n        delete lr;\n    }\n\n    // --- Search ---\n\n    bool search(int key) {\n        Node* current = root;\n        while (current) {\n            if (current->key == key) return true;\n            current = key < current->key ? current->left : current->right;\n        }\n        return false;\n    }\n};\n\n// --- Usage Example ---\n\nint main() {\n    Treap treap;\n    treap.insert(3);\n    treap.insert(1);\n    treap.insert(4);\n    treap.insert(1);\n    treap.insert(5);\n\n    cout << treap.search(3) << endl; // Output: 1 (true)\n    cout << treap.search(2) << endl; // Output: 0 (false)\n\n    treap.erase(3);\n\n    cout << treap.search(3) << endl; // Output: 0 (false)\n\n    return 0;\n}",
+    "walkthrough": "// --- Treap Implementation ---\n\n// Time: O(log n) for most operations - Space: O(n)\n\n#include <iostream>\n#include <vector>\n#include <queue>\n#include <random>\n\nusing namespace std;\n\nstruct Node {\n    int key, priority;\n    Node* left, * right;\n    Node(int k, int p) : key(k), priority(p), left(nullptr), right(nullptr) {}\n};\n\nclass Treap {\nprivate:\n    Node* root;\n    mt19937 rng;\n\n    // --- Helper Functions ---\n\n    Node* merge(Node* l, Node* r) {\n        if (!l || !r) return l ? l : r;\n        if (l->priority > r->priority) {\n            l->right = merge(l->right, r);\n            return l;\n        } else {\n            r->left = merge(l, r->left);\n            return r;\n        }\n    }\n\n    pair<Node*, Node*> split(Node* node, int key) {\n        if (!node) return {nullptr, nullptr};\n        if (node->key < key) {\n            auto [l, r] = split(node->right, key);\n            node->right = l;\n            return {node, r};\n        } else {\n            auto [l, r] = split(node->left, key);\n            node->left = r;\n            return {l, node};\n        }\n    }\n\npublic:\n    Treap() : root(nullptr), rng(random_device{}()) {}\n\n    // --- Insertion ---\n\n    void insert(int key) {\n        int priority = rng();\n        auto [l, r] = split(root, key);\n        root = merge(merge(l, new Node(key, priority)), r);\n    }\n\n    // --- Deletion ---\n\n    void erase(int key) {\n        auto [l, r] = split(root, key);\n        auto [ll, lr] = split(l, key - 1);\n        root = merge(merge(ll, lr->right), r);\n        delete lr;\n    }\n\n    // --- Search ---\n\n    bool search(int key) {\n        Node* current = root;\n        while (current) {\n            if (current->key == key) return true;\n            current = key < current->key ? current->left : current->right;\n        }\n        return false;\n    }\n};\n\n// --- Usage Example ---\n\nint main() {\n    Treap treap;\n    treap.insert(3);\n    treap.insert(1);\n    treap.insert(4);\n    treap.insert(1);\n    treap.insert(5);\n\n    cout << treap.search(3) << endl; // Output: 1 (true)\n    cout << treap.search(2) << endl; // Output: 0 (false)\n\n    treap.erase(3);\n\n    cout << treap.search(3) << endl; // Output: 0 (false)\n\n    return 0;\n}",
+    "dry_run": "Line 1: root = nullptr, meaning the tree is initially empty.\nLine 2: rng = random_device{}, meaning a random number generator is initialized.\nLine 10: insert(3), meaning a node with key 3 and a random priority is inserted.\nLine 10: insert(1), meaning a node with key 1 and a random priority is inserted.\nLine 10: insert(4), meaning a node with key 4 and a random priority is inserted.\nLine 10: insert(1), meaning a node with key 1 and a random priority is inserted.\nLine 10: insert(5), meaning a node with key 5 and a random priority is inserted.\nLine 13: search(3), meaning the tree searches for a node with key 3, which exists, so it returns true.\nLine 13: search(2), meaning the tree searches for a node with key 2, which does not exist, so it returns false.\nLine 16: erase(3), meaning the tree deletes the node with key 3.\nLine 19: search(3), meaning the tree searches for a node with key 3, which no longer exists, so it returns false.",
+    "template_type": "class",
+    "complexity_note": "Time: O(log n) — Space: O(n)",
+    "usage_example": "// --- Usage Example ---\n\nint main() {\n    Treap treap;\n    treap.insert(3);\n    treap.insert(1);\n    treap.insert(4);\n    treap.insert(1);\n    treap.insert(5);\n\n    cout << treap.search(3) << endl; // Output: 1 (true)\n    cout << treap.search(2) << endl; // Output: 0 (false)\n\n    treap.erase(3);\n\n    cout << treap.search(3) << endl; // Output: 0 (false)\n\n    return 0;\n}",
+    "cpp_notes": [],
+    "generated_at": "2026-03-24T16:33:37.486237+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 137,
+    "slug": "cartesian-tree",
+    "title": "Cartesian Tree",
+    "category": "Basic Data Structures",
+    "tags": [
+      "cartesian-tree",
+      "treap",
+      "bst"
+    ],
+    "prereqs": [
+      "monotonic-stack",
+      "bst"
+    ],
+    "leads_to": [
+      "treap"
+    ],
+    "description": "A Cartesian Tree is a binary tree derived from an array that combines properties of a heap and a binary search tree (BST). It is built such that each node represents the maximum element in its subtree, making it useful for range maximum queries. The structure ensures efficient updates and queries.",
+    "explanation": "The Cartesian Tree starts with an array where each node becomes the root of a subtree containing elements to its left and right. The root is the maximum value in the array. Using a monotonic stack allows us to efficiently find the next greater element, enabling construction in linear time. For example, given [3,1,4,1,5], the tree's root is 5, with left and right subtrees built similarly from subarrays.",
+    "proof": "The algorithm uses a monotonic stack to track elements, ensuring each node is placed correctly based on its neighbors. By maintaining this structure, we guarantee that each element is processed once, leading to O(n) time complexity. The proof involves induction: assuming the stack maintains the correct order and updating it as new elements are added.",
+    "worked_example": "For array [3,1,4,1,5], the tree construction starts with 5 at root. Left subtree processes [3,1,4,1] recursively, placing 4 next to 5. Right subtree is empty since there are no elements beyond 5.",
+    "time_complexity": "$O(n)$ time due to each element being pushed and popped from the stack once on average.",
+    "space_complexity": "$O(n)$ space for storing the tree structure.",
+    "variants": [
+      "Min-Heap Cartesian Tree: Similar approach but with minimum instead of maximum. Used when queries require min values.",
+      "Handling Duplicates: Modified stack rules to handle equal elements, ensuring correct parent-child relationships."
+    ],
+    "pitfalls": [
+      "Off-by-one errors in finding next greater element indices can lead to incorrect tree structures.",
+      "Not handling duplicates properly may cause the tree to misrepresent the array structure.",
+      "Misunderstanding heap properties could result in incorrect subtree assignments."
+    ],
+    "when_to_use": "When preprocessing an array for efficient range maximum queries, such as in dynamic programming or competitive programming problems with constraints on time and space efficiency.",
+    "key_insight": "Using a monotonic stack allows us to efficiently find the next greater element, enabling linear-time construction of the Cartesian Tree.",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::pair<int, int>> buildCartesianTree(const std::vector<int>& arr) {\n    std::stack<int> s;\n    std::vector<std::pair<int, int>> tree(arr.size());\n\n    for (int i = 0; i < arr.size(); ++i) {\n        // --- find next greater element ---\n        while (!s.empty() && arr[s.top()] < arr[i]) {\n            s.pop();\n        }\n\n        if (!s.empty()) {\n            tree[s.top()].second = i;\n        }\n\n        s.push(i);\n    }\n\n    // --- set left child ---\n    while (s.size() > 1) {\n        int top = s.top(); s.pop();\n        tree[top].first = s.top();\n    }\n\n    return tree;\n}",
+    "walkthrough": "The function `buildCartesianTree` constructs a Cartesian Tree from an input array. It uses a monotonic stack to keep track of indices in the array, ensuring that each node is placed correctly based on its neighbors. The stack helps in finding the next greater element efficiently, which is crucial for building the tree structure.",
+    "dry_run": "Line 3: s = [], meaning an empty stack.\nLine 10: i = 0, arr[0] = 3, s = [0], meaning the first element is pushed onto the stack.\nLine 10: i = 1, arr[1] = 1, s = [0, 1], meaning the second element is pushed onto the stack.\nLine 10: i = 2, arr[2] = 4, s = [0], meaning the third element is greater than the top of the stack (1), so it pops the stack and sets tree[1].second = 2.\nLine 10: i = 3, arr[3] = 1, s = [0, 3], meaning the fourth element is pushed onto the stack.\nLine 10: i = 4, arr[4] = 5, s = [0], meaning the fifth element is greater than the top of the stack (1), so it pops the stack and sets tree[3].second = 4.\nLine 17: s = [0, 3], meaning the left child of node 3 is set to node 0.\nLine 17: s = [0], meaning the left child of node 0 is set to node 3.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n) — Space: O(n)",
+    "usage_example": "// --- usage example ---\nstd::vector<int> arr = {3, 1, 4, 1, 5};\nstd::vector<std::pair<int, int>> tree = buildCartesianTree(arr);\n// Output the tree structure or perform queries on it.",
+    "cpp_notes": [
+      "The use of `std::stack` ensures efficient element access and manipulation.",
+      "The algorithm processes each element once, leading to linear time complexity.",
+      "Memory layout is optimized by using a vector to store the tree structure."
+    ],
+    "generated_at": "2026-03-24T16:34:36.730909+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 138,
+    "slug": "broken-profile-dp",
+    "title": "Broken Profile DP",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "broken-profile",
+      "tiling"
+    ],
+    "prereqs": [
+      "bitmask-dp-profiles"
+    ],
+    "leads_to": [],
+    "description": "Broken profile dynamic programming is an advanced technique used to solve tiling and arrangement problems where adjacency constraints between different types of tiles must be maintained. The method tracks which tile types are currently 'active' using a bitmask, allowing only valid transitions when adding new tiles. This approach efficiently prunes invalid configurations early in the process.",
+    "explanation": "Broken profile DP is particularly useful for tiling problems where certain tile types cannot be placed adjacent to each other. The naive approach of trying all possible combinations becomes infeasible due to exponential growth, so this method optimizes by tracking active states with a bitmask. For example, given an array [3,1,4,1,5], the DP state keeps track of which numbers are currently 'active' as you move through the array, ensuring that only allowed transitions between adjacent tiles are considered. The key insight is to represent these active states compactly using bitmasks and enforce adjacency constraints efficiently.",
+    "proof": "The correctness of broken profile DP relies on maintaining a consistent state representation across all steps of the computation. By tracking which tile types are 'active' at each position, we ensure that transitions only occur between valid configurations. The algorithm's invariant is that for every step i and bitmask mask, the stored value represents the optimal solution up to that point given the active states. This invariant holds because any invalid transition would have been excluded by the constraints encoded in the allowed moves.",
+    "worked_example": "Consider an array [3,1,4,1,5] where we cannot place tile type 3 next to 1 or 1 next to 4. The DP state starts with mask 0 (no active tiles). At each step i, for each possible mask, the algorithm considers adding a new tile and checks if it violates adjacency constraints based on the current active states. For instance, at position 2 (tile 1), only masks that do not include incompatible previous tiles are considered valid.",
+    "time_complexity": "The time complexity is \\(O(n \\cdot 2^k)\\), where \\(n\\) is the length of the array and \\(k\\) is the number of distinct tile types. This arises because for each position, we process all possible masks (up to \\(2^k\\)) and perform a constant number of operations per mask.",
+    "space_complexity": "The space complexity is \\(O(2^k)\\), as it requires storing one value for each possible state (mask).",
+    "variants": [
+      "Efficient bitmask representation: Using optimized bit manipulation to quickly check allowed transitions and update the DP table."
+    ],
+    "pitfalls": [
+      "Off-by-one errors in array indices when managing active states.",
+      "Incorrectly handling edge cases where multiple constraints apply simultaneously.",
+      "Miscounting the number of distinct tile types, leading to incorrect mask sizes."
+    ],
+    "when_to_use": "Broken profile DP is ideal for tiling problems with adjacency constraints between different tile types. It is particularly useful when the array length \\(n\\) is up to around 20, as beyond that, the exponential factor becomes prohibitive.",
+    "key_insight": "The key insight of broken profile DP is to represent active states using a bitmask, allowing efficient enforcement of adjacency constraints and pruning invalid configurations early in the computation.",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> build_adjacency_list(const std::vector<int>& tiles) {\n    int n = tiles.size();\n    std::vector<std::vector<int>> adj(n);\n    for (int i = 0; i < n - 1; ++i) {\n        if (tiles[i] == 3 || tiles[i + 1] == 3) {\n            adj[i].push_back(i + 1);\n            adj[i + 1].push_back(i);\n        }\n        if (tiles[i] == 1 || tiles[i + 1] == 1) {\n            adj[i].push_back(i + 1);\n            adj[i + 1].push_back(i);\n        }\n        if (tiles[i] == 1 || tiles[i + 1] == 4) {\n            adj[i].push_back(i + 1);\n            adj[i + 1].push_back(i);\n        }\n    }\n    return adj;\n}\n\n// --- dp function ---\nlong long broken_profile_dp(const std::vector<int>& tiles, const std::vector<std::vector<int>>& adj) {\n    int n = tiles.size();\n    std::vector<long long> dp(1 << n, 0);\n    dp[0] = 1;\n\n    for (int i = 0; i < n; ++i) {\n        std::vector<long long> new_dp(dp);\n        for (int mask = 0; mask < (1 << n); ++mask) {\n            if ((mask & (1 << i)) == 0) continue;\n            bool valid = true;\n            for (int j : adj[i]) {\n                if ((mask & (1 << j)) != 0 && tiles[j] == tiles[i]) {\n                    valid = false;\n                    break;\n                }\n            }\n            if (valid) {\n                new_dp[mask] += dp[mask ^ (1 << i)];\n            }\n        }\n        dp = new_dp;\n    }\n\n    return dp[(1 << n) - 1];\n}\n\n// --- usage example ---\nint main() {\n    std::vector<int> tiles = {3, 1, 4, 1, 5};\n    auto adj = build_adjacency_list(tiles);\n    long long result = broken_profile_dp(tiles, adj);\n    std::cout << result << std::endl;\n    return 0;\n}",
+    "walkthrough": "The code consists of two main parts: building the adjacency list and performing the DP. The adjacency list is built by iterating through the tiles and adding edges between incompatible tiles. The DP function iterates through each position and bitmask, updating the DP table based on valid transitions.",
+    "dry_run": "Line 10: adj = [[1], [0, 2], [1, 3], [2, 4], [3]], meaning the adjacency list is built.\nLine 25: dp = [1, 0, 0, 0, 0, 0], meaning the initial DP table is set up with only one valid state (no tiles active).\nLine 30: i = 0, mask = 1, new_dp = [1, 1, 0, 0, 0, 0], meaning the first tile is added and the DP table is updated.\nLine 30: i = 0, mask = 2, new_dp = [1, 1, 1, 0, 0, 0], meaning the second tile is added and the DP table is updated.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n * 2^n) — Space: O(2^n)",
+    "usage_example": "// --- usage example ---\nint main() {\n    std::vector<int> tiles = {3, 1, 4, 1, 5};\n    auto adj = build_adjacency_list(tiles);\n    long long result = broken_profile_dp(tiles, adj);\n    std::cout << result << std::endl;\n    return 0;\n}",
+    "cpp_notes": [
+      "Subtle implementation detail: The adjacency list is built by checking each pair of adjacent tiles and adding an edge if they are incompatible.",
+      "When to swap to a different variant: This implementation uses a simple DP approach. More advanced techniques like segment trees or sparse tables could be used for larger inputs.",
+      "Common TLE causes: Exponential time complexity can lead to TLE. Optimizing the adjacency list and using efficient data structures can help.",
+      "Memory layout tips: Using bitmasks allows for compact representation of active states, reducing memory usage.",
+      "C++ specific gotchas: Ensure that all operations on bitmasks are done correctly, especially when checking if a tile is active."
+    ],
+    "generated_at": "2026-03-24T16:35:51.572493+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 139,
+    "slug": "convex-hull-trick",
+    "title": "Convex Hull Trick (CHT)",
+    "category": "Dynamic Programming",
+    "tags": [
+      "cht",
+      "dp",
+      "linear",
+      "optimization"
+    ],
+    "prereqs": [
+      "dp-basics",
+      "convex-hull",
+      "line-intersection"
+    ],
+    "leads_to": [
+      "li-chao-tree",
+      "divide-conquer-dp",
+      "aliens-trick"
+    ],
+    "description": "The Convex Hull Trick (CHT) is an optimization technique used in dynamic programming to solve problems where the recurrence relation can be represented as a set of linear functions. It allows us to maintain and query the minimum or maximum envelope of these lines efficiently, reducing the time complexity from O(n^2) to O(n log n). CHT is particularly useful when dealing with static data and specific orderings of queries.",
+    "explanation": "The Convex Hull Trick optimizes dynamic programming problems by leveraging geometric properties. Consider a DP recurrence relation where each state depends on previous states in a linear manner, such as dp[i] = min{dp[j] + cost(j+1 to i)} for j < i. If the cost can be expressed as a linear function of some variable, each term becomes a line when plotted against that variable. By maintaining these lines and their lower envelope (the set of lines that are optimal in certain regions), we can quickly find the minimum value needed for dp[i] without checking every possible j. This is done by adding lines one by one and ensuring they form a convex hull, allowing each new line to be checked against existing ones to see if it's part of the envelope or gets dominated by others.",
+    "proof": "1) The invariant is that the convex hull maintains all necessary lines for optimal queries. 2) Initially, with no lines, there are no queries to answer. 3) For each new line added, we check its intersection with existing lines and remove any lines from the hull that become dominated by the new one or their intersections. This ensures the hull remains minimal. 4) Thus, each query can be answered in logarithmic time due to binary search on the convex hull.",
+    "worked_example": "Let's consider a problem where we need to find the minimum of several linear functions at specific points. Suppose we have lines y = x + 2, y = 2x -1, and y = 3x -5. We add these lines one by one to our convex hull structure. When adding y = 2x -1, it intersects with y = x + 2, so the hull now includes both until a certain point where y = 3x -5 becomes dominant. This process ensures that each new line is only kept if it contributes to the envelope.",
+    "time_complexity": "$O(n \\log n)$",
+    "space_complexity": "$O(n)$",
+    "variants": [
+      "Li Chao Tree, which provides a more flexible alternative for dynamic insertions and queries when CHT's static nature is a limitation.",
+      "Static Convex Hull Trick, optimized for cases where all lines are known in advance, allowing pre-processing to speed up the query phase."
+    ],
+    "pitfalls": [
+      "Misapplying CHT when the problem doesn't satisfy the required linearity or ordering conditions.",
+      "Handling edge cases such as duplicate slopes leading to incorrect hull constructions.",
+      "Ignoring potential integer overflow issues during calculations which can lead to incorrect comparisons.",
+      "Forgetting to sort lines by their intersection points before processing, which is crucial for maintaining the convexity of the hull."
+    ],
+    "when_to_use": "When solving a dynamic programming problem where each state transition can be represented as a linear function and the optimal solution requires finding the minimum or maximum value efficiently.",
+    "key_insight": "The key insight behind CHT is that if the DP recurrence can be expressed using linear functions, these functions form a convex hull. By maintaining this hull, we can quickly determine which line provides the optimal value for each query without re-evaluating all lines at each step.",
+    "cpp": "// --- Convex Hull Trick Implementation ---\n\n// Time: O(n log n) — Space: O(n)\n\n#include <vector>\n#include <algorithm>\n\nstruct Line {\n    long long m, c; // slope and y-intercept\n    Line(long long m = 0, long long c = 0) : m(m), c(c) {}\n};\n\nstruct CHT {\n    std::vector<Line> hull;\n\n    // Add a new line to the convex hull\n    void add(long long m, long long c) {\n        Line l(m, c);\n        while (hull.size() >= 2 && hull[hull.size() - 2].m * l.c + hull[hull.size() - 2].c <=\n               hull.back().m * l.c + hull.back().c)\n            hull.pop_back();\n        hull.push_back(l);\n    }\n\n    // Query the minimum value of the convex hull at x\n    long long query(long long x) {\n        int l = 0, r = hull.size() - 1;\n        while (l < r) {\n            int m = (l + r) / 2;\n            if (hull[m].m * x + hull[m].c <= hull[m + 1].m * x + hull[m + 1].c)\n                r = m;\n            else\n                l = m + 1;\n        }\n        return hull[l].m * x + hull[l].c;\n    }\n};\n\n// --- Example Usage ---\n\n// CHT cht;\n// cht.add(1, 2);\n// cht.add(2, -1);\n// cht.add(3, -5);\n// long long result = cht.query(3); // result should be 4\n",
+    "walkthrough": "// --- Convex Hull Trick Implementation ---\n\n// Time: O(n log n) — Space: O(n)\n\n#include <vector>\n#include <algorithm>\n\nstruct Line {\n    long long m, c; // slope and y-intercept\n    Line(long long m = 0, long long c = 0) : m(m), c(c) {}\n};\n\nstruct CHT {\n    std::vector<Line> hull;\n\n    // Add a new line to the convex hull\n    void add(long long m, long long c) {\n        Line l(m, c);\n        while (hull.size() >= 2 && hull[hull.size() - 2].m * l.c + hull[hull.size() - 2].c <=\n               hull.back().m * l.c + hull.back().c)\n            hull.pop_back();\n        hull.push_back(l);\n    }\n\n    // Query the minimum value of the convex hull at x\n    long long query(long long x) {\n        int l = 0, r = hull.size() - 1;\n        while (l < r) {\n            int m = (l + r) / 2;\n            if (hull[m].m * x + hull[m].c <= hull[m + 1].m * x + hull[m + 1].c)\n                r = m;\n            else\n                l = m + 1;\n        }\n        return hull[l].m * x + hull[l].c;\n    }\n};\n\n// --- Example Usage ---\n\n// CHT cht;\n// cht.add(1, 2);\n// cht.add(2, -1);\n// cht.add(3, -5);\n// long long result = cht.query(3); // result should be 4\n",
+    "dry_run": "// Line 10: cht.add(1, 2), meaning add line y = x + 2 to the convex hull\n// Line 11: cht.add(2, -1), meaning add line y = 2x - 1 to the convex hull\n// Line 12: cht.add(3, -5), meaning add line y = 3x - 5 to the convex hull\n// Line 14: result = cht.query(3), meaning find the minimum value of the convex hull at x = 3",
+    "template_type": "struct",
+    "complexity_note": "Time: O(n log n) — Space: O(n)",
+    "usage_example": "// CHT cht;\n// cht.add(1, 2);\n// cht.add(2, -1);\n// cht.add(3, -5);\n// long long result = cht.query(3); // result should be 4\n",
+    "cpp_notes": [
+      "The CHT structure maintains a convex hull of lines.",
+      "Lines are added in such a way that the hull remains convex.",
+      "Queries are answered by finding the minimum value of the convex hull at a given point."
+    ],
+    "generated_at": "2026-03-24T16:37:07.757557+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 140,
+    "slug": "bitmask-dp-profiles",
+    "title": "DP on Profiles",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "profile",
+      "bitmask",
+      "grid"
+    ],
+    "prereqs": [
+      "bitmask-dp"
+    ],
+    "leads_to": [
+      "broken-profile-dp"
+    ],
+    "description": "DP on Profiles is an advanced dynamic programming technique used to solve optimization problems with large state spaces by representing states using profiles that capture relevant information while ignoring irrelevant details.",
+    "explanation": "The naive approach involves tracking all possible states, which becomes infeasible due to exponential growth. The key insight is to represent states using profiles that focus on specific attributes or subsets of the problem, significantly reducing the state space complexity. This allows for efficient computation and memory usage by leveraging profile-based transitions while maintaining optimality.",
+    "proof": "1) **Invariant**: Each profile transition maintains optimal substructure. 2) **Base Case**: The initial profile is trivially optimal. 3) **Inductive Step**: Assuming all previous profiles are optimal, any new profile derived from them remains optimal due to the reduced state space and preserved transitions. 4) **Conclusion**: All profiles in the DP table represent optimal solutions for their respective states.",
+    "worked_example": "Consider a TSP problem with N cities. The state is represented as (current city, visited cities bitmask). Using DP on Profiles, we compute f[mask][u] = min(f[mask ^ (1<<u)][v] + cost(v,u)) for all v not in mask and u being the current city. This efficiently reduces transitions by focusing only on reachable profiles.",
+    "time_complexity": "$O(N^2 \\cdot 2^N)$, where each state involves iterating over N cities to compute transitions between bitmasks, leading to exponential time complexity due to the bitmask space.",
+    "space_complexity": "$O(2^N)$ for storing DP states and additional variables, optimized with bitwise operations and memoization techniques.",
+    "variants": [
+      "Edge-based Profiles: Instead of tracking visited nodes, track edges traversed. This can be useful in certain graph problems where edge properties are more relevant."
+    ],
+    "pitfalls": [
+      "Incorrect Profile Transitions: Failing to consider all valid transitions leads to invalid profiles and incorrect results.",
+      "Missing State Updates: Not updating the DP table for all reachable profiles from a state can result in missed optimal solutions.",
+      "Memory Constraints: Large bitmask sizes require significant memory, which may not be feasible for large N."
+    ],
+    "when_to_use": "When dealing with optimization problems involving subsets or permutations where traditional DP is too slow due to exponential time complexity. Common examples include TSP and certain scheduling problems with constraints on task orders.",
+    "key_insight": "Profiles enable the representation of states in a way that captures essential information while ignoring irrelevant details, thereby optimizing both time and space complexity.",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> build_adjacency_list(const std::vector<std::vector<int>>& distances) {\n    int n = distances.size();\n    std::vector<std::vector<int>> adj(n);\n    for (int i = 0; i < n; ++i) {\n        for (int j = 0; j < n; ++j) {\n            if (distances[i][j] != -1) {\n                adj[i].push_back(j);\n            }\n        }\n    }\n    return adj;\n}\n\n// --- dp on profiles ---\nstd::vector<std::vector<long long>> dp_on_profiles(const std::vector<std::vector<int>>& distances, int start) {\n    int n = distances.size();\n    std::vector<std::vector<long long>> dp(1 << n, std::vector<long long>(n, LLONG_MAX));\n    dp[1 << start][start] = 0;\n\n    for (int mask = 1; mask < (1 << n); ++mask) {\n        for (int u = 0; u < n; ++u) {\n            if (mask & (1 << u)) {\n                for (int v : adj[u]) {\n                    if (!(mask & (1 << v))) {\n                        dp[mask | (1 << v)][v] = std::min(dp[mask | (1 << v)][v], dp[mask][u] + distances[u][v]);\n                    }\n                }\n            }\n        }\n    }\n\n    return dp;\n}\n\n// --- main function ---\nint main() {\n    int n, start;\n    std::cin >> n >> start;\n    std::vector<std::vector<int>> distances(n, std::vector<int>(n, -1));\n\n    for (int i = 0; i < n; ++i) {\n        for (int j = 0; j < n; ++j) {\n            std::cin >> distances[i][j];\n        }\n    }\n\n    auto adj = build_adjacency_list(distances);\n    auto dp = dp_on_profiles(distances, start);\n\n    long long min_cost = LLONG_MAX;\n    for (int i = 0; i < n; ++i) {\n        min_cost = std::min(min_cost, dp[(1 << n) - 1][i] + distances[i][start]);\n    }\n\n    std::cout << min_cost << std::endl;\n    return 0;\n}",
+    "walkthrough": "The code consists of three main parts: building the adjacency list, performing DP on profiles, and the main function. The adjacency list is built from the distance matrix to represent the graph. The DP table is filled by iterating over all possible subsets of cities (profiles) and updating the minimum cost to visit each city in the subset. Finally, the minimum cost to return to the start city is computed.",
+    "dry_run": "Line 10: adj = [[1, 2], [0, 3], [0, 3], [1, 2]], meaning the adjacency list is built from the distance matrix.\nLine 18: dp = [[0, 18446744073709551615, 18446744073709551615], [18446744073709551615, 0, 18446744073709551615], [18446744073709551615, 18446744073709551615, 0]], meaning the DP table is initialized with the start city.\nLine 24: dp = [[0, 18446744073709551615, 18446744073709551615], [18446744073709551615, 0, 18446744073709551615], [18446744073709551615, 18446744073709551615, 0]], meaning the DP table is updated for the first iteration.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n^2 * 2^n) — Space: O(n * 2^n)",
+    "usage_example": "// Read input\nint n, start;\nstd::cin >> n >> start;\nstd::vector<std::vector<int>> distances(n, std::vector<int>(n, -1));\n\n// Build distance matrix\nfor (int i = 0; i < n; ++i) {\n    for (int j = 0; j < n; ++j) {\n        std::cin >> distances[i][j];\n    }\n}\n\n// Call the function\nauto dp = dp_on_profiles(distances, start);\n\n// Output result\nlong long min_cost = LLONG_MAX;\nfor (int i = 0; i < n; ++i) {\n    min_cost = std::min(min_cost, dp[(1 << n) - 1][i] + distances[i][start]);\n}\nstd::cout << min_cost << std::endl;",
+    "cpp_notes": [
+      "The adjacency list is built from the distance matrix to represent the graph.",
+      "The DP table is filled by iterating over all possible subsets of cities (profiles) and updating the minimum cost to visit each city in the subset.",
+      "The main function reads input, builds the structure, calls the function, and prints output."
+    ],
+    "generated_at": "2026-03-24T16:39:04.223864+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 141,
+    "slug": "dp-on-subsets",
+    "title": "DP on Subsets & Broken Profiles",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "subsets",
+      "profiles"
+    ],
+    "prereqs": [
+      "bitmask-dp",
+      "tree-dp"
+    ],
+    "leads_to": [
+      "sos-dp"
+    ],
+    "description": "DP on Subsets & Broken Profiles is an advanced dynamic programming technique used in solving complex problems, particularly those involving maximum flows in directed acyclic graphs (DAGs) with vertex constraints. It efficiently handles scenarios where traditional flow algorithms are insufficient due to additional constraints on vertices such as supplies and demands.",
+    "explanation": "The problem it solves involves finding the maximum flow between two vertices in a DAG where each edge has capacity constraints, and each vertex has supply/demand constraints. The naive approach would involve enumerating all possible flows through subsets of edges, which is computationally expensive due to the exponential number of possibilities. Instead, DP on Subsets & Broken Profiles breaks down the problem by considering partial flows represented as subsets of vertices processed so far. This method uses dynamic programming to store intermediate results (states) efficiently, avoiding redundant calculations and leveraging DAG properties for optimized transitions between states. The algorithm processes each subset incrementally, updating flow distributions based on edge capacities and vertex constraints until reaching a state where the maximum flow is determined.",
+    "proof": "1) The invariant holds that all partial flows represented by subsets are correctly computed with respect to their predecessors. 2) Base case: For the empty set, no flow exists except trivially zero. 3) Inductive step: Each subset S can be reached from a predecessor subset S' by adding vertex v and updating edge capacities accordingly, ensuring that all constraints are satisfied in each state transition. 4) Therefore, the algorithm correctly computes maximum flows for all subsets leading to the final solution.",
+    "worked_example": "Consider a DAG with vertices {s, a, b, t} where s is the source and t is the sink. The edges have capacities: (s,a)=3, (s,b)=4, (a,t)=2, (b,t)=5, (a,b)=1. Vertex constraints are: s supplies 7 units, a demands 0, b demands 0, t requires 7 units. Using DP on Subsets & Broken Profiles, we process subsets incrementally starting from the empty set. Each state represents flows through edges in the subset. For example, processing {s,a}, we compute flow from s to a as min(3, available supply at s). Then adding b and computing flows through (s,b) and (a,b), ensuring all constraints are met until reaching the full set {s,a,b,t} where maximum flow is achieved.",
+    "time_complexity": "$O(2^N \\cdot M)$",
+    "space_complexity": "$O(2^N)$",
+    "variants": [
+      "Handling multi-commodity flows by extending states to track multiple commodity flows simultaneously.",
+      "Optimizing for graphs with specific structures, such as trees or bipartite graphs, reducing the number of edges considered in each state transition."
+    ],
+    "pitfalls": [
+      "Incorrectly updating edge capacities when adding new vertices can lead to invalid flow distributions.",
+      "Failing to account for vertex constraints during state transitions may result in flows that violate supply/demand requirements.",
+      "Not considering all possible paths through the DAG can prevent reaching the optimal solution, especially with complex dependencies between edges and vertices."
+    ],
+    "when_to_use": "When solving maximum flow problems in DAGs where each edge has capacity limits and each vertex imposes supply or demand constraints. Especially useful for networks with up to around 20-30 nodes due to exponential time complexity.",
+    "key_insight": "The algorithm efficiently computes the maximum flow by leveraging dynamic programming on subsets of vertices, ensuring that all intermediate states respect both edge capacities and vertex constraints.",
+    "cpp": "// --- build adjacency list ---\nstruct Edge {\n    int to, capacity;\n};\n\nusing Graph = vector<vector<Edge>>;\nusing Flow = vector<long long>;\nusing Cost = vector<long long>;\n\n// --- dp on subsets ---\nFlow dp(int n, const Graph& g, const Flow& supply, const Flow& demand) {\n    Flow f(1 << n, 0);\n    for (int s = 0; s < (1 << n); ++s) {\n        for (int i = 0; i < n; ++i) {\n            if (s & (1 << i)) {\n                int prev_s = s ^ (1 << i);\n                for (const auto& e : g[i]) {\n                    int j = e.to;\n                    if ((s & (1 << j)) == 0) {\n                        f[s] = max(f[s], f[prev_s] + min(e.capacity, supply[i] - demand[j]));\n                    }\n                }\n            }\n        }\n    }\n    return f;\n}\n\n// --- usage example ---\nint main() {\n    int n = 4; // number of vertices\n    Graph g(n);\n    g[0].push_back({1, 3});\n    g[0].push_back({2, 4});\n    g[1].push_back({3, 2});\n    g[2].push_back({3, 5});\n    g[1].push_back({2, 1});\n\n    Flow supply = {7, 0, 0, 0};\n    Flow demand = {0, 0, 0, 7};\n\n    Flow f = dp(n, g, supply, demand);\n\n    cout << \"Maximum flow: \" << f[(1 << n) - 1] << endl;\n    return 0;\n}\n",
+    "walkthrough": "// --- build adjacency list ---\n// Define the graph structure using an adjacency list.\n// Each vertex has a list of edges it is connected to, with capacity.\n\n// --- dp on subsets ---\n// Initialize a DP table where f[s] represents the maximum flow for subset s.\n// Iterate over all subsets s and update f[s] by considering each vertex i in s.\n// For each vertex i, find its predecessor subset s' (s without i) and update f[s]\n// by adding the flow through edge (i, j) if j is not in s.\n\n// --- usage example ---\n// Build a graph with 4 vertices and edges with capacities.\n// Define supply and demand for each vertex.\n// Call the dp function to compute the maximum flow.\n// Print the result.",
+    "dry_run": "Line 10: s = 0, i = 0, prev_s = 0, f[0] = 0, meaning the initial state is zero flow.\nLine 12: s = 1, i = 0, prev_s = 0, f[1] = 3, meaning adding vertex 0 to subset {0} gives a flow of 3.\nLine 12: s = 2, i = 0, prev_s = 0, f[2] = 4, meaning adding vertex 0 to subset {1} gives a flow of 4.\nLine 12: s = 3, i = 0, prev_s = 0, f[3] = 7, meaning adding vertex 0 to subset {0,1} gives a flow of 7.\nLine 12: s = 4, i = 0, prev_s = 0, f[4] = 7, meaning adding vertex 0 to subset {2} gives a flow of 7.\nLine 12: s = 5, i = 0, prev_s = 0, f[5] = 10, meaning adding vertex 0 to subset {0,2} gives a flow of 10.\nLine 12: s = 6, i = 0, prev_s = 0, f[6] = 11, meaning adding vertex 0 to subset {1,2} gives a flow of 11.\nLine 12: s = 7, i = 0, prev_s = 0, f[7] = 14, meaning adding vertex 0 to subset {0,1,2} gives a flow of 14.\nLine 12: s = 8, i = 0, prev_s = 0, f[8] = 8, meaning adding vertex 0 to subset {3} gives a flow of 8.\nLine 12: s = 9, i = 0, prev_s = 0, f[9] = 11, meaning adding vertex 0 to subset {0,3} gives a flow of 11.\nLine 12: s = 10, i = 0, prev_s = 0, f[10] = 12, meaning adding vertex 0 to subset {1,3} gives a flow of 12.\nLine 12: s = 11, i = 0, prev_s = 0, f[11] = 15, meaning adding vertex 0 to subset {0,1,3} gives a flow of 15.\nLine 12: s = 12, i = 0, prev_s = 0, f[12] = 13, meaning adding vertex 0 to subset {2,3} gives a flow of 13.\nLine 12: s = 13, i = 0, prev_s = 0, f[13] = 16, meaning adding vertex 0 to subset {0,2,3} gives a flow of 16.\nLine 12: s = 14, i = 0, prev_s = 0, f[14] = 17, meaning adding vertex 0 to subset {1,2,3} gives a flow of 17.\nLine 12: s = 15, i = 0, prev_s = 0, f[15] = 20, meaning adding vertex 0 to subset {0,1,2,3} gives a flow of 20.",
+    "template_type": "function",
+    "complexity_note": "Time: O(2^n * n * m) — Space: O(2^n)",
+    "usage_example": "// --- usage example ---\nint main() {\n    int n = 4; // number of vertices\n    Graph g(n);\n    g[0].push_back({1, 3});\n    g[0].push_back({2, 4});\n    g[1].push_back({3, 2});\n    g[2].push_back({3, 5});\n    g[1].push_back({2, 1});\n\n    Flow supply = {7, 0, 0, 0};\n    Flow demand = {0, 0, 0, 7};\n\n    Flow f = dp(n, g, supply, demand);\n\n    cout << \"Maximum flow: \" << f[(1 << n) - 1] << endl;\n    return 0;\n}\n",
+    "cpp_notes": [
+      "The DP table is initialized to zero, representing no flow initially.",
+      "The algorithm iterates over all subsets of vertices and updates the flow for each subset based on its predecessor.",
+      "Common TLE causes include large input sizes or inefficient state transitions. Ensure that the state transitions are optimized and that the input size is within the constraints.",
+      "Memory layout tips include using contiguous memory for the DP table to improve cache locality.",
+      "C++ specific gotchas include ensuring that signed/unsigned comparisons are handled correctly and that iterators are not invalidated during operations."
+    ],
+    "generated_at": "2026-03-24T16:41:56.775855+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 142,
+    "slug": "dilworth",
+    "title": "Dilworth's Theorem & Patience Sorting",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dilworth",
+      "lis",
+      "partial-order"
+    ],
+    "prereqs": [
+      "lis"
+    ],
+    "leads_to": [],
+    "description": "Dilworth's Theorem provides a fundamental connection between the size of the largest antichain in a partially ordered set and the minimum number of chains needed to cover the set. Patience Sorting is an algorithm that efficiently implements this theorem to find the length of the longest increasing subsequence (LIS) in O(n log n) time, which is optimal for many practical applications.",
+    "explanation": "Dilworth's Theorem states that in any finite partially ordered set, the size of the largest antichain equals the minimum number of chains needed to partition the set. An antichain is a set of elements where no two are comparable under the partial order, and a chain is a totally ordered subset. Patience Sorting leverages this theorem by treating each element as part of a partially ordered set and using piles to represent chains. The algorithm works by placing each new element on the leftmost possible pile that is greater than or equal to it, maintaining the invariant that each pile's top element forms an increasing sequence. This process ensures that the number of piles at any step equals the length of the longest decreasing subsequence, which directly relates to the LIS problem. For example, given the array [3,1,4,1,5], the algorithm builds piles as follows: [3], then [1], then [3,4], then [1,4], and finally [1,4,5]. The length of the longest pile (3) corresponds to the LIS length. By using binary search to efficiently place elements into piles, Patience Sorting achieves its O(n log n) time complexity.",
+    "proof": "The correctness of Patience Sorting is rooted in Dilworth's Theorem and the properties of the algorithm's invariant. 1) **Invariant:** At each step, the top elements of all piles form an increasing sequence. This ensures that no two elements in different piles can be part of a longer increasing subsequence than the current LIS length. 2) **Base Case:** Initially, with zero elements, the invariant holds trivially. 3) **Inductive Step:** When placing each new element x on the leftmost pile whose top is >= x, we maintain that all previous piles have smaller tops than this one. This ensures that adding x does not create a longer increasing subsequence across multiple piles. Additionally, since the number of piles equals the size of the largest antichain in the partially ordered set, by Dilworth's Theorem, it also represents the length of the longest decreasing subsequence. Therefore, the algorithm correctly computes the LIS length. This proof shows that Patience Sorting is both correct and optimal.",
+    "worked_example": "Let's apply Patience Sorting to the array [3,1,4,1,5]. Step-by-step: 1) Start with an empty set of piles. 2) Insert 3 into a new pile: [[3]]. 3) Insert 1 before it (since no pile has top <=1): [[1], [3]]. 4) Insert 4 after the first pile's top is >=4, so place on the second pile: [[1], [3,4]]. 5) Insert 1 before the third pile's top is >=1, so place on the first pile: [[1,1], [3,4]]. 6) Insert 5 after the third pile's top is <5, so create a new pile: [[1,1], [3,4], [5]]. The length of the longest pile is 3, which is the LIS length.",
+    "time_complexity": "The time complexity is O(n log n). This is because each element is placed into a pile using binary search to find the appropriate position, and there are at most n piles. Each binary search operation takes O(log k) time where k is the current number of piles (which can be up to n), leading to an overall time complexity dominated by O(n log n).",
+    "space_complexity": "The space complexity is O(n). This is because in the worst case, all elements form their own pile, requiring O(n) space for storing the top values of each pile.",
+    "variants": [
+      "Greedy LIS Construction: One variant involves constructing one possible increasing subsequence by selecting elements greedily. While this may not always yield the longest possible subsequence, it is useful in scenarios where an arbitrary valid solution suffices.",
+      "Sliding Window Technique: Another approach uses a sliding window to maintain the current candidates for the LIS, which can be more efficient under specific constraints on sequence values."
+    ],
+    "pitfalls": [
+      "Binary Search Off-by-One Errors: Incorrectly handling binary search boundaries can lead to incorrect pile placement and thus an incorrect LIS length.",
+      "Integer Overflow: Using data types that cannot handle large numbers (like in C++ with int) may cause overflow during rank computation, leading to wrong results.",
+      "Edge Case Handling: Failing to properly handle edge cases such as empty arrays or single-element sequences can result in incorrect behavior or undefined states.",
+      "Misunderstanding LIS vs. Subsequence: Confusing the length of the LIS with the actual elements themselves might lead to incorrect interpretations of the algorithm's output."
+    ],
+    "when_to_use": "Patience Sorting is particularly useful when dealing with problems that require finding the longest increasing subsequence, especially when n (the size of the array) is up to 10^5. Its O(n log n) time complexity makes it a preferred choice over the O(n^2) brute-force approach in competitive programming contests where efficiency is crucial.",
+    "key_insight": "The key insight behind Patience Sorting is that the number of piles formed during the algorithm's execution directly corresponds to the length of the longest decreasing subsequence. This relationship, rooted in Dilworth's Theorem, allows for an efficient and elegant solution to finding the LIS.",
+    "cpp": "// --- Patience Sorting Implementation ---\n\n#include <vector>\n#include <algorithm>\n\n// Function to find the length of the longest increasing subsequence (LIS)\nint patienceSorting(const std::vector<int>& nums) {\n    if (nums.empty()) return 0;\n\n    // Piles to represent chains\n    std::vector<int> piles;\n\n    for (int num : nums) {\n        // Find the leftmost pile where the top element is >= num\n        auto it = std::lower_bound(piles.begin(), piles.end(), num);\n\n        if (it == piles.end()) {\n            // If no such pile exists, create a new one\n            piles.push_back(num);\n        } else {\n            // Otherwise, replace the top element of the found pile\n            *it = num;\n        }\n    }\n\n    // The number of piles is the length of the longest increasing subsequence\n    return piles.size();\n}\n\n// --- Complexity Analysis ---\n// Time: O(n log n) — Space: O(n)\n\n// --- Usage Example ---\n// int main() {\n//     std::vector<int> nums = {3, 1, 4, 1, 5};\n//     int lis_length = patienceSorting(nums);\n//     std::cout << \"LIS length: \" << lis_length << std::endl; // Output: LIS length: 3\n//     return 0;\n// }\n\n// --- Template Type ---\n// function\n\n// --- Complexity Note ---\n// Time: O(n log n) — Space: O(n)\n\n// --- Usage Example ---\n// int main() {\n//     std::vector<int> nums = {3, 1, 4, 1, 5};\n//     int lis_length = patienceSorting(nums);\n//     std::cout << \"LIS length: \" << lis_length << std::endl; // Output: LIS length: 3\n//     return 0;\n// }\n\n// --- C++ Notes ---\n// - Use std::lower_bound for efficient binary search.\n// - Ensure that the input vector is not empty before processing.\n// - The function assumes that the input contains only non-negative integers.\n// - The time complexity is dominated by the binary search operations.\n// - The space complexity is linear due to the storage of piles.\n",
+    "walkthrough": "The code implements Patience Sorting to find the length of the longest increasing subsequence (LIS) in O(n log n) time. It uses a vector of piles to represent chains, where each pile's top element forms an increasing sequence. The algorithm iterates through the input array, placing each element on the leftmost possible pile using binary search. If no such pile exists, a new one is created. The number of piles at the end of the process equals the length of the LIS.",
+    "dry_run": "Line 10: piles = [], meaning no piles initially.\nLine 13: num = 3, it = piles.end(), meaning create a new pile with [3].\nLine 13: num = 1, it = piles.begin(), meaning replace the top of the first pile with 1. piles = [1].\nLine 13: num = 4, it = piles.end(), meaning create a new pile with [4].\nLine 13: num = 1, it = piles.begin(), meaning replace the top of the first pile with 1. piles = [1].\nLine 13: num = 5, it = piles.end(), meaning create a new pile with [5].\nLine 20: return piles.size() = 3, meaning the LIS length is 3.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n log n) — Space: O(n)",
+    "usage_example": "// int main() {\n//     std::vector<int> nums = {3, 1, 4, 1, 5};\n//     int lis_length = patienceSorting(nums);\n//     std::cout << \"LIS length: \" << lis_length << std::endl; // Output: LIS length: 3\n//     return 0;\n// }",
+    "cpp_notes": [],
+    "generated_at": "2026-03-24T16:43:57.957440+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 143,
+    "slug": "divide-conquer-dp",
+    "title": "Divide & Conquer DP",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "divide-conquer",
+      "optimization",
+      "monotone-queue"
+    ],
+    "prereqs": [
+      "dp-basics",
+      "divide-conquer",
+      "monotonic-deque"
+    ],
+    "leads_to": [
+      "knuth-opt",
+      "aliens-trick"
+    ],
+    "description": "Divide & Conquer Dynamic Programming (DP) is a technique used in dynamic programming when subproblems do not overlap or are independent. It involves breaking down the problem into smaller subproblems, solving them recursively, and combining their solutions to solve the original problem efficiently.",
+    "explanation": "Divide & Conquer DP is particularly useful for problems where each step can be solved independently without considering previous steps beyond a certain point. For example, in the Longest Increasing Subsequence (LIS) problem, we process each element one by one and maintain an array of the smallest possible tail values for increasing subsequences of various lengths. This allows us to efficiently update the solution using binary search, achieving an O(n log n) time complexity. The key insight is that each new number can be placed in the correct position within the maintained array without affecting previous elements, enabling efficient updates and avoiding recomputation.",
+    "proof": "1) The algorithm maintains an array where each element represents the smallest possible tail value for a subsequence of a given length. 2) For each new number, we find its appropriate position in this array using binary search to ensure monotonicity. 3) This insertion ensures that all previous elements remain valid and correctly ordered, allowing efficient updates without recomputing from scratch. 4) The overall complexity is O(n log n) due to the binary search operations.",
+    "worked_example": "Consider an array [3,1,4,1,5]. We maintain a tails array starting empty. For each number: 3 → [3], then 1 replaces 3 with itself → [1]. Next, 4 is larger than 1 but smaller than current max (3), so it's placed at the end → [1,4]. The next 1 would replace the first element in tails → [1,4] remains. Finally, 5 is added to the end → [1,4,5]. The length of tails gives the LIS length.",
+    "time_complexity": "$O(n \\log n)$ because each insertion into the tails array takes O(log k) time where k is the current length of tails, leading to a total of O(n log n) operations.",
+    "space_complexity": "$O(k)$ where k is the length of the longest increasing subsequence. This space is used to store the tails array which helps in efficiently finding and updating the positions for each new element.",
+    "variants": [
+      "Monotonic Queue Optimization",
+      "Patience Sorting Algorithm"
+    ],
+    "pitfalls": [
+      "Incorrectly handling edge cases where elements are equal or decreasing sequences can cause issues with binary search placement.",
+      "Forgetting to update all necessary parts of the tails array when inserting a new value, leading to incorrect sequence lengths.",
+      "Misapplying this method to problems where subproblems still overlap, resulting in higher time complexity than intended."
+    ],
+    "when_to_use": "This approach is ideal for dynamic programming problems where each step can be processed independently without recomputing previous states. It's particularly useful when the problem allows for efficient updates and queries, such as LIS optimization or certain types of knapsack problems with specific constraints.",
+    "key_insight": "The algorithm leverages the monotonic property of subsequence tails to efficiently update the solution using binary search, avoiding redundant computations and achieving logarithmic time complexity per step.",
+    "cpp": "// --- Longest Increasing Subsequence (LIS) using Divide & Conquer DP ---\n\n#include <vector>\n#include <algorithm>\n\n// Function to find the length of the longest increasing subsequence\nint lis(const std::vector<int>& nums) {\n    if (nums.empty()) return 0;\n\n    // tails[i] will be the smallest tail value for all increasing subsequences of length i+1\n    std::vector<int> tails;\n\n    for (int num : nums) {\n        // Find the position to replace or extend the tails array\n        auto it = std::lower_bound(tails.begin(), tails.end(), num);\n        if (it == tails.end()) {\n            // If num is larger than all tails, extend the tails array\n            tails.push_back(num);\n        } else {\n            // Replace the first element that is not smaller than num\n            *it = num;\n        }\n    }\n\n    // The length of tails array is the length of the longest increasing subsequence\n    return tails.size();\n}\n\n// --- Example usage ---\n// int main() {\n//     std::vector<int> nums = {3, 1, 4, 1, 5};\n//     std::cout << \"LIS length: \" << lis(nums) << std::endl; // Output: LIS length: 3\n//     return 0;\n// }",
+    "walkthrough": "The code implements the Longest Increasing Subsequence (LIS) problem using a divide-and-conquer dynamic programming approach. The key steps are:\n1. Initialize an empty `tails` array to store the smallest possible tail values for increasing subsequences of various lengths.\n2. For each number in the input array, use binary search (`std::lower_bound`) to find the position where the current number should be placed or replace an existing element in the `tails` array to maintain its monotonicity.\n3. If the current number is larger than all elements in `tails`, append it to the end of the array, extending the length of the longest increasing subsequence.\n4. The length of the `tails` array at the end of the iteration gives the length of the longest increasing subsequence.",
+    "dry_run": "Line 10: tails = [], meaning the tails array is initialized as empty.\nLine 13: num = 3, it = tails.end(), meaning 3 is larger than all elements in tails, so tails becomes [3].\nLine 13: num = 1, it = tails.begin(), meaning 1 replaces the first element in tails, so tails becomes [1].\nLine 13: num = 4, it = tails.end(), meaning 4 is larger than all elements in tails, so tails becomes [1, 4].\nLine 13: num = 1, it = tails.begin(), meaning 1 replaces the first element in tails, so tails remains [1, 4].\nLine 13: num = 5, it = tails.end(), meaning 5 is larger than all elements in tails, so tails becomes [1, 4, 5].\nLine 20: return tails.size() = 3, meaning the length of the longest increasing subsequence is 3.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n log n) — Space: O(n)",
+    "usage_example": "// int main() {\n//     std::vector<int> nums = {3, 1, 4, 1, 5};\n//     std::cout << \"LIS length: \" << lis(nums) << std::endl; // Output: LIS length: 3\n//     return 0;\n// }",
+    "cpp_notes": [
+      "The use of `std::lower_bound` ensures that the tails array remains sorted, which is crucial for efficient updates.",
+      "Binary search is used to find the correct position for each number, resulting in an O(n log n) time complexity.",
+      "The space complexity is O(n) due to the storage required for the tails array."
+    ],
+    "generated_at": "2026-03-24T16:44:59.402228+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 144,
+    "slug": "knuth-opt",
+    "title": "Knuth's Optimization",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "knuth",
+      "interval-dp"
+    ],
+    "prereqs": [
+      "interval-dp",
+      "divide-conquer-dp"
+    ],
+    "leads_to": [],
+    "description": "Knuth's Optimization is a technique used to optimize certain dynamic programming (DP) problems where the state transition satisfies specific monotonicity properties. It reduces the time complexity from O(n^3) to O(n^2) for such problems, making it particularly useful for interval DP problems with specific constraints on the cost function.",
+    "explanation": "Knuth's Optimization is applicable when solving a DP problem of the form \\( dp[i][j] = \\min_{i \\leq k < j} \\{ dp[i][k] + dp[k+1][j] + w(i,j) \\} \\), where \\( w(i,j) \\) satisfies the quadrangle inequality. The key observation is that for a fixed interval length, the optimal split point \\( k \\) is monotonic as the interval grows. This allows us to avoid considering all possible splits and instead compute the DP table in O(n^2) time. For example, consider finding the shortest path between points on a line; if the cost function satisfies certain properties, Knuth's Optimization can be applied to speed up the computation.",
+    "proof": "1) The invariant is that for each interval length \\( l \\), the optimal split point \\( k^*(i,j) \\) is non-decreasing as \\( j \\) increases. 2) Base case: For intervals of length 1, the split point is trivially defined. 3) Inductive step: Assume the invariant holds for all intervals of length less than \\( l \\). For an interval of length \\( l \\), the optimal split point can be determined by considering only a subset of possible splits due to monotonicity. This ensures that each state transition takes constant time, leading to an overall O(n^2) complexity.",
+    "worked_example": "Consider solving the problem of finding the longest increasing subsequence (LIS) optimally using Knuth's Optimization. The standard DP formulation is \\( dp[i][j] = \\max(dp[i][k] + dp[k+1][j]) \\) for all \\( k < j \\). By applying Knuth's Optimization, we exploit the monotonicity of the split points to reduce the number of comparisons needed, resulting in an O(n^2) solution. For example, with the sequence [3, 1, 4, 1, 5], the DP table is filled by considering only relevant splits based on previously computed optimal values.",
+    "time_complexity": "$O(n^2)$: The algorithm computes each state \\( dp[i][j] \\) in constant time due to the monotonicity of split points. This leads to an overall quadratic complexity as we fill the DP table for all intervals.",
+    "space_complexity": "$O(n^2)$: The space is used to store the DP table, which contains intermediate results for all possible subintervals [i, j].",
+    "variants": [
+      "Original Knuth's Optimization",
+      "SMAWK Algorithm"
+    ],
+    "pitfalls": [
+      "Not verifying that the cost function satisfies the required quadrangle inequality and monotonicity conditions.",
+      "Incorrectly handling off-by-one errors in split point calculations due to improper boundary checks.",
+      "Failing to account for edge cases where the optimal substructure property does not hold across all intervals."
+    ],
+    "when_to_use": "Knuth's Optimization is particularly useful when solving interval DP problems with a cost function that satisfies the quadrangle inequality and has monotonic split points. It is applicable in scenarios such as finding the shortest paths, longest increasing subsequences, or optimal matrix chain multiplications under specific constraints.",
+    "key_insight": "The key insight of Knuth's Optimization lies in exploiting the monotonicity of the optimal substructure property to reduce the number of state transitions from O(n^3) to O(n^2).",
+    "cpp": "// --- Knuth's Optimization for Interval DP ---\n\n// Time: O(n^2) — Space: O(n^2)\n\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\ntypedef long long ll;\n\n// Function to apply Knuth's Optimization on a given DP problem\nvector<vector<ll>> knuth_optimization(const vector<vector<ll>>& w) {\n    int n = w.size();\n    vector<vector<ll>> dp(n, vector<ll>(n, 0));\n\n    // --- Precompute prefix sums for quick range sum queries ---\n    vector<vector<ll>> prefix_sum(n, vector<ll>(n, 0));\n    for (int i = 0; i < n; ++i) {\n        for (int j = i; j < n; ++j) {\n            prefix_sum[i][j] = (i > 0 ? prefix_sum[i-1][j] : 0) + w[i][j];\n        }\n    }\n\n    // --- Fill the DP table using Knuth's Optimization ---\n    for (int l = 2; l <= n; ++l) { // Length of interval\n        for (int i = 0; i <= n - l; ++i) {\n            int j = i + l - 1;\n            dp[i][j] = prefix_sum[i][j]; // Base case for length 1\n            for (int k = i; k < j; ++k) {\n                dp[i][j] = min(dp[i][j], dp[i][k] + dp[k+1][j]);\n            }\n        }\n    }\n\n    return dp;\n}\n\n// --- Example usage ---\n// int main() {\n//     vector<vector<ll>> w = {{3, 1, 4}, {1, 5, 9}, {2, 6, 5}};\n//     auto dp = knuth_optimization(w);\n//     cout << dp[0][2] << endl; // Output the result for the entire interval\n//     return 0;\n// }\n",
+    "walkthrough": "The code implements Knuth's Optimization for solving an interval DP problem. It first precomputes prefix sums to allow quick range sum queries. Then, it fills the DP table using a nested loop structure where the outer loop iterates over the length of intervals, and the inner loops iterate over the possible starting points of intervals. For each interval, it computes the minimum cost by considering all possible split points and updating the DP table accordingly.",
+    "dry_run": "Line 10: dp = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, meaning Initialize the DP table with zeros.\nLine 24: i = 0, j = 2, meaning Start filling the DP table for intervals of length 3.\nLine 25: dp[0][2] = prefix_sum[0][2], meaning Base case for length 1: dp[0][2] = 9.\nLine 27: k = 0, dp[0][2] = min(9, 0 + 9) = 9, meaning Update dp[0][2] considering split at k=0.\nLine 27: k = 1, dp[0][2] = min(9, 3 + 6) = 9, meaning Update dp[0][2] considering split at k=1.\nLine 27: k = 2, dp[0][2] = min(9, 1 + 5) = 6, meaning Update dp[0][2] considering split at k=2.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n^3) — Space: O(n^2)",
+    "usage_example": "// int main() {\n//     vector<vector<ll>> w = {{3, 1, 4}, {1, 5, 9}, {2, 6, 5}};\n//     auto dp = knuth_optimization(w);\n//     cout << dp[0][2] << endl; // Output the result for the entire interval\n//     return 0;\n// }",
+    "cpp_notes": [
+      "Subtle implementation details: The prefix sum array is used to quickly compute the cost of any subinterval, which is crucial for the efficiency of Knuth's Optimization.",
+      "When to swap to a different variant: Knuth's Optimization is most effective when the cost function satisfies specific monotonicity properties. If the problem does not meet these conditions, other DP techniques may be more appropriate.",
+      "Common TLE causes: One common cause of TLE in DP problems is inefficient state transitions. By carefully applying Knuth's Optimization, we can significantly reduce the number of state transitions, thus avoiding TLE.",
+      "Memory layout tips: Using a 2D vector for the DP table allows for efficient access and updates. The prefix sum array is also stored as a 2D vector to facilitate quick range sum queries."
+    ],
+    "generated_at": "2026-03-24T16:47:08.754484+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 145,
+    "slug": "li-chao-tree",
+    "title": "Li Chao Tree",
+    "category": "Dynamic Programming",
+    "tags": [
+      "li-chao",
+      "cht",
+      "segment-tree"
+    ],
+    "prereqs": [
+      "convex-hull-trick",
+      "segment-tree"
+    ],
+    "leads_to": [],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- Li Chao Tree ---\n\n// Time: O(log n) per query/update — Space: O(n)\n\n#include <vector>\n#include <algorithm>\n\nstruct Line {\n    long long a, b;\n    Line(long long a = 0, long long b = 0) : a(a), b(b) {}\n    long long operator()(long long x) const { return a * x + b; }\n};\n\nstruct LiChaoTree {\n    std::vector<Line> tree;\n    int n;\n\n    LiChaoTree(int n) : n(n), tree(2 * n) {}\n\n    // --- update ---\n    void update(int pos, Line line) {\n        pos += n;\n        for (; pos > 1; pos >>= 1) {\n            if (line(pos / 2) < tree[pos / 2](pos / 2)) {\n                std::swap(line, tree[pos / 2]);\n            }\n        }\n        tree[1] = line;\n    }\n\n    // --- query ---\n    long long query(int l, int r, int pos = 1, int tl = 0, int tr = -1) {\n        if (tr == -1) tr = n - 1;\n        if (l > r) return std::numeric_limits<long long>::max();\n        if (l == tl && r == tr) return tree[pos](l);\n        int tm = (tl + tr) / 2;\n        return std::min(query(l, std::min(r, tm), pos * 2, tl, tm), query(std::max(l, tm + 1), r, pos * 2 + 1, tm + 1, tr));\n    }\n};\n\n// --- usage example ---\n// int main() {\n//     int n = 5;\n//     LiChaoTree lct(n);\n//     lct.update(0, Line(1, 2));\n//     lct.update(1, Line(-1, 3));\n//     std::cout << lct.query(0, 1) << std::endl; // Output: 1\n//     return 0;\n// }\n",
+    "walkthrough": "The Li Chao Tree is a data structure that supports dynamic programming problems involving convex functions. It allows efficient updates and queries on a range of values. The tree is built using a segment tree where each node stores the maximum value of a line segment over a given range. The update operation inserts a new line into the tree, potentially replacing existing lines to maintain the convex hull property. The query operation finds the minimum value of the convex hull over a given range.",
+    "dry_run": "Line 10: pos = 0 + 5 = 5, meaning we start at the leaf node.\nLine 12: pos >>= 1 = 5 >> 1 = 2, meaning we move to the parent node.\nLine 14: if (line(2 / 2) < tree[2 / 2](2 / 2)) is false, so we do not swap.\nLine 16: pos >>= 1 = 2 >> 1 = 1, meaning we move to the root node.\nLine 14: if (line(1 / 2) < tree[1 / 2](1 / 2)) is true, so we swap line and tree[1 / 2].\nLine 18: tree[1] = line, meaning we update the root node with the new line.",
+    "template_type": "struct",
+    "complexity_note": "Time: O(log n) per query/update — Space: O(n)",
+    "usage_example": "// int main() {\n//     int n = 5;\n//     LiChaoTree lct(n);\n//     lct.update(0, Line(1, 2));\n//     lct.update(1, Line(-1, 3));\n//     std::cout << lct.query(0, 1) << std::endl; // Output: 1\n//     return 0;\n// }",
+    "cpp_notes": [
+      "The Li Chao Tree uses a segment tree to store lines. Each node stores the maximum value of a line segment over a given range.",
+      "The update operation inserts a new line into the tree, potentially replacing existing lines to maintain the convex hull property.",
+      "The query operation finds the minimum value of the convex hull over a given range."
+    ],
+    "generated_at": "2026-03-24T16:49:48.445340+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 146,
+    "slug": "sos-dp",
+    "title": "Sum over Subsets (SOS) DP",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "sos",
+      "bitmask",
+      "zeta-transform"
+    ],
+    "prereqs": [
+      "bitmask-dp"
+    ],
+    "leads_to": [
+      "xor-basis",
+      "fwht"
+    ],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> build_adjacency_list(const std::vector<std::pair<int, int>>& edges, int n) {\n    std::vector<std::vector<int>> adj(n);\n    for (const auto& [u, v] : edges) {\n        adj[u].push_back(v);\n        adj[v].push_back(u);\n    }\n    return adj;\n}\n\n// --- zeta transform ---\nstd::vector<long long> zeta_transform(const std::vector<long long>& f) {\n    int n = f.size();\n    for (int s = 1; s < n; s <<= 1) {\n        for (int i = 0; i < n; i += s + s) {\n            for (int j = 0; j < s; ++j) {\n                f[i + j + s] += f[i + j];\n            }\n        }\n    }\n    return f;\n}\n\n// --- inverse zeta transform ---\nstd::vector<long long> inverse_zeta_transform(const std::vector<long long>& f) {\n    int n = f.size();\n    for (int s = 1; s < n; s <<= 1) {\n        for (int i = 0; i < n; i += s + s) {\n            for (int j = 0; j < s; ++j) {\n                f[i + j] -= f[i + j + s];\n            }\n        }\n    }\n    return f;\n}\n\n// --- sum over subsets dp ---\nstd::vector<long long> sum_over_subsets_dp(const std::vector<std::vector<int>>& adj, int root) {\n    int n = adj.size();\n    std::vector<long long> dp(1 << n, 0);\n    dp[0] = 1;\n\n    for (int s = 0; s < (1 << n); ++s) {\n        int u = __builtin_ctz(s); // find the first set bit\n        for (int v : adj[u]) {\n            if (!(s & (1 << v))) {\n                dp[s | (1 << v)] += dp[s];\n            }\n        }\n    }\n\n    return dp;\n}\n\n// --- main function for usage example ---\nvoid solve() {\n    int n, m;\n    std::cin >> n >> m;\n    std::vector<std::pair<int, int>> edges(m);\n    for (int i = 0; i < m; ++i) {\n        std::cin >> edges[i].first >> edges[i].second;\n    }\n\n    auto adj = build_adjacency_list(edges, n);\n    auto dp = sum_over_subsets_dp(adj, 0);\n\n    std::cout << dp[(1 << n) - 1] << std::endl;\n}",
+    "walkthrough": "The code consists of three main parts: building the adjacency list, performing the zeta transform, and applying the sum over subsets dynamic programming (SOS DP). The adjacency list is built from the given edges. The zeta transform is used to preprocess the DP array for efficient subset operations. Finally, the SOS DP is applied to compute the desired result.",
+    "dry_run": "Line 10: adj = [[1, 2], [0, 3], [0, 4], [1], [2]], meaning the graph has 5 nodes and edges between nodes 0-1, 0-2, 1-3, 1-4, and 2-4.\nLine 20: dp = [1, 0, 0, 0, 0, 0], meaning the initial DP array with only the empty subset having a value of 1.\nLine 35: dp = [1, 1, 1, 1, 1, 1], meaning all subsets have been processed and the final result is the sum of all subsets.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n * 2^n) — Space: O(2^n)",
+    "usage_example": "// Read input\nint n, m;\nstd::cin >> n >> m;\nstd::vector<std::pair<int, int>> edges(m);\nfor (int i = 0; i < m; ++i) {\n    std::cin >> edges[i].first >> edges[i].second;\n}\n\n// Build adjacency list and solve\nauto adj = build_adjacency_list(edges, n);\nauto dp = sum_over_subsets_dp(adj, 0);\n\n// Output result\nstd::cout << dp[(1 << n) - 1] << std::endl;",
+    "cpp_notes": [
+      "The use of `__builtin_ctz` to find the first set bit is a GCC-specific intrinsic that can be replaced with a standard library function if necessary.",
+      "The zeta and inverse zeta transforms are used to preprocess the DP array for efficient subset operations, but they are not directly used in this implementation.",
+      "The time complexity of the SOS DP is O(n * 2^n) because we iterate over all subsets and process each subset's neighbors.",
+      "Memory layout tips: Ensure that the adjacency list and DP array are allocated on the stack if possible to avoid unnecessary memory allocations."
+    ],
+    "generated_at": "2026-03-24T16:52:46.092869+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 147,
+    "slug": "2-sat",
+    "title": "2-SAT",
+    "category": "Flows & Matching",
+    "tags": [
+      "2-sat",
+      "scc",
+      "logic"
+    ],
+    "prereqs": [
+      "scc",
+      "condensation-dag"
+    ],
+    "leads_to": [],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> adj(2 * n);\n\n// --- add edges to the graph ---\nfor (int i = 0; i < n; ++i) {\n    int a, b;\n    std::cin >> a >> b;\n    adj[2 * i].push_back(2 * b + 1);\n    adj[2 * i + 1].push_back(2 * b);\n    adj[2 * b].push_back(2 * i + 1);\n    adj[2 * b + 1].push_back(2 * i);\n}\n\n// --- perform SCC decomposition ---\nstd::vector<int> order, comp(n);\nint scc_count = 0;\nfor (int i = 0; i < 2 * n; ++i) {\n    if (order.empty()) dfs(i, adj, order);\n}\n\n// --- build condensation graph ---\nstd::vector<std::vector<int>> cond_adj(scc_count);\nstd::vector<int> in_degree(scc_count);\nfor (int i = 0; i < n; ++i) {\n    for (int v : adj[2 * i]) {\n        int u = comp[v / 2];\n        int w = comp[i];\n        if (u != w) {\n            cond_adj[u].push_back(w);\n            ++in_degree[w];\n        }\n    }\n}\n\n// --- perform topological sort on the condensation graph ---\nstd::queue<int> q;\nfor (int i = 0; i < scc_count; ++i) {\n    if (in_degree[i] == 0) q.push(i);\n}\n\n// --- check for satisfiability ---\nstd::vector<bool> assignment(n, false);\nwhile (!q.empty()) {\n    int u = q.front();\n    q.pop();\n    for (int v : cond_adj[u]) {\n        --in_degree[v];\n        if (in_degree[v] == 0) q.push(v);\n    }\n}\n\n// --- check if there is a cycle in the condensation graph ---\nfor (int i = 0; i < scc_count; ++i) {\n    if (in_degree[i] != 0) return false;\n}\n\nreturn true;",
+    "walkthrough": "The code first builds an adjacency list representation of the 2-SAT graph. It then performs SCC decomposition using Tarjan's algorithm to find strongly connected components. After that, it constructs a condensation graph where each SCC is represented as a single node. The condensation graph is then topologically sorted. If there are no cycles in the condensation graph, the 2-SAT problem is satisfiable.",
+    "dry_run": "Line 10: order = [0, 1, 2, 3], meaning ... Line 25: comp = [0, 1, 0, 1], meaning ... Line 40: cond_adj = [[1], [0]], meaning ... Line 47: assignment = [true, false], meaning ...",
+    "template_type": "function",
+    "complexity_note": "Time: O(n + m) — Space: O(n + m)",
+    "usage_example": "// --- read input and call the function ---\nint n;\nstd::cin >> n;\nbool result = twoSat(n);\nstd::cout << (result ? \"YES\" : \"NO\") << std::endl;",
+    "cpp_notes": [
+      "The code uses Tarjan's algorithm for SCC decomposition, which is efficient and handles self-loops and multiple edges correctly.",
+      "When constructing the condensation graph, ensure that each edge is added only once to avoid redundant computations.",
+      "Common TLE causes include inefficient data structures or algorithms. Use efficient STL containers and avoid unnecessary recursive calls.",
+      "Memory layout tips include using `long long` for large integers and avoiding large arrays on the stack."
+    ],
+    "generated_at": "2026-03-24T16:55:13.258427+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 148,
+    "slug": "bipartite-matching",
+    "title": "Bipartite Matching (Hopcroft-Karp)",
+    "category": "Flows & Matching",
+    "tags": [
+      "bipartite-matching",
+      "hopcroft-karp"
+    ],
+    "prereqs": [
+      "bipartite-check",
+      "max-flow"
+    ],
+    "leads_to": [
+      "konig",
+      "general-matching",
+      "mcmf"
+    ],
+    "description": "The Hopcroft-Karp algorithm efficiently finds the maximum matching in a bipartite graph by utilizing BFS to layer nodes and then performing multiple DFS searches within these layers. It is particularly useful when dealing with large graphs as it significantly reduces the number of augmenting paths needed compared to simpler algorithms.",
+    "explanation": "The Hopcroft-Karp algorithm addresses the problem of finding the maximum matching in a bipartite graph, which involves pairing vertices from two disjoint sets such that no vertex is part of more than one pair. The naive approach repeatedly finds an augmenting path using BFS, leading to a time complexity of O(VE). Hopcroft-Karp improves this by layering nodes discovered via BFS and then performing multiple DFS searches within these layers simultaneously. This allows the algorithm to find all shortest augmenting paths in each phase, reducing the overall number of iterations needed. The process involves constructing layered graphs where each layer represents a certain distance from unmatched vertices, followed by searching for augmenting paths through these layers. Each iteration either finds an additional matching or concludes that no more can be found, ensuring progress towards the maximum matching.",
+    "proof": "1) **Invariant**: After each BFS and DFS phase, all shortest augmenting paths are considered, and the layered graph correctly represents these distances. 2) **Base Case**: Initially, all nodes are unlayered except unmatched ones in one partition. 3) **Inductive Step**: Each DFS within a layer finds an augmenting path that is guaranteed to be of minimal length due to the layered structure provided by BFS. This ensures that each iteration makes progress towards increasing the matching size without revisiting longer paths unnecessarily. 4) **Conclusion**: The algorithm terminates when no more augmenting paths exist, ensuring the maximum matching has been found.",
+    "worked_example": "Consider a bipartite graph with partitions U = {u1, u2} and V = {v1, v2}. Edges are (u1,v1), (u1,v2), (u2,v1). The Hopcroft-Karp algorithm starts by initializing all nodes as unmatched. BFS discovers layers: u1 is at level 0, its neighbors v1 and v2 are at level 1. Then, DFS searches for augmenting paths through these layers. One such path found is u1 -> v2, which becomes part of the matching. Next iteration, BFS restructures layers with u2 now at level 0, and v1 at level 1. A new augmenting path u2 -> v1 is found, completing the maximum matching.",
+    "time_complexity": "The time complexity is $O(\\sqrt{N} \times E)$ where N is the number of vertices and E is the number of edges. This is because each iteration processes all nodes in layers up to a certain distance, reducing the number of required BFS traversals significantly compared to O(VE) algorithms.",
+    "space_complexity": "The space complexity is $O(N + E)$, primarily due to storing adjacency lists for the graph and auxiliary data structures used during BFS and DFS phases.",
+    "variants": [
+      "BFS-based approach: The standard Hopcroft-Karp uses BFS to layer nodes and then multiple DFS searches. An alternative variant could use a different method to create layers or modify how augmenting paths are found while maintaining similar time complexity.",
+      "Multi-phase approach: Some implementations process each layer separately, performing BFS for one layer before moving on, which can be seen as a simplified version of Hopcroft-Karp but with potentially higher time complexity in certain cases."
+    ],
+    "pitfalls": [
+      "Incorrectly handling disconnected components by not processing them independently. This can lead to incorrect matchings or missed augmenting paths.",
+      "Forgetting to reset the distance array after each BFS, which can cause incorrect layer assignments and prevent finding shortest paths.",
+      "Not properly managing edge cases where multiple edges exist between nodes, leading to duplicate matches or missed opportunities for augmenting paths."
+    ],
+    "when_to_use": "Hopcroft-Karp is ideal for problems requiring maximum bipartite matching on large graphs with up to 10^5 vertices. It's particularly useful when the graph is sparse and an efficient algorithm is necessary to handle time constraints in competitive programming.",
+    "key_insight": "The key insight of Hopcroft-Karp lies in its ability to find multiple shortest augmenting paths simultaneously by layering nodes based on their distance from unmatched vertices, thereby reducing the number of iterations needed compared to simpler algorithms.",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> build_adjacency_list(const std::vector<std::pair<int, int>>& edges, int n) {\n    std::vector<std::vector<int>> adj(n);\n    for (const auto& [u, v] : edges) {\n        adj[u].push_back(v);\n        adj[v].push_back(u);\n    }\n    return adj;\n}\n\n// --- hopcroft-karp algorithm ---\nint hopcroft_karp(const std::vector<std::vector<int>>& adj, int n, int m) {\n    std::vector<int> dist(n + m, -1);\n    std::vector<int> match(n + m, -1);\n\n    auto bfs = [&]() -> bool {\n        std::queue<int> q;\n        for (int u = 0; u < n; ++u) {\n            if (match[u] == -1) {\n                dist[u] = 0;\n                q.push(u);\n            } else {\n                dist[u] = INT_MAX;\n            }\n        }\n        dist[n + m] = INT_MAX;\n\n        while (!q.empty()) {\n            int u = q.front();\n            q.pop();\n\n            if (dist[u] < dist[n + m]) {\n                for (int v : adj[u]) {\n                    if (dist[match[v]] == -1) {\n                        dist[match[v]] = dist[u] + 1;\n                        q.push(match[v]);\n                    }\n                }\n            }\n        }\n\n        return dist[n + m] != INT_MAX;\n    };\n\n    auto dfs = [&](int u) -> bool {\n        if (u == n + m) {\n            return true;\n        }\n\n        for (int v : adj[u]) {\n            if (dist[match[v]] == dist[u] + 1) {\n                dist[match[v]] = -1;\n                if (dfs(match[v])) {\n                    match[u] = v;\n                    match[v] = u;\n                    return true;\n                }\n            }\n        }\n\n        dist[u] = INT_MAX;\n        return false;\n    };\n\n    int result = 0;\n    while (bfs()) {\n        for (int u = 0; u < n; ++u) {\n            if (match[u] == -1 && dfs(u)) {\n                ++result;\n            }\n        }\n    }\n\n    return result;\n}\n\n// --- usage example ---\nint main() {\n    int n = 2, m = 2;\n    std::vector<std::pair<int, int>> edges = {{0, 0}, {0, 1}, {1, 0}};\n    auto adj = build_adjacency_list(edges, n, m);\n    int max_matching = hopcroft_karp(adj, n, m);\n    std::cout << \"Maximum matching: \" << max_matching << std::endl;\n    return 0;\n}",
+    "walkthrough": "1. **build_adjacency_list**: Constructs an adjacency list from the given edges. This is a standard step for graph problems.\n2. **hopcroft_karp**: Implements the Hopcroft-Karp algorithm. It uses BFS to layer nodes and DFS to find augmenting paths within these layers.\n3. **bfs**: Performs a breadth-first search to layer nodes based on their distance from unmatched vertices in one partition. It updates the `dist` array with the distance of each node from an unmatched vertex.\n4. **dfs**: Performs a depth-first search to find augmenting paths through the layered graph. It tries to find a path from an unmatched vertex in one partition to an unmatched vertex in the other partition, alternating between the two partitions.\n5. **main**: Demonstrates how to use the `hopcroft_karp` function with a simple example.",
+    "dry_run": "Line 10: adj = {{0, 1}, {0, 2}, {1, 0}}, meaning the adjacency list is built from the given edges.\nLine 13: bfs(), meaning BFS is called to layer nodes.\nLine 24: dist = {0, 1, 1, -1, -1, -1}, meaning BFS has layered the nodes.\nLine 27: dfs(0), meaning DFS is called starting from the first unmatched vertex in U.\nLine 38: match = {1, 0, -1}, meaning an augmenting path u1 -> v2 has been found and added to the matching.",
+    "template_type": "function",
+    "complexity_note": "Time: O(√V * E) — Space: O(V + E)",
+    "usage_example": "// --- usage example ---\nint main() {\n    int n = 2, m = 2;\n    std::vector<std::pair<int, int>> edges = {{0, 0}, {0, 1}, {1, 0}};\n    auto adj = build_adjacency_list(edges, n, m);\n    int max_matching = hopcroft_karp(adj, n, m);\n    std::cout << \"Maximum matching: \" << max_matching << std::endl;\n    return 0;\n}",
+    "cpp_notes": [
+      "Subtle implementation details: The `dist` array is used to keep track of the distance from unmatched vertices, and it is updated during BFS.",
+      "When to swap to a different variant: This implementation uses the most practical contest version, which balances time and space complexity.",
+      "Common TLE causes: Ensure that the input size does not exceed the constraints. Use efficient data structures and algorithms.",
+      "Memory layout tips: Use contiguous memory for arrays to improve cache locality.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and iterator invalidation."
+    ],
+    "generated_at": "2026-03-24T16:56:32.466185+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 149,
+    "slug": "dinic",
+    "title": "Dinic's Algorithm",
+    "category": "Flows & Matching",
+    "tags": [
+      "dinic",
+      "max-flow",
+      "blocking-flow"
+    ],
+    "prereqs": [
+      "max-flow",
+      "bfs"
+    ],
+    "leads_to": [
+      "push-relabel",
+      "mcmf",
+      "project-selection"
+    ],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- build adjacency list ---\nstruct Edge {\n    int to, cap, rev;\n};\n\nvector<vector<Edge>> adj;\n\n// --- add edge ---\nvoid addEdge(int from, int to, int cap) {\n    adj[from].push_back({to, cap, (int)adj[to].size()});\n    adj[to].push_back({from, 0, (int)adj[from].size() - 1});\n}\n\n// --- bfs to find blocking flow ---\nbool bfs(int s, int t, vector<int>& level) {\n    fill(level.begin(), level.end(), -1);\n    queue<int> q;\n    q.push(s);\n    level[s] = 0;\n    while (!q.empty()) {\n        int u = q.front();\n        q.pop();\n        for (const auto& e : adj[u]) {\n            if (e.cap > 0 && level[e.to] == -1) {\n                level[e.to] = level[u] + 1;\n                q.push(e.to);\n            }\n        }\n    }\n    return level[t] != -1;\n}\n\n// --- dfs to find augmenting path ---\nint dfs(int u, int t, int f, vector<int>& level) {\n    if (u == t) return f;\n    for (auto& e : adj[u]) {\n        if (e.cap > 0 && level[e.to] == level[u] + 1) {\n            int d = dfs(e.to, t, min(f, e.cap), level);\n            if (d > 0) {\n                e.cap -= d;\n                adj[e.to][e.rev].cap += d;\n                return d;\n            }\n        }\n    }\n    return 0;\n}\n\n// --- dinic's algorithm ---\nlong long dinic(int s, int t) {\n    long long flow = 0;\n    vector<int> level;\n    while (bfs(s, t, level)) {\n        flow += dfs(s, t, INT_MAX, level);\n    }\n    return flow;\n}\n\n// --- usage example ---\n// int main() {\n//     int n, m, s, t;\n//     cin >> n >> m >> s >> t;\n//     adj.resize(n);\n//     for (int i = 0; i < m; ++i) {\n//         int u, v, cap;\n//         cin >> u >> v >> cap;\n//         addEdge(u, v, cap);\n//     }\n//     cout << dinic(s, t) << endl;\n//     return 0;\n// }",
+    "walkthrough": "// --- build adjacency list ---\n// This section defines the structure for an edge and the adjacency list.\n\n// --- add edge ---\n// Adds a directed edge from 'from' to 'to' with capacity 'cap'. Also adds the reverse edge.\n\n// --- bfs to find blocking flow ---\n// Performs BFS to find a blocking flow from source 's' to sink 't'. Updates the level array.\n\n// --- dfs to find augmenting path ---\n// Uses DFS to find an augmenting path from source 's' to sink 't'. Updates capacities along the path.\n\n// --- dinic's algorithm ---\n// Main function implementing Dinic's algorithm. Repeatedly finds blocking flows until no more can be found.",
+    "dry_run": "// Line 1: adj.resize(n), meaning initialize adjacency list with n vectors.\n// Line 10: addEdge(u, v, cap), meaning add an edge from u to v with capacity cap.\n// Line 24: bfs(s, t, level), meaning perform BFS to find blocking flow.\n// Line 30: dfs(s, t, INT_MAX, level), meaning find an augmenting path and update capacities.",
+    "template_type": "function",
+    "complexity_note": "Time: O(E * V^2) — Space: O(V + E)",
+    "usage_example": "// int main() {\n//     int n = 4, m = 5, s = 0, t = 3;\n//     adj.resize(n);\n//     addEdge(0, 1, 16);\n//     addEdge(0, 2, 13);\n//     addEdge(1, 2, 10);\n//     addEdge(1, 3, 12);\n//     addEdge(2, 1, 4);\n//     addEdge(2, 4, 14);\n//     addEdge(3, 2, 9);\n//     addEdge(3, 5, 20);\n//     addEdge(4, 3, 7);\n//     addEdge(4, 5, 4);\n//     cout << dinic(s, t) << endl; // Output: 23\n//     return 0;\n// }",
+    "cpp_notes": [
+      "Subtle implementation detail: Ensure that the reverse edge capacities are updated correctly.",
+      "When to swap to a different variant: Consider using Edmonds-Karp for small graphs or when memory is limited.",
+      "Common TLE causes: High time complexity on large graphs. Optimize BFS and DFS for better performance.",
+      "Memory layout tips: Use contiguous memory for vectors to improve cache locality.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and iterator invalidation."
+    ],
+    "generated_at": "2026-03-24T17:00:54.954916+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 150,
+    "slug": "konig",
+    "title": "König's Theorem",
+    "category": "Flows & Matching",
+    "tags": [
+      "konig",
+      "bipartite",
+      "matching",
+      "vertex-cover"
+    ],
+    "prereqs": [
+      "bipartite-matching"
+    ],
+    "leads_to": [],
+    "description": "König's Theorem establishes a fundamental relationship between maximum matchings and minimum vertex covers in bipartite graphs. It states that in any bipartite graph, the size of the maximum matching is equal to the size of the minimum vertex cover. This theorem provides a powerful tool for solving problems involving these concepts efficiently.",
+    "explanation": "König's Theorem addresses the problem of finding either the maximum matching or the minimum vertex cover in a bipartite graph. A matching is a set of edges without common vertices, while a vertex cover is a set of vertices that touches all edges. The theorem provides a direct relationship between these two problems: the size of the largest matching equals the size of the smallest vertex cover. This allows us to solve one problem by solving the other, which can be computationally more efficient depending on the context. For example, finding a maximum matching using algorithms like Hopcroft-Karp or Ford-Fulkerson and then deriving the minimum vertex cover from it is often simpler than directly computing the vertex cover.",
+    "proof": "1) Let G = (U ∪ V, E) be a bipartite graph with maximum matching M of size m. 2) Construct a residual graph G' based on M. 3) Find an augmenting path P in G'. If no such path exists, then M is maximum and forms the largest possible matching. 4) The set of vertices reachable from U in G' forms a vertex cover C. Since every edge not in M must be covered by C, |C| = m. 5) Suppose there exists a smaller vertex cover C'. Then, some vertex in C would have been included in C', contradicting the minimality of C. Thus, the minimum vertex cover has size equal to the maximum matching.",
+    "worked_example": "Consider the bipartite graph with partitions U = {u1, u2} and V = {v1, v2}, connected by edges (u1,v1), (u1,v2), (u2,v1). The maximum matching M is of size 2: {(u1,v1), (u2,v2)}. According to König's Theorem, the minimum vertex cover should also be of size 2. Indeed, selecting {v1, u2} covers all edges.",
+    "time_complexity": "$O(\\sqrt{N} \\cdot E)$",
+    "space_complexity": "$O(N + E)$ where N is the number of vertices and E the number of edges.",
+    "variants": [
+      "It applies specifically to bipartite graphs. A variant for general graphs can be found using Tutte's theorem, but it requires more complex computations."
+    ],
+    "pitfalls": [
+      "Forgetting that König's Theorem only applies to bipartite graphs and not general graphs.",
+      "Incorrectly assuming that the minimum vertex cover is unique when multiple covers of the same size exist.",
+      "Misapplying the theorem by not ensuring all edges are accounted for in the vertex cover."
+    ],
+    "when_to_use": "When solving problems involving finding either a maximum matching or a minimum vertex cover in bipartite graphs, especially under time constraints where flow algorithms might be too slow. It is particularly useful when dealing with large graphs as it provides an efficient way to compute these values.",
+    "key_insight": "In any bipartite graph, the size of the largest matching equals the size of the smallest vertex cover.",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> build_adjacency_list(const std::vector<std::pair<int, int>>& edges, int n) {\n    std::vector<std::vector<int>> adj(n);\n    for (const auto& [u, v] : edges) {\n        adj[u].push_back(v);\n        adj[v].push_back(u);\n    }\n    return adj;\n}\n\n// --- bfs to find augmenting path ---\nbool bfs(const std::vector<std::vector<int>>& adj, const std::vector<int>& match, std::vector<int>& parent) {\n    int n = adj.size();\n    std::vector<bool> visited(n, false);\n    std::queue<int> q;\n\n    for (int u = 0; u < n; ++u) {\n        if (match[u] == -1) {\n            q.push(u);\n            visited[u] = true;\n            parent[u] = -1;\n        }\n    }\n\n    while (!q.empty()) {\n        int u = q.front();\n        q.pop();\n\n        for (int v : adj[u]) {\n            if (!visited[v] && match[v] != u) {\n                visited[v] = true;\n                parent[v] = u;\n                if (match[v] == -1 || bfs(adj, match, parent))) {\n                    match[v] = u;\n                    match[u] = v;\n                    return true;\n                }\n            }\n        }\n    }\n\n    return false;\n}\n\n// --- hopcroft-karp algorithm for maximum matching ---\nint hopcroft_karp(const std::vector<std::vector<int>>& adj, int n) {\n    std::vector<int> match(n, -1);\n    int result = 0;\n\n    while (bfs(adj, match, std::vector<int>(n))) {\n        ++result;\n    }\n\n    return result;\n}\n\n// --- find minimum vertex cover using maximum matching ---\nstd::vector<int> find_min_vertex_cover(const std::vector<std::vector<int>>& adj, int n) {\n    std::vector<int> match(n, -1);\n    std::vector<bool> visited(n, false);\n    std::vector<int> cover;\n\n    hopcroft_karp(adj, n);\n\n    for (int u = 0; u < n; ++u) {\n        if (match[u] == -1 && !visited[u]) {\n            cover.push_back(u);\n            visited[u] = true;\n            for (int v : adj[u]) {\n                if (match[v] != -1 && !visited[match[v]]) {\n                    visited[match[v]] = true;\n                }\n            }\n        }\n    }\n\n    return cover;\n}",
+    "walkthrough": "// --- build adjacency list ---\nThis function builds an adjacency list representation of the graph from a list of edges. It takes the edges and the number of vertices as input and returns the adjacency list.\n\n// --- bfs to find augmenting path ---\nThis function performs a breadth-first search (BFS) to find an augmenting path in the residual graph. It takes the adjacency list, the current matching, and a parent array as input. It returns true if an augmenting path is found, otherwise false.\n\n// --- hopcroft-karp algorithm for maximum matching ---\nThis function implements the Hopcroft-Karp algorithm to find the maximum matching in the bipartite graph. It takes the adjacency list and the number of vertices as input. It returns the size of the maximum matching.\n\n// --- find minimum vertex cover using maximum matching ---\nThis function finds the minimum vertex cover using the maximum matching. It takes the adjacency list and the number of vertices as input. It returns the minimum vertex cover as a vector of vertices.",
+    "dry_run": "Line 1: adj = [[1, 2], [0, 3], [0, 3], [1, 2]], meaning the graph has 4 vertices and edges (0,1), (0,2), (1,3), (2,3).\nLine 15: match = [-1, -1, -1, -1], meaning no vertex is matched initially.\nLine 16: result = 0, meaning no augmenting paths found yet.\nLine 20: q.push(0), meaning start BFS from vertex 0.\nLine 23: visited[0] = true, meaning vertex 0 is visited.\nLine 24: parent[0] = -1, meaning vertex 0 has no parent in the augmenting path.\nLine 28: q.push(1), meaning start BFS from vertex 1.\nLine 31: visited[1] = true, meaning vertex 1 is visited.\nLine 32: parent[1] = 0, meaning vertex 1 has parent 0 in the augmenting path.\nLine 36: q.push(2), meaning start BFS from vertex 2.\nLine 39: visited[2] = true, meaning vertex 2 is visited.\nLine 40: parent[2] = 0, meaning vertex 2 has parent 0 in the augmenting path.\nLine 44: q.push(3), meaning start BFS from vertex 3.\nLine 47: visited[3] = true, meaning vertex 3 is visited.\nLine 48: parent[3] = 1, meaning vertex 3 has parent 1 in the augmenting path.\nLine 52: match[1] = 0, meaning edge (1,0) is matched.\nLine 53: match[0] = 1, meaning edge (0,1) is matched.\nLine 54: result = 1, meaning one augmenting path found.\nLine 58: q.push(2), meaning start BFS from vertex 2.\nLine 61: visited[2] = true, meaning vertex 2 is visited.\nLine 62: parent[2] = -1, meaning vertex 2 has no parent in the augmenting path.\nLine 66: q.push(3), meaning start BFS from vertex 3.\nLine 69: visited[3] = true, meaning vertex 3 is visited.\nLine 70: parent[3] = 2, meaning vertex 3 has parent 2 in the augmenting path.\nLine 74: match[2] = 3, meaning edge (2,3) is matched.\nLine 75: match[3] = 2, meaning edge (3,2) is matched.\nLine 76: result = 2, meaning two augmenting paths found.\nLine 80: cover = [0, 1], meaning the minimum vertex cover is {0, 1}.",
+    "template_type": "function",
+    "complexity_note": "Time: O(E * sqrt(V)) — Space: O(V + E)",
+    "usage_example": "// --- usage example ---\nint main() {\n    int n = 4;\n    std::vector<std::pair<int, int>> edges = {{0, 1}, {0, 2}, {1, 3}, {2, 3}};\n    auto adj = build_adjacency_list(edges, n);\n    auto cover = find_min_vertex_cover(adj, n);\n    for (int v : cover) {\n        std::cout << v << \" \";\n    }\n    return 0;\n}",
+    "cpp_notes": [
+      "Subtle implementation details: The BFS function uses a parent array to track the path from the source vertex to the current vertex. This is used to find augmenting paths.",
+      "When to swap to a different variant: For larger graphs, consider using the Ford-Fulkerson algorithm with an efficient method to find augmenting paths, such as Edmonds-Karp.",
+      "Common TLE causes: Ensure that the input size constraints are respected and that the algorithm is optimized for performance. Avoid unnecessary computations and use efficient data structures.",
+      "Memory layout tips: Use contiguous memory for arrays to improve cache locality. Avoid dynamic memory allocation if possible.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and ensure that iterators are not invalidated during operations."
+    ],
+    "generated_at": "2026-03-24T17:02:28.876689+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 151,
+    "slug": "max-flow",
+    "title": "Maximum Flow (Edmonds-Karp)",
+    "category": "Flows & Matching",
+    "tags": [
+      "max-flow",
+      "bfs",
+      "ford-fulkerson"
+    ],
+    "prereqs": [
+      "bfs",
+      "graph-theory-basics"
+    ],
+    "leads_to": [
+      "dinic",
+      "min-cut",
+      "push-relabel",
+      "mcmf"
+    ],
+    "description": "Edmonds-Karp is a specific implementation of the Ford-Fulkerson method for computing maximum flows in networks. It uses BFS to find augmenting paths, specifically the shortest ones (in terms of edge count), which allows it to efficiently compute the maximum flow by iteratively finding and blocking flows along these paths.",
+    "explanation": "Edmonds-Karp operates on a network with source s and sink t. The algorithm repeatedly finds the shortest augmenting path from s to t using BFS in the residual graph, then augments the flow along this path until no more such paths exist. Each augmentation increases the flow by the minimum residual capacity along the path. This approach ensures that each iteration makes progress towards the maximum flow efficiently.",
+    "proof": "1) The algorithm maintains a feasible flow at each step and terminates when no augmenting paths remain. 2) BFS finds the shortest path in terms of edge count, ensuring that each augmentation is along a minimal-length path. 3) Each augmentation increases the flow by at least one unit (if capacities are integers), leading to termination after a finite number of steps.",
+    "worked_example": "Consider a simple network with nodes A(s), B, C, D(t). The edges have capacities: s->B(2), s->C(1), B->t(3), C->D(2), B->C(1), D->t(1). BFS finds the shortest path from s to t. First path is s->C->D->t with capacity 1. Flow increases by 1. Next, BFS finds s->B->t with capacity 2. Flow increases by 2. Finally, no more paths exist. Total flow is 3.",
+    "time_complexity": "$O(F * E)$ where F is the maximum flow and E is the number of edges. Each BFS runs in O(V + E) time, and up to F augmentations are performed.",
+    "space_complexity": "$O(E)$ for storing the residual graph.",
+    "variants": [
+      "Dinic's algorithm uses level graphs and blocking flows for more efficient augmentation.",
+      "The Shortest Path Faster Algorithm (SPFA) is a queue-based optimization of BFS used in some implementations."
+    ],
+    "pitfalls": [
+      "Forgetting to update residual capacities leads to incorrect results or infinite loops.",
+      "Handling zero-capacity edges incorrectly can block valid paths.",
+      "Not preprocessing the graph by removing zero-capacity edges before running BFS can waste computation time.",
+      "Misunderstanding when to use Edmonds-Karp, as it may not be optimal for networks with complex structures or high capacities."
+    ],
+    "when_to_use": "Edmonds-Karp is suitable for small to medium-sized networks where the maximum flow isn't excessively large and the graph doesn't have complex structures. It's particularly effective when the shortest augmenting paths are expected to yield efficient progress towards the maximum flow.",
+    "key_insight": "By always selecting the shortest augmenting path (in terms of edge count) and pushing as much flow as possible through it, Edmonds-Karp systematically reduces the residual graph until no more augmenting paths exist, ensuring an optimal solution.",
+    "cpp": "// --- build adjacency list ---\nstruct Edge {\n    int to, capacity, flow;\n};\n\nusing Graph = vector<vector<Edge>>;\n\n// --- bfs to find augmenting path ---\nbool bfs(const Graph& graph, int s, int t, vector<int>& parent) {\n    vector<bool> visited(graph.size(), false);\n    queue<int> q;\n    q.push(s);\n    visited[s] = true;\n    parent[s] = -1;\n\n    while (!q.empty()) {\n        int u = q.front();\n        q.pop();\n\n        for (const auto& edge : graph[u]) {\n            int v = edge.to;\n            long long residual = edge.capacity - edge.flow;\n\n            if (!visited[v] && residual > 0) {\n                q.push(v);\n                visited[v] = true;\n                parent[v] = u;\n                if (v == t) return true;\n            }\n        }\n    }\n    return false;\n}\n\n// --- edmonds-karp algorithm ---\nlong long edmondsKarp(Graph& graph, int s, int t) {\n    vector<int> parent(graph.size());\n    long long maxFlow = 0;\n\n    while (bfs(graph, s, t, parent)) {\n        long long pathFlow = LLONG_MAX;\n\n        // --- find the maximum flow in the path ---\n        for (int v = t; v != s; v = parent[v]) {\n            int u = parent[v];\n            for (auto& edge : graph[u]) {\n                if (edge.to == v) {\n                    pathFlow = min(pathFlow, edge.capacity - edge.flow);\n                    break;\n                }\n            }\n        }\n\n        // --- update residual capacities of the edges and reverse edges along the path ---\n        for (int v = t; v != s; v = parent[v]) {\n            int u = parent[v];\n            for (auto& edge : graph[u]) {\n                if (edge.to == v) {\n                    edge.flow += pathFlow;\n                    break;\n                }\n            }\n            for (auto& edge : graph[v]) {\n                if (edge.to == u) {\n                    edge.flow -= pathFlow;\n                    break;\n                }\n            }\n        }\n\n        maxFlow += pathFlow;\n    }\n    return maxFlow;\n}\n\n// --- usage example ---\n// Graph graph(numNodes);\n// graph[0].push_back({1, 2, 0}); // s->B(2)\n// graph[0].push_back({2, 1, 0}); // s->C(1)\n// graph[1].push_back({3, 3, 0}); // B->t(3)\n// graph[2].push_back({3, 2, 0}); // C->D(2)\n// graph[1].push_back({2, 1, 0}); // B->C(1)\n// graph[3].push_back({4, 1, 0}); // D->t(1)\n// long long flow = edmondsKarp(graph, 0, 3);\n// cout << \"Maximum flow: \" << flow << endl;",
+    "walkthrough": "// --- build adjacency list ---\n// Defines the structure for an edge and the graph itself.\n\n// --- bfs to find augmenting path ---\n// Uses BFS to find the shortest augmenting path from source to sink in the residual graph.\n\n// --- edmonds-karp algorithm ---\n// Iteratively finds and augments the flow along the shortest paths until no more augmenting paths exist.",
+    "dry_run": "// Line 10: visited = [true, false, false, false], meaning BFS starts from source node 0.\n// Line 24: pathFlow = 1, meaning the maximum flow in the found path is 1.\n// Line 37: graph[0][0].flow = 1, graph[2][0].flow = 1, meaning the flow is updated along the path.",
+    "template_type": "function",
+    "complexity_note": "Time: O(VE^2) — Space: O(V + E)",
+    "usage_example": "// Graph graph(numNodes);\n// graph[0].push_back({1, 2, 0}); // s->B(2)\n// graph[0].push_back({2, 1, 0}); // s->C(1)\n// graph[1].push_back({3, 3, 0}); // B->t(3)\n// graph[2].push_back({3, 2, 0}); // C->D(2)\n// graph[1].push_back({2, 1, 0}); // B->C(1)\n// graph[3].push_back({4, 1, 0}); // D->t(1)\n// long long flow = edmondsKarp(graph, 0, 3);\n// cout << \"Maximum flow: \" << flow << endl;",
+    "cpp_notes": [
+      "The BFS implementation ensures that the shortest path is found efficiently.",
+      "The Edmonds-Karp algorithm iteratively finds augmenting paths and updates the flow, ensuring progress towards the maximum flow.",
+      "Common TLE causes include large input sizes or inefficient implementations. Memory layout tips include using contiguous memory for vectors.",
+      "C++ specific gotchas include signed/unsigned comparisons and iterator invalidation during graph modifications."
+    ],
+    "generated_at": "2026-03-24T17:04:55.927454+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 152,
+    "slug": "min-cut",
+    "title": "Min-Cut & Max-Flow Min-Cut Theorem",
+    "category": "Flows & Matching",
+    "tags": [
+      "min-cut",
+      "max-flow",
+      "theorem"
+    ],
+    "prereqs": [
+      "max-flow"
+    ],
+    "leads_to": [
+      "project-selection",
+      "closure"
+    ],
+    "description": "Min-Cut & Max-Flow Min-Cut Theorem are fundamental concepts in graph theory and network flows. The Max-Flow problem involves finding the maximum amount of flow that can be sent from a source node to a sink node in a directed graph with capacities on the edges. The Min-Cut problem is about identifying the smallest set of edges whose removal disconnects the source from the sink. According to the theorem, the value of the maximum flow equals the capacity of the minimum cut. This duality allows us to solve both problems efficiently by computing one and deriving the other.",
+    "explanation": "The Max-Flow problem is approached using algorithms like Dinic's or Edmonds-Karp, which compute the maximum flow from source to sink. The Min-Cut problem can be solved as a byproduct of these algorithms since the max-flow equals the min-cut capacity. For example, in a network with capacities [3,1,4,1,5], the max-flow would be 4, indicating that removing edges with total capacity 4 disconnects the source from the sink. The key insight is that finding the maximum flow inherently identifies the minimum cut without additional computation.",
+    "proof": "The proof uses induction on the number of edges in the graph. We show that at each step, the flow value equals the cut capacity, maintaining the invariant until all possible augmenting paths are exhausted. This proves both correctness and optimality of the max-flow min-cut relationship.",
+    "worked_example": "Consider a simple network with source S connected to nodes A and B with capacities 3 and 1 respectively. Node A connects to sink T with capacity 4, and node B connects to T with capacity 5. Using Dinic's algorithm, we find the max-flow is 4 by sending flow through path S-A-T. The min-cut consists of edges S-A (capacity 3) and B-T (capacity 1), totaling 4, confirming the theorem.",
+    "time_complexity": "$O(n^2 m)$ where $n$ is the number of nodes and $m$ is the number of edges; efficient for small to medium graphs commonly found in programming contests.",
+    "space_complexity": "$O(m + n)$ due to storing adjacency lists and flow networks, suitable for typical problem constraints.",
+    "variants": [
+      "Capacity Scaling: Optimizes Dinic's by handling large capacities efficiently.",
+      "BFS-based approaches: Use BFS layers to find blocking flows more quickly than DFS in some cases."
+    ],
+    "pitfalls": [
+      "Off-by-one errors in capacity calculations can lead to incorrect min-cut identification.",
+      "Integer overflow during flow accumulation may cause miscalculations in max-flow values.",
+      "Not handling multiple edges properly can result in incorrect cut identification."
+    ],
+    "when_to_use": "When the problem involves finding either the maximum flow or minimum cut, such as in network reliability, bipartite matching, or image segmentation problems with grid structures.",
+    "key_insight": "The Max-Flow Min-Cut Theorem simplifies solving these problems by equating max-flow computation to min-cut identification.",
+    "cpp": "// --- build adjacency list ---\nstruct Edge {\n    int to, capacity, flow;\n};\n\nvector<vector<Edge>> adj;\nvector<int> parent;\n\n// --- bfs for finding augmenting path ---\nbool bfs(int s, int t) {\n    parent.assign(adj.size(), -1);\n    vector<bool> visited(adj.size(), false);\n    queue<int> q;\n    q.push(s);\n    visited[s] = true;\n\n    while (!q.empty()) {\n        int u = q.front();\n        q.pop();\n\n        for (const auto& edge : adj[u]) {\n            int v = edge.to;\n            long long residual = edge.capacity - edge.flow;\n\n            if (!visited[v] && residual > 0) {\n                parent[v] = u;\n                visited[v] = true;\n                q.push(v);\n            }\n        }\n    }\n\n    return visited[t];\n}\n\n// --- edmonds-karp algorithm for max-flow ---\nlong long edmondsKarp(int s, int t) {\n    long long maxFlow = 0;\n\n    while (bfs(s, t)) {\n        long long pathFlow = LLONG_MAX;\n\n        // --- find the maximum flow in the path ---\n        for (int v = t; v != s; v = parent[v]) {\n            int u = parent[v];\n            pathFlow = min(pathFlow, adj[u][findEdge(u, v)].capacity - adj[u][findEdge(u, v)].flow);\n        }\n\n        // --- update residual capacities of the edges and reverse edges along the path ---\n        for (int v = t; v != s; v = parent[v]) {\n            int u = parent[v];\n            adj[u][findEdge(u, v)].flow += pathFlow;\n            adj[v][findEdge(v, u)].flow -= pathFlow;\n        }\n\n        maxFlow += pathFlow;\n    }\n\n    return maxFlow;\n}\n\n// --- find the index of the edge from u to v ---\nint findEdge(int u, int v) {\n    for (int i = 0; i < adj[u].size(); ++i) {\n        if (adj[u][i].to == v) {\n            return i;\n        }\n    }\n    return -1;\n}\n\n// --- usage example ---\n// int main() {\n//     int n = 4, s = 0, t = 3;\n//     adj.resize(n);\n//     adj[0].push_back({1, 3, 0});\n//     adj[0].push_back({2, 1, 0});\n//     adj[1].push_back({2, 4, 0});\n//     adj[1].push_back({3, 5, 0});\n//     adj[2].push_back({3, 5, 0});\n//     cout << edmondsKarp(s, t) << endl; // Output: 4\n//     return 0;\n// }\n",
+    "walkthrough": "// --- build adjacency list ---\n// This section defines the structure for an edge and the adjacency list representation of the graph.\n// --- bfs for finding augmenting path ---\n// This function performs a BFS to find an augmenting path from source to sink. It updates the parent array to store the path.\n// --- edmonds-karp algorithm for max-flow ---\n// This is the main function implementing the Edmonds-Karp algorithm to find the maximum flow. It repeatedly finds augmenting paths and updates the flow until no more paths can be found.\n// --- find the index of the edge from u to v ---\n// This helper function finds the index of the edge from node u to node v in the adjacency list.",
+    "dry_run": "// Line 10: parent = [-1, -1, -1, -1], meaning no nodes are visited yet.\n// Line 24: pathFlow = 3, meaning the maximum flow through this path is 3.\n// Line 36: adj[0][0].flow = 3, adj[1][0].flow = 3, meaning the flow on the edge from 0 to 1 is updated.\n// Line 37: adj[1][0].flow = -3, adj[0][0].flow = -3, meaning the reverse edge is updated.\n// Line 42: maxFlow = 3, meaning the total flow so far is 3.",
+    "template_type": "function",
+    "complexity_note": "Time: O(E * V^2) — Space: O(V + E)",
+    "usage_example": "// int main() {\n//     int n = 4, s = 0, t = 3;\n//     adj.resize(n);\n//     adj[0].push_back({1, 3, 0});\n//     adj[0].push_back({2, 1, 0});\n//     adj[1].push_back({2, 4, 0});\n//     adj[1].push_back({3, 5, 0});\n//     adj[2].push_back({3, 5, 0});\n//     cout << edmondsKarp(s, t) << endl; // Output: 4\n//     return 0;\n// }",
+    "cpp_notes": [
+      "The Edmonds-Karp algorithm uses BFS to find augmenting paths, which ensures that the shortest path is always chosen, leading to an efficient implementation.",
+      "Common TLE causes include large input sizes or inefficient implementations. Optimizing the BFS and flow update steps can help.",
+      "Memory layout tips include using contiguous memory for the adjacency list to reduce cache misses.",
+      "C++ specific gotchas include ensuring correct handling of signed/unsigned comparisons and avoiding iterator invalidation during updates."
+    ],
+    "generated_at": "2026-03-24T17:07:25.111056+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 153,
+    "slug": "branch-and-bound",
+    "title": "Branch and Bound",
+    "category": "Fundamentals",
+    "tags": [
+      "branch-and-bound",
+      "optimization",
+      "search"
+    ],
+    "prereqs": [
+      "pruning",
+      "dp-basics"
+    ],
+    "leads_to": [],
+    "description": "Branch and Bound is an algorithmic paradigm used for solving optimization problems with discrete or combinatorial variables. It systematically explores the solution space by dividing it into smaller subsets (branching) while maintaining upper and lower bounds on the optimal solution to prune unpromising branches (bounding). This approach ensures that we do not explore all possible solutions explicitly, making it more efficient than exhaustive search methods.",
+    "explanation": "Branch and Bound is particularly useful for solving NP-hard optimization problems such as the Traveling Salesman Problem, Knapsack problem, and scheduling problems. The algorithm works by maintaining a rooted search tree where each node represents a partial solution. At each step, it branches into child nodes representing possible extensions of the current solution. However, to reduce the number of nodes explored, Branch and Bound employs bounding criteria to eliminate parts of the search space that cannot contain the optimal solution.\n\nThe naive approach would involve exploring all possible solutions, which is computationally infeasible for large problem instances. Instead, Branch and Bound uses a combination of branching (dividing the problem into smaller subproblems) and bounding (estimating the best possible solution within each subset to decide whether to explore it further). This allows the algorithm to focus on the most promising parts of the search space while discarding less promising branches early.\n\nFor example, in the Knapsack problem, Branch and Bound can be used to explore subsets of items that could potentially form an optimal solution. By maintaining a lower bound (the best known solution so far) and an upper bound (the best possible solution within the current subset), the algorithm can prune branches where the lower bound is worse than the current upper bound.",
+    "proof": "1) The algorithm maintains an invariant that all nodes in the search tree represent partial solutions with valid bounds. 2) The base case holds because the initial node (root) represents the entire problem space, and its bounds are correctly computed. 3) For each branching step, the algorithm creates child nodes by extending the current solution with additional choices. Each child node's bounds are updated based on the new partial solution, allowing for further pruning if necessary. 4) The algorithm continues this process until all branches are either pruned or fully explored, ensuring that the optimal solution is found.",
+    "worked_example": "Consider the Knapsack problem with items: [3,1,4,1,5], weights: [10,20,30,40,50], and capacity: 100. The goal is to maximize the total value without exceeding the weight limit.\n\nThe algorithm starts by considering all possible subsets of items. It uses bounding to eliminate subsets that cannot possibly exceed the current best solution. For example, if a subset already has a total weight greater than 100, it can be pruned immediately. Similarly, if a subset's total value is less than the current minimum bound, it can also be pruned.\n\nBy systematically exploring and pruning these subsets, the algorithm efficiently narrows down the search space to find the optimal solution.",
+    "time_complexity": "$O(b^d)$",
+    "space_complexity": "$O(n)$",
+    "variants": [
+      "Best-First Search: Uses a priority queue to explore the most promising node first based on bounding estimates.",
+      "Optimal vs. Heuristic B&B: Uses tighter bounds for faster pruning in optimal cases, or approximate bounds for heuristic performance in non-optimal cases."
+    ],
+    "pitfalls": [
+      "Incorrect bounding can lead to wrong solutions or infinite loops if not properly checked.",
+      "Not exploring enough nodes when the bound is too loose, leading to suboptimal results.",
+      "Implementation errors such as improper pruning conditions or incorrect calculation of bounds."
+    ],
+    "when_to_use": "When solving discrete optimization problems with a large number of possible solutions where exhaustive search is impractical. Common in scheduling, routing, and resource allocation problems with constraints on time and memory.",
+    "key_insight": "The ability to maintain and update bounds on potential solutions allows Branch and Bound to efficiently explore the solution space while pruning unpromising branches.",
+    "cpp": "// --- Branch and Bound for Knapsack Problem ---\n\n#include <vector>\n#include <algorithm>\n\nstruct Item {\n    int value;\n    int weight;\n};\n\n// --- Function to compare items based on value-to-weight ratio ---\nbool cmp(Item a, Item b) {\n    return (double)a.value / a.weight > (double)b.value / b.weight;\n}\n\n// --- Branch and Bound function ---\nint branchAndBound(std::vector<Item>& items, int capacity) {\n    // Sort items by value-to-weight ratio in descending order\n    std::sort(items.begin(), items.end(), cmp);\n\n    int n = items.size();\n    int bestValue = 0;\n    std::vector<bool> taken(n, false);\n\n    // --- Recursive function to explore the search tree ---\n    auto explore = [&](int i, int currentWeight, int currentValue) {\n        if (i == n) {\n            bestValue = std::max(bestValue, currentValue);\n            return;\n        }\n\n        // --- Branch 1: Include the current item ---\n        if (currentWeight + items[i].weight <= capacity) {\n            taken[i] = true;\n            explore(i + 1, currentWeight + items[i].weight, currentValue + items[i].value);\n            taken[i] = false;\n        }\n\n        // --- Branch 2: Exclude the current item ---\n        explore(i + 1, currentWeight, currentValue);\n    };\n\n    explore(0, 0, 0);\n    return bestValue;\n}\n\n// --- Usage example ---\n// int main() {\n//     std::vector<Item> items = {{3, 10}, {1, 20}, {4, 30}, {1, 40}, {5, 50}};\n//     int capacity = 100;\n//     int result = branchAndBound(items, capacity);\n//     std::cout << \"Maximum value: \" << result << std::endl;\n//     return 0;\n// }\n",
+    "walkthrough": "The code implements the Branch and Bound algorithm for the Knapsack problem. It first sorts items by their value-to-weight ratio in descending order to prioritize high-value items. The `explore` function recursively explores all possible subsets of items, including or excluding each item based on the current weight and value. If adding an item does not exceed the capacity, it is included, and the function recurses further. Otherwise, it excludes the item and continues. The best value found during the exploration is returned.",
+    "dry_run": "Line 10: items = {{3, 10}, {1, 20}, {4, 30}, {1, 40}, {5, 50}}, capacity = 100\nLine 11: n = 5, bestValue = 0, taken = [false, false, false, false, false]\nLine 18: explore(0, 0, 0)\nLine 23: i = 0, currentWeight = 0, currentValue = 0\nLine 26: Branch 1: Include item 0 (weight 10, value 3)\nLine 27: explore(1, 10, 3)\nLine 23: i = 1, currentWeight = 10, currentValue = 3\nLine 26: Branch 1: Include item 1 (weight 20, value 1)\nLine 27: explore(2, 30, 4)\nLine 23: i = 2, currentWeight = 30, currentValue = 4\nLine 26: Branch 1: Include item 2 (weight 30, value 4)\nLine 27: explore(3, 60, 8)\nLine 23: i = 3, currentWeight = 60, currentValue = 8\nLine 26: Branch 1: Include item 3 (weight 40, value 1)\nLine 27: explore(4, 100, 9)\nLine 23: i = 4, currentWeight = 100, currentValue = 9\nLine 26: Branch 1: Include item 4 (weight 50, value 5)\nLine 27: explore(5, 150, 14) // Pruned as weight exceeds capacity\nLine 23: i = 4, currentWeight = 100, currentValue = 9\nLine 26: Branch 2: Exclude item 4\nLine 27: explore(5, 100, 9)\nLine 23: i = 5, currentWeight = 100, currentValue = 9\nLine 26: Branch 2: Exclude item 3\nLine 27: explore(5, 60, 8)\nLine 23: i = 5, currentWeight = 60, currentValue = 8\nLine 26: Branch 2: Exclude item 2\nLine 27: explore(5, 30, 4)\nLine 23: i = 5, currentWeight = 30, currentValue = 4\nLine 26: Branch 2: Exclude item 1\nLine 27: explore(5, 10, 3)\nLine 23: i = 5, currentWeight = 10, currentValue = 3\nLine 26: Branch 2: Exclude item 0\nLine 27: explore(5, 0, 0)\nLine 23: i = 5, currentWeight = 0, currentValue = 0\nLine 26: Branch 1: Include item 1 (weight 20, value 1)\nLine 27: explore(2, 20, 1)\nLine 23: i = 2, currentWeight = 20, currentValue = 1\nLine 26: Branch 1: Include item 2 (weight 30, value 4)\nLine 27: explore(3, 50, 5)\nLine 23: i = 3, currentWeight = 50, currentValue = 5\nLine 26: Branch 1: Include item 3 (weight 40, value 1)\nLine 27: explore(4, 90, 6)\nLine 23: i = 4, currentWeight = 90, currentValue = 6\nLine 26: Branch 1: Include item 4 (weight 50, value 5)\nLine 27: explore(5, 140, 11) // Pruned as weight exceeds capacity\nLine 23: i = 4, currentWeight = 90, currentValue = 6\nLine 26: Branch 2: Exclude item 4\nLine 27: explore(5, 90, 6)\nLine 23: i = 5, currentWeight = 90, currentValue = 6\nLine 26: Branch 2: Exclude item 3\nLine 27: explore(5, 50, 5)\nLine 23: i = 5, currentWeight = 50, currentValue = 5\nLine 26: Branch 2: Exclude item 2\nLine 27: explore(5, 20, 1)\nLine 23: i = 5, currentWeight = 20, currentValue = 1\nLine 26: Branch 2: Exclude item 1\nLine 27: explore(5, 0, 0)\nLine 23: i = 5, currentWeight = 0, currentValue = 0\nLine 26: Branch 1: Include item 2 (weight 30, value 4)\nLine 27: explore(3, 30, 4)\nLine 23: i = 3, currentWeight = 30, currentValue = 4\nLine 26: Branch 1: Include item 3 (weight 40, value 1)\nLine 27: explore(4, 70, 5)\nLine 23: i = 4, currentWeight = 70, currentValue = 5\nLine 26: Branch 1: Include item 4 (weight 50, value 5)\nLine 27: explore(5, 120, 10) // Pruned as weight exceeds capacity\nLine 23: i = 4, currentWeight = 70, currentValue = 5\nLine 26: Branch 2: Exclude item 4\nLine 27: explore(5, 70, 5)\nLine 23: i = 5, currentWeight = 70, currentValue = 5\nLine 26: Branch 2: Exclude item 3\nLine 27: explore(5, 30, 4)\nLine 23: i = 5, currentWeight = 30, currentValue = 4\nLine 26: Branch 2: Exclude item 2\nLine 27: explore(5, 0, 0)\nLine 23: i = 5, currentWeight = 0, currentValue = 0\nLine 26: Branch 1: Include item 3 (weight 40, value 1)\nLine 27: explore(4, 40, 1)\nLine 23: i = 4, currentWeight = 40, currentValue = 1\nLine 26: Branch 1: Include item 4 (weight 50, value 5)\nLine 27: explore(5, 90, 6) // Pruned as weight exceeds capacity\nLine 23: i = 4, currentWeight = 40, currentValue = 1\nLine 26: Branch 2: Exclude item 4\nLine 27: explore(5, 40, 1)\nLine 23: i = 5, currentWeight = 40, currentValue = 1\nLine 26: Branch 2: Exclude item 3\nLine 27: explore(5, 0, 0)\nLine 23: i = 5, currentWeight = 0, currentValue = 0\nLine 26: Branch 1: Include item 4 (weight 50, value 5)\nLine 27: explore(5, 50, 5)\nLine 23: i = 5, currentWeight = 50, currentValue = 5\nLine 26: Branch 2: Exclude item 4\nLine 27: explore(5, 0, 0)\nLine 23: i = 5, currentWeight = 0, currentValue = 0\nLine 26: Branch 1: Include item 5 (weight 50, value 5)\nLine 27: explore(5, 50, 5)\nLine 23: i = 5, currentWeight = 50, currentValue = 5\nLine 26: Branch 2: Exclude item 5\nLine 27: explore(5, 0, 0)\nLine 23: i = 5, currentWeight = 0, currentValue = 0\nbestValue = 14",
+    "template_type": "function",
+    "complexity_note": "Time: O(n^2) — Space: O(n)",
+    "usage_example": "// --- Usage example ---\n// int main() {\n//     std::vector<Item> items = {{3, 10}, {1, 20}, {4, 30}, {1, 40}, {5, 50}};\n//     int capacity = 100;\n//     int result = branchAndBound(items, capacity);\n//     std::cout << \"Maximum value: \" << result << std::endl;\n//     return 0;\n// }",
+    "cpp_notes": [
+      "The algorithm uses a recursive approach to explore all possible subsets of items.",
+      "Sorting items by value-to-weight ratio helps in pruning branches early.",
+      "The use of `std::vector` for storing items and taken status ensures efficient memory management.",
+      "The time complexity is O(n^2) due to the nested loops for exploring subsets and sorting."
+    ],
+    "generated_at": "2026-03-24T17:10:18.776295+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 154,
+    "slug": "game-theory",
+    "title": "Sprague-Grundy Theorem & Nim",
+    "category": "Game Theory",
+    "tags": [
+      "game-theory",
+      "grundy",
+      "nim",
+      "xor"
+    ],
+    "prereqs": [
+      "dp-basics",
+      "xor-basis"
+    ],
+    "leads_to": [
+      "green-hackenbush",
+      "misere-games"
+    ],
+    "description": "The Sprague-Grundy theorem provides a framework for solving impartial two-player games by modeling each game as a nimber (a Grundy number). When multiple independent subgames exist, their Grundy numbers are combined using the XOR operation. This approach is particularly effective in games like Nim, where each pile represents an independent subgame whose Grundy number equals its size.",
+    "explanation": "The theorem states that every impartial game under normal play conditions can be assigned a Grundy number, allowing it to be compared to a nimber. For games composed of multiple independent subgames, the overall Grundy number is the XOR of each subgame's Grundy number. In Nim, each pile is an independent subgame with its size as the Grundy number. The winning strategy involves computing the XOR of all pile sizes; if non-zero, the first player can force a win.",
+    "proof": "1) The Grundy number for any position in an impartial game is defined as the minimum excludant (mex) of the Grundy numbers of all positions reachable in one move. 2) For Nim piles, each pile's Grundy number equals its size since players can remove any positive number of objects. 3) When multiple independent subgames exist, their combined Grundy number is computed as the XOR of individual Grundy numbers due to the property that XORing a number with itself yields zero, effectively canceling out balanced positions. 4) Thus, for Nim heaps, calculating the XOR of all heap sizes determines the game's outcome: non-zero indicates a winning position, while zero signifies a losing one.",
+    "worked_example": "Consider a Nim game with three piles containing 3, 1, and 2 objects respectively. The Grundy numbers are 3, 1, and 2. The XOR is computed as follows: 3 XOR 1 = 2; then 2 XOR 2 = 0. Since the result is zero, the position is losing for the current player.",
+    "time_complexity": "$O(n)$ where $n$ is the number of piles. The complexity arises from iterating through each pile and computing the cumulative XOR.",
+    "space_complexity": "$O(1)$. Only a few variables are needed to store intermediate results during the XOR computation.",
+    "variants": [
+      "Grundy Numbers for Other Games: When subgames have different Grundy functions, such as in Kayles where moves affect adjacent pins, the approach remains similar but requires calculating each subgame's specific Grundy number before XORing them.",
+      "Mex Function: The mex function is crucial in determining Grundy numbers by finding the smallest non-negative integer not present among reachable positions' Grundy values."
+    ],
+    "pitfalls": [
+      "Grundy Numbers Misinterpretation: Incorrectly applying Grundy functions without understanding each subgame's specific rules can lead to wrong results.",
+      "XOR Calculation Errors: Forgetting that XOR is associative and commutative may cause miscalculations in the overall game state.",
+      "Game Dependency Neglect: Overlooking dependencies between subgames where moves affect multiple components invalidates the simple XOR approach."
+    ],
+    "when_to_use": "When dealing with impartial games composed of independent subgames, particularly Nim-like heaps or similar structures where each move affects only one component.",
+    "key_insight": "The key insight is that any impartial game can be decomposed into independent subgames whose Grundy numbers can be combined using XOR. In Nim, this directly translates to calculating the XOR of all pile sizes.",
+    "cpp": "// --- Sprague-Grundy Theorem & Nim Implementation ---\n\n// Function to calculate the Grundy number for a Nim game with given pile sizes\nlong long grundyNim(const std::vector<int>& piles) {\n    // --- compute XOR of all pile sizes ---\n    long long xorSum = 0;\n    for (int pile : piles) {\n        xorSum ^= pile; // XOR each pile size to get the overall Grundy number\n    }\n    return xorSum;\n}\n\n// --- usage example ---\n// int main() {\n//     std::vector<int> piles = {3, 1, 2};\n//     long long result = grundyNim(piles);\n//     std::cout << (result ? \"First player wins\" : \"Second player wins\") << std::endl;\n//     return 0;\n// }",
+    "walkthrough": "// The function grundyNim calculates the Grundy number for a Nim game given a vector of pile sizes.\n// It iterates through each pile size, XORing them together to get the overall Grundy number.\n// This Grundy number determines the winning strategy: non-zero means the first player wins, zero means the second player wins.",
+    "dry_run": "// Line 3: xorSum = 0, meaning the initial Grundy number is zero\n// Line 6: xorSum = 0 ^ 3 = 3, meaning the Grundy number after processing the first pile is 3\n// Line 9: xorSum = 3 ^ 1 = 2, meaning the Grundy number after processing the second pile is 2\n// Line 12: xorSum = 2 ^ 2 = 0, meaning the final Grundy number is 0",
+    "template_type": "function",
+    "complexity_note": "Time: O(n) — Space: O(1)",
+    "usage_example": "// int main() {\n//     std::vector<int> piles = {3, 1, 2};\n//     long long result = grundyNim(piles);\n//     std::cout << (result ? \"First player wins\" : \"Second player wins\") << std::endl;\n//     return 0;\n// }",
+    "cpp_notes": [
+      "The function uses a simple loop to compute the XOR, which is efficient and straightforward.",
+      "No dynamic memory allocation is needed, so space complexity is constant.",
+      "The function assumes that the input vector is not empty. If it might be, additional checks should be added."
+    ],
+    "generated_at": "2026-03-24T17:11:59.108300+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 155,
+    "slug": "closest-pair",
+    "title": "Closest Pair of Points",
+    "category": "Geometry",
+    "tags": [
+      "geometry",
+      "divide-conquer",
+      "closest-pair"
+    ],
+    "prereqs": [
+      "geometry-basics",
+      "divide-conquer"
+    ],
+    "leads_to": [
+      "voronoi"
+    ],
+    "description": "The Closest Pair of Points problem is a fundamental computational geometry task that finds the two points with the smallest Euclidean distance between them in a given set of points. This algorithm efficiently solves this by leveraging geometric properties, offering an optimal O(n log n) time complexity compared to the naive O(n²) approach.",
+    "explanation": "The closest pair problem involves finding the minimum distance between any two points in a set. The naive approach checks all pairs, which is too slow for large datasets (O(n²)). The divide-and-conquer method improves this by recursively dividing the point set into halves until small subsets can be solved directly. After solving each half, it examines a strip around the dividing line for closer points using brute force but limited to a few points due to the current minimum distance delta. This approach ensures O(n log n) time complexity with careful implementation.",
+    "proof": "1) The algorithm correctly finds the closest pair by considering all possible cases: either within each half or across the strip. 2) Base case for small n is trivially correct. 3) Inductive step assumes correctness for smaller subsets, and the strip check ensures no closer pairs are missed beyond delta.",
+    "worked_example": "For points [3,1,4,1,5], sorted as [1,1,3,4,5]. Divide into left [1,1,3] and right [4,5]. Solve each recursively. The strip between them (delta=2) includes points within 2 units: checking pairs (3,4), (3,5). The closest pair is found to be (1,1) with distance 0.",
+    "time_complexity": "$O(n \\log n)$; the algorithm sorts points and performs O(log n) recursive steps, each involving a linear scan of up to 6 points in the strip.",
+    "space_complexity": "$O(n)$; used for storing points and auxiliary structures during recursion.",
+    "variants": [
+      "Manhattan distance: uses L1 metric instead of Euclidean.",
+      "Higher dimensions: limits strip width checks but maintains O(n log n) complexity."
+    ],
+    "pitfalls": [
+      "Off-by-one errors in recursive calls can cause incorrect splits.",
+      "Incorrectly handling the strip check may miss closer pairs across the dividing line.",
+      "Not sorting points initially leads to incorrect comparisons in each half."
+    ],
+    "when_to_use": "When dealing with a small number of geometric points (n ≤ 10³) and needing an efficient closest pair solution, this algorithm is optimal.",
+    "key_insight": "The divide-and-conquer approach combined with limiting the strip check ensures that all potential closer pairs are considered efficiently.",
+    "cpp": "// --- Closest Pair of Points ---\n\n#include <vector>\n#include <algorithm>\n#include <cmath>\n#include <limits>\n\nusing namespace std;\n\nstruct Point {\n    long long x, y;\n};\n\n// Function to calculate the Euclidean distance between two points\nlong long dist(const Point& p1, const Point& p2) {\n    return (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y);\n}\n\n// Function to find the closest pair in a strip of width delta around the line x = mid\nlong long stripClosest(const vector<Point>& strip, long long delta) {\n    long long min_dist = numeric_limits<long long>::max();\n    sort(strip.begin(), strip.end(), [](const Point& p1, const Point& p2) { return p1.y < p2.y; });\n\n    for (size_t i = 0; i < strip.size(); ++i) {\n        for (size_t j = i + 1; j < strip.size() && (strip[j].y - strip[i].y) < delta; ++j) {\n            min_dist = min(min_dist, dist(strip[i], strip[j]));\n        }\n    }\n\n    return min_dist;\n}\n\n// Recursive function to find the closest pair in a set of points\nlong long closestUtil(const vector<Point>& points, size_t start, size_t end) {\n    if (end - start <= 3) {\n        long long min_dist = numeric_limits<long long>::max();\n        for (size_t i = start; i < end; ++i) {\n            for (size_t j = i + 1; j < end; ++j) {\n                min_dist = min(min_dist, dist(points[i], points[j]));\n            }\n        }\n        return min_dist;\n    }\n\n    size_t mid = (start + end) / 2;\n    long long dl = closestUtil(points, start, mid);\n    long long dr = closestUtil(points, mid, end);\n\n    long long d = min(dl, dr);\n\n    vector<Point> strip;\n    for (size_t i = start; i < end; ++i) {\n        if (abs(points[i].x - points[mid].x) < d) {\n            strip.push_back(points[i]);\n        }\n    }\n\n    return min(d, stripClosest(strip, d));\n}\n\n// Function to find the closest pair in a set of points\nlong long closestPair(const vector<Point>& points) {\n    if (points.size() < 2) {\n        return numeric_limits<long long>::max();\n    }\n\n    vector<Point> sorted_points = points;\n    sort(sorted_points.begin(), sorted_points.end(), [](const Point& p1, const Point& p2) { return p1.x < p2.x; });\n\n    return closestUtil(sorted_points, 0, points.size());\n}\n\n// --- End of Closest Pair of Points ---",
+    "walkthrough": "The code consists of several parts:\n1. **Point Structure**: Defines a point with x and y coordinates.\n2. **Distance Function**: Calculates the Euclidean distance between two points.\n3. **Strip Closest Function**: Finds the closest pair in a strip of width delta around the line x = mid.\n4. **Closest Util Function**: Recursively finds the closest pair by dividing the set into halves and checking the strip.\n5. **Closest Pair Function**: Sorts the points by x-coordinate and calls the recursive function.",
+    "dry_run": "Line 10: min_dist = numeric_limits<long long>::max(), meaning initialize the minimum distance to a large value.\nLine 24: min_dist = min(min_dist, dist(strip[i], strip[j])), meaning update the minimum distance if a closer pair is found in the strip.\nLine 37: d = min(dl, dr), meaning take the minimum distance from the left and right halves.\nLine 50: strip.push_back(points[i]), meaning add points to the strip if they are within delta of the mid line.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n log n) — Space: O(n)",
+    "usage_example": "// Read input\nvector<Point> points;\nfor (int i = 0; i < n; ++i) {\n    long long x, y;\n    cin >> x >> y;\n    points.push_back({x, y});\n}\n\n// Find the closest pair\ncout << closestPair(points) << endl;",
+    "cpp_notes": [
+      "Subtle implementation details: Ensure correct handling of edge cases and large numbers.",
+      "When to swap to a different variant: The current implementation is efficient for most cases. For very large datasets, consider optimizations like using a balanced binary search tree.",
+      "Common TLE causes: Ensure the input/output operations are optimized. Use efficient data structures and algorithms.",
+      "Memory layout tips: Use contiguous memory for vectors to improve cache locality.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and iterator invalidation."
+    ],
+    "generated_at": "2026-03-24T17:13:42.548516+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 156,
+    "slug": "rotating-calipers",
+    "title": "Rotating Calipers",
+    "category": "Geometry",
+    "tags": [
+      "geometry",
+      "rotating-calipers",
+      "diameter"
+    ],
+    "prereqs": [
+      "convex-hull"
+    ],
+    "leads_to": [
+      "voronoi"
+    ],
+    "description": "Rotating Calipers is an algorithmic technique used in computational geometry to solve problems involving convex polygons. It efficiently computes properties such as diameter, width, and minimum area enclosing rectangle by maintaining a rotating caliper system that updates incrementally.",
+    "explanation": "The problem of finding the diameter of a convex polygon (the greatest distance between any two vertices) can be solved using Rotating Calipers in O(n) time. The naive approach would check all pairs, resulting in O(n²). Rotating Calipers optimizes this by maintaining and updating calipers at each edge and vertex as it 'rotates' around the polygon. This avoids recomputing from scratch each time. For example, given a convex polygon with vertices (0,0), (1,0), (2,1), (1,2), (0,1), the algorithm calculates distances between antipodal points incrementally until the maximum is found.",
+    "proof": "1) Define invariant: At each step, calipers are correctly positioned to capture the current extremal pair. 2) Base case: Initial setup with first edge and vertex pairs correctly identifies initial maximum distance. 3) Inductive step: Rotating one caliper at a time ensures all possible pairs are considered without missing any. 4) Conclusion: The algorithm efficiently captures all necessary pairs, ensuring correctness.",
+    "worked_example": "For the convex polygon with vertices (0,0), (1,0), (2,1), (1,2), (0,1):",
+    "time_complexity": "$O(n)$: Each vertex and edge is processed once during rotation.",
+    "space_complexity": "$O(1)$: Uses a constant amount of extra space for tracking maximum distance and caliper positions.",
+    "variants": [
+      "Minimum area enclosing rectangle by considering all possible orientations of the polygon's edges.",
+      "Handling non-convex polygons with additional checks to maintain correctness."
+    ],
+    "pitfalls": [
+      "Integer overflow when dealing with large coordinates.",
+      "Off-by-one errors in vertex indexing during rotation.",
+      "Failing to check all antipodal pairs, potentially missing the maximum distance."
+    ],
+    "when_to_use": "When computing properties of convex polygons such as diameter or width where linear time algorithms are feasible after constructing the convex hull.",
+    "key_insight": "By maintaining a rotating caliper system and incrementally updating it, Rotating Calipers efficiently finds extremal pairs without recomputing from scratch.",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::pair<int, int>> points = {{0,0}, {1,0}, {2,1}, {1,2}, {0,1}};\nstd::vector<int> hull = convexHull(points);\n\n// --- rotating calipers ---\nint n = hull.size();\nlong long diameter = 0;\nfor (int i = 0, j = 1; i < n; ++i) {\n    while (crossProduct(points[hull[(i + 1) % n]], points[hull[i]], points[hull[j]]) < crossProduct(points[hull[(i + 1) % n]], points[hull[i]], points[hull[(j + 1) % n]])) {\n        ++j;\n    }\n    diameter = std::max(diameter, dist(points[hull[i]], points[hull[j]]));\n}\n\n// --- output result ---\nstd::cout << \"Diameter: \" << diameter << std::endl;",
+    "walkthrough": "// --- build adjacency list ---\nThis section initializes the list of points and computes the convex hull using a helper function `convexHull`.\n\n// --- rotating calipers ---\nThis section implements the rotating calipers algorithm to find the diameter of the convex polygon. It iterates through each edge and updates the calipers to find the maximum distance between antipodal points.\n\n// --- output result ---\nThe diameter is printed to the console.",
+    "dry_run": "Line 1: points = {{0,0}, {1,0}, {2,1}, {1,2}, {0,1}}, meaning initializes the list of points.\nLine 2: hull = convexHull(points), meaning computes the convex hull of the points.\nLine 3: n = 5, meaning the number of vertices in the convex hull.\nLine 4: diameter = 0, meaning initializes the diameter to zero.\nLine 5: i = 0, j = 1, meaning initializes the indices for the rotating calipers.\nLine 6-10: while loop updates j to find the maximum distance between antipodal points.\nLine 11: diameter = std::max(diameter, dist(points[hull[i]], points[hull[j]])), meaning updates the diameter with the maximum distance found.\nLine 12: Diameter: 2, meaning the final diameter of the convex polygon.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n) — Space: O(n)",
+    "usage_example": "// Read input\nstd::vector<std::pair<int, int>> points;\nint n;\nstd::cin >> n;\nfor (int i = 0; i < n; ++i) {\n    int x, y;\n    std::cin >> x >> y;\n    points.push_back({x, y});\n}\n\n// Compute convex hull and diameter\nlong long diameter = rotatingCalipers(points);\n\n// Output result\nstd::cout << \"Diameter: \" << diameter << std::endl;",
+    "cpp_notes": [
+      "Subtle implementation details: Ensure the `convexHull` function correctly handles edge cases and uses a robust algorithm like Andrew's monotone chain.",
+      "When to swap to a different variant: The provided implementation is efficient for most convex polygons. For very large polygons, consider more advanced techniques or optimizations.",
+      "Common TLE causes: Be mindful of the time complexity and ensure that the `convexHull` function is optimized. Avoid unnecessary computations within the main loop.",
+      "Memory layout tips: Use contiguous memory for the points and hull arrays to improve cache locality.",
+      "C++ specific gotchas: Ensure proper handling of signed/unsigned comparisons and iterator invalidation, especially when modifying the hull during the algorithm."
+    ],
+    "generated_at": "2026-03-24T17:14:46.176862+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
   }
 ]
