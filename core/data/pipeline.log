@@ -689,3 +689,172 @@
 ⚠️  Interrupted. Progress saved.
 [10:46:55] 
 === Done. 67 entries in data/db.json ===
+[10:49:28] === cp-gpre pipeline starting ===
+[10:49:28] Topics: 233  |  already done: 67  |  pending: 166
+[10:49:28] Estimated time: ~166 minutes
+[10:49:28] 
+[1/166] Digit DP  (Dynamic Programming)
+[10:49:28]   [digit-dp] math model...
+[10:50:18]   [digit-dp] math attempt 1 failed: Invalid control character at: line 6 column 144 (char 1018)
+[10:51:06]   [digit-dp] code model...
+[10:51:38]   [digit-dp] code attempt 1 failed: Expecting ',' delimiter: line 2 column 1477 (char 1478)
+[10:53:02]   [digit-dp] code attempt 2 failed: Expecting ',' delimiter: line 2 column 3062 (char 3063)
+[10:53:41]   [digit-dp] code attempt 3 failed: Invalid control character at: line 2 column 1936 (char 1937)
+[10:53:43]   ✓  saved  |  ETA 701.9 min remaining
+[10:53:43] 
+[2/166] Interval DP  (Dynamic Programming)
+[10:53:43]   [interval-dp] math model...
+[10:54:23]   [interval-dp] math attempt 1 failed: Invalid control character at: line 4 column 111 (char 1146)
+[10:55:03]   [interval-dp] math attempt 2 failed: Invalid control character at: line 4 column 120 (char 1236)
+[10:55:56]   [interval-dp] code model...
+[10:56:22]   ✓  saved  |  ETA 566.9 min remaining
+[10:56:22] 
+[3/166] LIS Variants (LCIS, LCS reduction)  (Dynamic Programming)
+[10:56:22]   [lis-variants] math model...
+[10:56:54]   [lis-variants] math attempt 1 failed: Expecting ',' delimiter: line 16 column 5 (char 2088)
+[10:57:36]   [lis-variants] math attempt 2 failed: Invalid \escape: line 7 column 29 (char 2005)
+[10:58:17]   [lis-variants] code model...
+[10:58:53]   ✓  saved  |  ETA 511.8 min remaining
+[10:58:53] 
+[4/166] Matrix Chain Multiplication  (Dynamic Programming)
+[10:58:53]   [matrix-chain] math model...
+[10:59:39]   [matrix-chain] code model...
+[11:00:51]   ✓  saved  |  ETA 461.3 min remaining
+[11:00:51] 
+[5/166] XOR DP & Basis  (Dynamic Programming)
+[11:00:51]   [xor-dp] math model...
+[11:01:29]   [xor-dp] math attempt 1 failed: Invalid control character at: line 4 column 144 (char 1005)
+[11:02:10]   [xor-dp] math attempt 2 failed: Invalid control character at: line 4 column 255 (char 520)
+[11:02:44]   [xor-dp] math attempt 3 failed: Invalid control character at: line 4 column 121 (char 1047)
+[11:02:46]   [xor-dp] code model...
+[11:03:12]   ✓  saved  |  ETA 442.6 min remaining
+[11:03:12] 
+[6/166] Amortized Analysis  (Fundamentals)
+[11:03:12]   [amortized-analysis] math model...
+[11:03:48]   [amortized-analysis] math attempt 1 failed: Invalid control character at: line 5 column 313 (char 1847)
+[11:04:40]   [amortized-analysis] math attempt 2 failed: Invalid control character at: line 4 column 638 (char 1213)
+[11:05:24]   [amortized-analysis] code model...
+[11:05:47]   ✓  saved  |  ETA 435.4 min remaining
+[11:05:47] 
+[7/166] Convex Hull  (Geometry)
+[11:05:47]   [convex-hull] math model...
+[11:06:21]   [convex-hull] code model...
+[11:06:59]   ✓  saved  |  ETA 397.9 min remaining
+[11:06:59] 
+[8/166] Geometry Basics (Points, Lines, Cross Product)  (Geometry)
+[11:06:59]   [geometry-basics] math model...
+[11:07:47]   [geometry-basics] math attempt 1 failed: Invalid control character at: line 4 column 329 (char 638)
+[11:08:30]   [geometry-basics] math attempt 2 failed: Invalid \escape: line 3 column 54 (char 595)
+[11:09:13]   [geometry-basics] math attempt 3 failed: Expecting ':' delimiter: line 10 column 270 (char 2706)
+[11:09:15]   [geometry-basics] code model...
+[11:09:40]   ✓  saved  |  ETA 398.9 min remaining
+[11:09:40] 
+[9/166] Line Intersection & Sweep Line  (Geometry)
+[11:09:40]   [line-intersection] math model...
+[11:10:25]   [line-intersection] code model...
+[11:10:57]   ✓  saved  |  ETA 374.8 min remaining
+[11:10:57] 
+[10/166] Point in Polygon  (Geometry)
+[11:10:57]   [point-in-polygon] math model...
+[11:11:26]   [point-in-polygon] code model...
+[11:11:57]   ✓  saved  |  ETA 350.9 min remaining
+[11:11:57] 
+[11/166] 0-1 BFS  (Graph Traversal)
+[11:11:57]   [0-1-bfs] math model...
+[11:12:33]   [0-1-bfs] code model...
+[11:13:07]   ✓  saved  |  ETA 333.3 min remaining
+[11:13:07] 
+[12/166] 2-Edge-Connected Components  (Graph Traversal)
+[11:13:07]   [2-edge-connected] math model...
+[11:13:41]   [2-edge-connected] code model...
+[11:14:42] 
+⚠️  Interrupted. Progress saved.
+[11:14:42] 
+=== Done. 78 entries in data/db.json ===
+[12:47:32] === cp-gpre pipeline starting ===
+[12:47:32] Topics: 233  |  already done: 78  |  pending: 155
+[12:47:32] Estimated time: ~155 minutes
+[12:47:32] 
+[1/155] 2-Edge-Connected Components  (Graph Traversal)
+[12:47:32]   [2-edge-connected] math model...
+[12:48:17]   [2-edge-connected] math attempt 1 failed: Invalid control character at: line 4 column 319 (char 648)
+[12:48:53]   [2-edge-connected] math attempt 2 failed: Invalid control character at: line 4 column 227 (char 731)
+[12:49:31]   [2-edge-connected] code model...
+[12:50:21]   ✓  saved  |  ETA 432.0 min remaining
+[12:50:21] 
+[2/155] Biconnected Components  (Graph Traversal)
+[12:50:21]   [biconnected-components] math model...
+[12:51:03]   [biconnected-components] math attempt 1 failed: Invalid control character at: line 4 column 413 (char 979)
+[12:51:43]   [biconnected-components] math attempt 2 failed: Invalid control character at: line 4 column 411 (char 779)
+[12:52:32]   [biconnected-components] code model...
+[12:53:19]   ✓  saved  |  ETA 442.5 min remaining
+[12:53:19] 
+[3/155] Bidirectional BFS  (Graph Traversal)
+[12:53:19]   [bidirectional-bfs] math model...
+[12:53:58]   [bidirectional-bfs] math attempt 1 failed: Expecting ',' delimiter: line 18 column 16 (char 3620)
+[12:54:36]   [bidirectional-bfs] code model...
+[12:55:57]   [bidirectional-bfs] code attempt 1 failed: Unterminated string starting at: line 4 column 14 (char 1973)
+[12:57:20]   [bidirectional-bfs] code attempt 2 failed: Unterminated string starting at: line 4 column 14 (char 2470)
+[12:58:02]   ✓  saved  |  ETA 531.6 min remaining
+[12:58:02] 
+[4/155] Bridges & Articulation Points  (Graph Traversal)
+[12:58:02]   [bridges-articulation] math model...
+[12:58:50]   [bridges-articulation] code model...
+[12:59:30]   ✓  saved  |  ETA 451.6 min remaining
+[12:59:30] 
+[5/155] Condensation DAG  (Graph Traversal)
+[12:59:30]   [condensation-dag] math model...
+[13:00:07]   [condensation-dag] code model...
+[13:00:44]   ✓  saved  |  ETA 396.0 min remaining
+[13:00:44] 
+[6/155] DFS Tree & Back Edges  (Graph Traversal)
+[13:00:44]   [dfs-tree] math model...
+[13:01:10]   [dfs-tree] code model...
+[13:01:51]   [dfs-tree] code attempt 1 failed: Expecting ',' delimiter: line 7 column 329 (char 4436)
+[13:02:30]   ✓  saved  |  ETA 371.5 min remaining
+[13:02:30] 
+[7/155] Strongly Connected Components  (Graph Traversal)
+[13:02:30]   [scc] math model...
+[13:03:14]   [scc] math attempt 1 failed: Invalid control character at: line 4 column 349 (char 805)
+[13:04:06]   [scc] code model...
+[13:04:54]   [scc] code attempt 1 failed: Expecting ',' delimiter: line 2 column 2980 (char 2981)
+[13:05:44]   ✓  saved  |  ETA 384.7 min remaining
+[13:05:44] 
+[8/155] Exchange Argument  (Greedy)
+[13:05:44]   [exchange-argument] math model...
+[13:06:18]   [exchange-argument] code model...
+[13:06:36]   ✓  saved  |  ETA 350.3 min remaining
+[13:06:36] 
+[9/155] Huffman Coding  (Greedy)
+[13:06:36]   [huffman] math model...
+[13:07:13]   [huffman] math attempt 1 failed: Invalid control character at: line 4 column 65 (char 561)
+[13:08:08]   [huffman] math attempt 2 failed: Invalid control character at: line 4 column 339 (char 694)
+[13:08:44]   [huffman] math attempt 3 failed: Invalid control character at: line 3 column 323 (char 570)
+[13:08:46]   [huffman] code model...
+[13:09:12]   ✓  saved  |  ETA 351.3 min remaining
+[13:09:12] 
+[10/155] Scheduling Problems  (Greedy)
+[13:09:12]   [scheduling] math model...
+[13:09:48]   [scheduling] math attempt 1 failed: Invalid \escape: line 6 column 30 (char 2765)
+[13:10:44]   [scheduling] math attempt 2 failed: Invalid control character at: line 3 column 375 (char 605)
+[13:11:25]   [scheduling] math attempt 3 failed: Invalid \escape: line 10 column 30 (char 1575)
+[13:11:27]   [scheduling] code model...
+[13:11:54]   ✓  saved  |  ETA 353.2 min remaining
+[13:11:54] 
+[11/155] Patience Sorting  (Miscellaneous)
+[13:11:54]   [patience-sorting] math model...
+[13:12:35]   [patience-sorting] math attempt 1 failed: Invalid control character at: line 3 column 277 (char 556)
+[13:14:00]   [patience-sorting] math attempt 2 failed: No JSON found in:
+
+[13:15:25]   [patience-sorting] math attempt 3 failed: No JSON found in:
+
+[13:15:27]   [patience-sorting] code model...
+[13:15:51]   ✓  saved  |  ETA 370.5 min remaining
+[13:15:51] 
+[12/155] Polynomial Hashing Tricks  (Miscellaneous)
+[13:15:51]   [hashing-tricks] math model...
+[13:16:33]   [hashing-tricks] math attempt 1 failed: Invalid control character at: line 6 column 142 (char 1218)
+[13:16:58] 
+⚠️  Interrupted. Progress saved.
+[13:16:58] 
+=== Done. 89 entries in data/db.json ===

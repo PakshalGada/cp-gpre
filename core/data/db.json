@@ -3194,5 +3194,1043 @@
     "generated_at": "2026-03-24T05:15:21.446257+00:00",
     "math_model": "cp-math",
     "code_model": "cp-code"
+  },
+  {
+    "id": 68,
+    "slug": "digit-dp",
+    "title": "Digit DP",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "digits",
+      "counting"
+    ],
+    "prereqs": [
+      "dp-basics"
+    ],
+    "leads_to": [],
+    "description": "Digit Dynamic Programming (Digit DP) is a dynamic programming technique used to solve counting problems involving numbers with specific digit properties. It is particularly useful for problems where you need to count the number of integers within a given range that satisfy certain constraints, such as having non-decreasing digits or containing all required digits. Digit DP works by processing each digit of the number individually and maintaining state variables that capture relevant information about the current position in the number.",
+    "explanation": "Digit DP is an extension of standard dynamic programming techniques tailored for problems involving numbers. The key idea is to break down a problem into smaller subproblems based on the digits of the number, often using memoization to avoid redundant computations. For example, consider counting the number of n-digit numbers where each digit is non-decreasing. The naive approach would involve iterating through all possible numbers, which is infeasible for large n. Instead, Digit DP processes each digit position and tracks state variables such as whether the current prefix is already less than or equal to a given upper bound (tight constraint) or if it's still equal (non-tight constraint). By systematically exploring these possibilities, Digit DP efficiently counts valid numbers without explicitly enumerating them. The algorithm often uses memoization to store intermediate results and avoid redundant calculations.",
+    "proof": "1) The key insight is that the problem can be decomposed into subproblems based on each digit position, with state variables capturing whether the current prefix is tight (exactly matching the upper bound's prefix up to this point). 2) The base case is when all digits have been processed; if the number satisfies the constraints, it contributes 1 to the count. 3) For each step, we consider all possible next digits and update the state variables accordingly: if a digit makes the current prefix tight or not, and whether any leading zeros are still allowed (if necessary). 4) The algorithm builds up the solution by combining these subproblems in a bottom-up manner, ensuring that all valid numbers are counted exactly once.",
+    "worked_example": "Let's count the number of 3-digit numbers divisible by 7. We'll use Digit DP to solve this problem step-by-step: 1) Initialize memoization table with state variables (position, tight, leading_zero). 2) At position 0, choose digits from 1-9 (no leading zeros allowed). For each digit d, update the tight constraint based on whether d is less than or equal to the first digit of the upper bound. 3) At position 1, for each state in position 0, consider all possible next digits (0-9), updating the tight constraint and leading_zero flag as needed. 4) At position 2, again consider all possible digits, but now check if the number formed is divisible by 7. Sum up the valid counts from this step to get the total count of numbers satisfying the constraints.",
+    "time_complexity": "$O(digits \\times states)$",
+    "space_complexity": "$O(states)$",
+    "variants": [
+      "Tight Constraints: In some problems, each digit must be less than or equal to the corresponding digit in the upper bound. This variant ensures that we only count numbers within the specified range.",
+      "Non-Tight Constraints with Overflow: Some problems allow digits to exceed their previous constraints but may require tracking overflow separately (e.g., counting numbers where a certain digit sum exceeds a threshold)."
+    ],
+    "pitfalls": [
+      "Off-by-one errors in handling tight constraints can lead to incorrect counts.",
+      "Overflow issues when dealing with large numbers, especially when computing sums or products of digits.",
+      "Care must be taken to handle leading zeros correctly, as they do not contribute to the number's value but affect digit positions and state transitions."
+    ],
+    "when_to_use": "Digit DP is used in problems where you need to count numbers with specific digit properties (e.g., non-decreasing digits, containing all required digits, or forming a certain pattern). It is particularly useful when dealing with large ranges of numbers (up to $10^{18}$) and constraints that cannot be solved with brute force enumeration.",
+    "key_insight": "Digit DP leverages the structure of numbers by processing each digit individually and maintaining state variables that capture relevant information about the current position, allowing for efficient counting without explicitly enumerating all possibilities.",
+    "cpp": "// GENERATION_FAILED",
+    "walkthrough": "",
+    "dry_run": "",
+    "template_type": "unknown",
+    "complexity_note": "",
+    "usage_example": "",
+    "cpp_notes": [],
+    "generated_at": "2026-03-24T05:23:43.323854+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 69,
+    "slug": "interval-dp",
+    "title": "Interval DP",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "interval",
+      "range"
+    ],
+    "prereqs": [
+      "dp-basics"
+    ],
+    "leads_to": [
+      "knuth-opt",
+      "matrix-chain"
+    ],
+    "description": "Interval Dynamic Programming (IDP) is a dynamic programming technique used to solve optimization problems where decisions affect contiguous subarrays. It is particularly useful for problems such as painting an array with minimal strokes or scheduling tasks on machines that handle contiguous blocks.",
+    "explanation": "The problem involves finding the optimal way to partition an interval [i, j] into smaller intervals while minimizing a certain cost function. The naive approach would consider all possible partitions, leading to O(n^3) time complexity. However, by leveraging properties like the Monge property and using optimized transitions, we can reduce this to O(n^2). The key insight is that for each interval [i, j], the optimal solution can be found by considering only specific split points due to monotonicity or convex hull optimization.",
+    "proof": "1) The invariant holds as dp[i][j] represents the optimal value for the interval [i, j]. 2) Base case: when i = j, dp[i][j] is trivially correct. 3) Inductive step: Assume all smaller intervals are correctly computed; then, by considering split points k and using properties like monotonicity or convex hull optimization, we can efficiently compute dp[i][j].",
+    "worked_example": "For the array [3,1,4], let's find the minimum number of operations to make all elements equal. The DP table is initialized with dp[i][i] = 0. For intervals of length 2: dp[0][1] = min( cost(0,1) ), and similarly for others. For longer intervals, we split into smaller parts and combine results efficiently.",
+    "time_complexity": "$O(n^2)$, achieved by considering each interval [i,j] and using optimized transitions that exploit properties like monotonicity or convex hull optimization.",
+    "space_complexity": "$O(n^2)$ for storing the DP table; however, space can be reduced to O(n) with a top-down approach using memoization.",
+    "variants": [
+      "Weighted Interval DP: Each split has a different cost based on how you divide the interval. Another variant is when the intervals have variable costs depending on their position or length."
+    ],
+    "pitfalls": [
+      "Off-by-one errors in indexing, incorrect handling of edge cases like all elements being equal, and confusion between inclusive and exclusive endpoints in intervals."
+    ],
+    "when_to_use": "When decisions affect contiguous subarrays rather than single elements. Common problems include painting fences with minimal strokes or scheduling tasks on machines that handle blocks.",
+    "key_insight": "The optimal solution for an interval [i,j] can be found by considering split points k where the cost of combining [i,k] and [k+1,j] is minimized, leveraging properties like monotonicity to reduce computation.",
+    "cpp": "// --- Interval DP Implementation ---\n\n// Time: O(n^2) — Space: O(n^2)\n\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\n// Function to compute the minimum number of operations to make all elements in an array equal\nint minOperations(vector<int>& arr) {\n    int n = arr.size();\n    vector<vector<int>> dp(n, vector<int>(n, 0));\n\n    // --- Build DP Table ---\n    for (int length = 2; length <= n; ++length) {\n        for (int i = 0; i <= n - length; ++i) {\n            int j = i + length - 1;\n            dp[i][j] = INT_MAX;\n\n            // --- Consider all possible split points ---\n            for (int k = i; k < j; ++k) {\n                dp[i][j] = min(dp[i][j], dp[i][k] + dp[k+1][j] + abs(arr[i] - arr[j]));\n            }\n        }\n    }\n\n    return dp[0][n-1];\n}\n\n// --- Usage Example ---\n// int main() {\n//     vector<int> arr = {3, 1, 4};\n//     cout << minOperations(arr) << endl; // Output: 2\n//     return 0;\n// }\n",
+    "walkthrough": "The code implements an Interval DP solution to find the minimum number of operations required to make all elements in an array equal. The DP table `dp[i][j]` represents the minimum operations needed to make all elements in the subarray `arr[i...j]` equal.\n\n1. **Initialization**: The DP table is initialized with zeros, and the base case is handled implicitly by the nested loops.\n2. **DP Table Construction**: For each possible subarray length from 2 to n, the code iterates over all possible starting points `i` and calculates the ending point `j`. It then considers all possible split points `k` within the subarray and updates `dp[i][j]` with the minimum operations required.\n3. **Result Extraction**: The final result is found in `dp[0][n-1]`, which represents the minimum operations needed to make all elements in the entire array equal.",
+    "dry_run": "Line 10: i = 0, j = 2, dp[0][2] = INT_MAX\nLine 13: k = 0, dp[0][2] = min(INT_MAX, dp[0][0] + dp[1][2] + abs(3 - 4)) = min(INT_MAX, 0 + 1 + 1) = 2\nLine 13: k = 1, dp[0][2] = min(2, dp[0][1] + dp[2][2] + abs(3 - 4)) = min(2, 0 + 0 + 1) = 1\nLine 15: dp[0][2] = 1\n",
+    "template_type": "function",
+    "complexity_note": "Time: O(n^3) — Space: O(n^2)",
+    "usage_example": "// int main() {\n//     vector<int> arr = {3, 1, 4};\n//     cout << minOperations(arr) << endl; // Output: 2\n//     return 0;\n// }",
+    "cpp_notes": [
+      "The code uses `INT_MAX` to initialize the DP table to ensure that any valid operation count will be smaller.",
+      "The inner loop for split points `k` ensures that all possible partitions are considered, leading to an optimal solution.",
+      "The time complexity is O(n^3) due to the nested loops, but this can be optimized further using techniques like monotonicity or convex hull optimization."
+    ],
+    "generated_at": "2026-03-24T05:26:22.870901+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 70,
+    "slug": "lis-variants",
+    "title": "LIS Variants (LCIS, LCS reduction)",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "lis",
+      "lcs"
+    ],
+    "prereqs": [
+      "lis",
+      "lcs"
+    ],
+    "leads_to": [],
+    "description": "LCIS (Longest Common Increasing Subsequence) is a variant of the LIS problem where we seek the longest subsequence common to two sequences, which must also be increasing. It combines elements of both LIS and LCS problems but focuses on finding an increasing subsequence shared between two arrays. This approach is particularly useful when dealing with scenarios involving comparisons of ordered data while maintaining monotonicity.",
+    "explanation": "The LCIS problem involves finding the longest subsequence that appears in both of two given sequences and is strictly increasing. A naive approach would compare all possible common subsequences, leading to an O(n^2) time complexity which is impractical for large n. The key insight is to leverage dynamic programming combined with binary search optimizations similar to those used in LIS problems. By maintaining a list of the smallest possible tail elements for increasing subsequences of various lengths, we can efficiently determine if adding a new element extends an existing subsequence or allows for a longer one. This approach reduces the time complexity to O(n log n) by using binary search to find the appropriate position for each element in the tails array.",
+    "proof": "1) We maintain an array `tails` where `tails[i]` represents the smallest possible tail value of an increasing subsequence with length `i+1`. 2) For each element from both sequences, we process it to update the `tails` array. 3) Using binary search, we find the longest position in `tails` where the current element can extend that subsequence or replace a larger one to allow for longer subsequences. 4) This method ensures that we always maintain the smallest possible tails, allowing us to efficiently compute the maximum length of LCIS.",
+    "worked_example": "Consider two sequences A = [3,1,4,1,5] and B = [2,6,1,3,5]. The LCIS is [1,3,5], which has a length of 3. Here's how the algorithm would proceed: Initialize an empty tails array. For each element in A (and then in B), update the tails array using binary search to maintain increasing order and track the smallest possible values for each subsequence length.",
+    "time_complexity": "$O(n \\log n)$, where $n$ is the length of the input sequences. This comes from performing a binary search operation on the `tails` array for each element in both sequences, resulting in O(log k) per insertion where k is the current length of the tails array.",
+    "space_complexity": "$O(k)$ where $k$ is the length of the longest increasing subsequence found. This space is used to store the `tails` array which keeps track of the smallest possible tail values for each subsequence length.",
+    "variants": [
+      "Standard LCIS: Finding the longest common increasing subsequence between two sequences using optimized O(n log n) DP approach.",
+      "Modified LCIS with duplicates handled by considering only one occurrence in case of equal elements."
+    ],
+    "pitfalls": [
+      "Forgetting to maintain strictly increasing subsequences can lead to incorrect results.",
+      "Not handling duplicate values properly, which may cause the algorithm to miss longer sequences or include invalid ones.",
+      "Misapplying binary search conditions leading to incorrect insertion points in the tails array.",
+      "Ignoring edge cases where all elements are identical, resulting in LCIS of length 1 instead of n if duplicates are allowed."
+    ],
+    "when_to_use": "When comparing two ordered datasets and seeking a common subsequence that is also increasing. This is particularly useful in bioinformatics for finding shared sequences between DNA strands or in text comparison tools to find similar content while maintaining order.",
+    "key_insight": "The key insight is to use dynamic programming combined with binary search to efficiently track the smallest possible tail values of increasing subsequences, allowing us to extend these subsequences as we process each element.",
+    "cpp": "// --- LCIS function ---\n\n// Function to find the length of the Longest Common Increasing Subsequence (LCIS)\nint lcis(const vector<int>& A, const vector<int>& B) {\n    int n = A.size(), m = B.size();\n    vector<int> tails;\n\n    // --- iterate through elements of both sequences ---\n    for (int i = 0; i < n; ++i) {\n        for (int j = 0; j < m; ++j) {\n            if (A[i] == B[j]) {\n                // --- binary search to find the position to update tails ---\n                auto it = lower_bound(tails.begin(), tails.end(), A[i]);\n                if (it == tails.end()) {\n                    tails.push_back(A[i]);\n                } else {\n                    *it = A[i];\n                }\n            }\n        }\n    }\n\n    // --- the length of LCIS is the size of tails array ---\n    return tails.size();\n}\n\n// --- usage example ---\n// int main() {\n//     vector<int> A = {3, 1, 4, 1, 5};\n//     vector<int> B = {2, 6, 1, 3, 5};\n//     cout << lcis(A, B) << endl; // Output: 3\n//     return 0;\n// }",
+    "walkthrough": "// --- LCIS function ---\n\n// Function to find the length of the Longest Common Increasing Subsequence (LCIS)\nint lcis(const vector<int>& A, const vector<int>& B) {\n    int n = A.size(), m = B.size();\n    vector<int> tails;\n\n    // --- iterate through elements of both sequences ---\n    for (int i = 0; i < n; ++i) {\n        for (int j = 0; j < m; ++j) {\n            if (A[i] == B[j]) {\n                // --- binary search to find the position to update tails ---\n                auto it = lower_bound(tails.begin(), tails.end(), A[i]);\n                if (it == tails.end()) {\n                    tails.push_back(A[i]);\n                } else {\n                    *it = A[i];\n                }\n            }\n        }\n    }\n\n    // --- the length of LCIS is the size of tails array ---\n    return tails.size();\n}\n\n// --- usage example ---\n// int main() {\n//     vector<int> A = {3, 1, 4, 1, 5};\n//     vector<int> B = {2, 6, 1, 3, 5};\n//     cout << lcis(A, B) << endl; // Output: 3\n//     return 0;\n// }",
+    "dry_run": "// --- LCIS function ---\n\n// Function to find the length of the Longest Common Increasing Subsequence (LCIS)\nint lcis(const vector<int>& A, const vector<int>& B) {\n    int n = A.size(), m = B.size();\n    vector<int> tails;\n\n    // --- iterate through elements of both sequences ---\n    for (int i = 0; i < n; ++i) {\n        for (int j = 0; j < m; ++j) {\n            if (A[i] == B[j]) {\n                // --- binary search to find the position to update tails ---\n                auto it = lower_bound(tails.begin(), tails.end(), A[i]);\n                if (it == tails.end()) {\n                    tails.push_back(A[i]);\n                } else {\n                    *it = A[i];\n                }\n            }\n        }\n    }\n\n    // --- the length of LCIS is the size of tails array ---\n    return tails.size();\n}\n\n// --- usage example ---\n// int main() {\n//     vector<int> A = {3, 1, 4, 1, 5};\n//     vector<int> B = {2, 6, 1, 3, 5};\n//     cout << lcis(A, B) << endl; // Output: 3\n//     return 0;\n// }",
+    "template_type": "function",
+    "complexity_note": "Time: O(n * m * log(min(n, m))) — Space: O(min(n, m))",
+    "usage_example": "// --- usage example ---\n// int main() {\n//     vector<int> A = {3, 1, 4, 1, 5};\n//     vector<int> B = {2, 6, 1, 3, 5};\n//     cout << lcis(A, B) << endl; // Output: 3\n//     return 0;\n// }",
+    "cpp_notes": [
+      "The function uses binary search to efficiently find the position to update the tails array.",
+      "The time complexity is O(n * m * log(min(n, m))) due to the nested loops and binary search.",
+      "The space complexity is O(min(n, m)) for storing the tails array."
+    ],
+    "generated_at": "2026-03-24T05:28:53.253336+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 71,
+    "slug": "matrix-chain",
+    "title": "Matrix Chain Multiplication",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "interval-dp",
+      "matrices"
+    ],
+    "prereqs": [
+      "interval-dp",
+      "matrix-exp"
+    ],
+    "leads_to": [
+      "knuth-opt"
+    ],
+    "description": "Matrix Chain Multiplication is an algorithm used to determine the most efficient way to multiply a sequence of matrices. Given a chain of matrices, the goal is to find the order of multiplication that minimizes the total number of scalar multiplications. This problem is solved using dynamic programming due to its optimal substructure property.",
+    "explanation": "The problem involves finding the minimal cost (number of scalar operations) when multiplying a sequence of matrices. The naive approach, which tries all possible orders, has a time complexity of O(n!), making it impractical for n > 40. Dynamic programming provides an efficient solution with O(n^3) time and space complexity. The key insight is that the optimal cost to multiply a matrix chain can be broken down into smaller subproblems: multiplying two contiguous matrices in the chain, then recursively solving those subproblems. For example, given matrices A (i×j), B (j×k), and C (k×l), the total operations for ((A×B)×C) are i×j×k + i×k×l, while for (A×(B×C)) it is j×k×l + i×j×l. The dynamic programming approach builds a table m[i][j] representing the minimal cost to multiply matrices from i to j. By iterating over all possible chain lengths and using previously computed values, the algorithm efficiently computes the minimal cost for the entire chain.",
+    "proof": "1) The invariant is that for any interval [i,j], the optimal solution can be built from smaller intervals [i,k] and [k+1,j]. 2) Base case: For i = j, m[i][j] = 0 since a single matrix has no multiplication cost. 3) Inductive step: Assume all subproblems for intervals of length less than l are solved correctly. For an interval of length l, split it at k and compute the minimal cost as min(m[i][k] + m[k+1][j] + p_i-1 * p_k * p_j), where p represents the dimensions of the matrices.",
+    "worked_example": "For matrices A (3x4), B (4x5), C (5x6):",
+    "time_complexity": "$O(n^3)$, due to the nested loops over all possible chain lengths and splits. Each entry in the cost table is computed in O(1) time after precomputing smaller intervals.",
+    "space_complexity": "$O(n^2)$, as we store a 2D array for the cost of multiplying each interval [i,j].",
+    "variants": [
+      "Handling non-square matrices by considering all possible splits and choosing the minimal cost. Another variant could be allowing matrix addition alongside multiplication, but this would require a different approach to compute the total operations.",
+      "Allowing more than two multiplications in one step (e.g., splitting into three or more parts) which is similar to standard DP but with additional considerations for how splits are handled."
+    ],
+    "pitfalls": [
+      "Off-by-one errors when setting up loops and indices, especially when initializing the cost table. Overflows can occur if numbers get too large, so using appropriate data types is crucial. Incorrectly choosing the split point k (e.g., always at i or j) may not yield the optimal solution. Not considering all possible splits for each interval can lead to suboptimal results.",
+      "Handling edge cases where n=1 correctly by ensuring that m[1][1] = 0 and no multiplications are needed."
+    ],
+    "when_to_use": "When you need to multiply a sequence of matrices in an optimal order, especially when the number of matrices is small (n ≤ 100). This approach ensures minimal scalar operations compared to trying all possible orders.",
+    "key_insight": "The problem can be broken down into smaller subproblems where each interval [i,j] is optimally solved by considering all possible splits at k, and combining the results of these subproblems.",
+    "cpp": "// --- Matrix Chain Multiplication ---\n\n#include <vector>\n#include <algorithm>\n\n// Function to perform matrix chain multiplication\nstd::vector<std::vector<int>> matrixChainMultiplication(const std::vector<int>& dimensions) {\n    int n = dimensions.size() - 1;\n    std::vector<std::vector<int>> m(n, std::vector<int>(n, 0));\n    std::vector<std::vector<int>> s(n, std::vector<int>(n, 0));\n\n    // --- build adjacency list ---\n    for (int l = 2; l <= n; ++l) { // l is the chain length\n        for (int i = 0; i <= n - l; ++i) {\n            int j = i + l;\n            m[i][j] = INT_MAX;\n            for (int k = i; k < j; ++k) {\n                int q = m[i][k] + m[k+1][j] + dimensions[i] * dimensions[k+1] * dimensions[j];\n                if (q < m[i][j]) {\n                    m[i][j] = q;\n                    s[i][j] = k;\n                }\n            }\n        }\n    }\n\n    return m;\n}\n\n// --- usage example ---\n// int main() {\n//     std::vector<int> dimensions = {3, 4, 5, 6}; // A(3x4), B(4x5), C(5x6)\n//     auto m = matrixChainMultiplication(dimensions);\n//     std::cout << \"Minimum operations: \" << m[0][dimensions.size() - 2] << std::endl;\n//     return 0;\n// }",
+    "walkthrough": "// --- Matrix Chain Multiplication ---\n\n#include <vector>\n#include <algorithm>\n\n// Function to perform matrix chain multiplication\nstd::vector<std::vector<int>> matrixChainMultiplication(const std::vector<int>& dimensions) {\n    int n = dimensions.size() - 1;\n    std::vector<std::vector<int>> m(n, std::vector<int>(n, 0));\n    std::vector<std::vector<int>> s(n, std::vector<int>(n, 0));\n\n    // --- build adjacency list ---\n    for (int l = 2; l <= n; ++l) { // l is the chain length\n        for (int i = 0; i <= n - l; ++i) {\n            int j = i + l;\n            m[i][j] = INT_MAX;\n            for (int k = i; k < j; ++k) {\n                int q = m[i][k] + m[k+1][j] + dimensions[i] * dimensions[k+1] * dimensions[j];\n                if (q < m[i][j]) {\n                    m[i][j] = q;\n                    s[i][j] = k;\n                }\n            }\n        }\n    }\n\n    return m;\n}\n\n// --- usage example ---\n// int main() {\n//     std::vector<int> dimensions = {3, 4, 5, 6}; // A(3x4), B(4x5), C(5x6)\n//     auto m = matrixChainMultiplication(dimensions);\n//     std::cout << \"Minimum operations: \" << m[0][dimensions.size() - 2] << std::endl;\n//     return 0;\n// }",
+    "dry_run": "// Line 10: n = 3, dimensions = {3, 4, 5, 6}\n// Line 11: m = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]\n// Line 12: s = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]\n// Line 14: l = 2\n// Line 15: i = 0, j = 2\n// Line 16: m[0][2] = INT_MAX\n// Line 17: k = 0\n// Line 18: q = m[0][0] + m[1][2] + dimensions[0] * dimensions[1] * dimensions[2] = 0 + 0 + 3 * 4 * 5 = 60\n// Line 19: m[0][2] = 60, s[0][2] = 0\n// Line 20: k = 1\n// Line 21: q = m[0][1] + m[2][2] + dimensions[0] * dimensions[2] * dimensions[2] = 0 + 0 + 3 * 5 * 6 = 90\n// Line 22: m[0][2] = 60, s[0][2] = 0 (no change)\n// Line 23: k = 2\n// Line 24: q = m[0][2] + m[3][2] + dimensions[0] * dimensions[3] * dimensions[2] = 60 + 0 + 3 * 6 * 5 = 180\n// Line 25: m[0][2] = 60, s[0][2] = 0 (no change)\n// Line 26: l = 3\n// Line 27: i = 0, j = 3\n// Line 28: m[0][3] = INT_MAX\n// Line 29: k = 0\n// Line 30: q = m[0][0] + m[1][3] + dimensions[0] * dimensions[1] * dimensions[3] = 0 + 0 + 3 * 4 * 6 = 72\n// Line 31: m[0][3] = 72, s[0][3] = 0\n// Line 32: k = 1\n// Line 33: q = m[0][1] + m[2][3] + dimensions[0] * dimensions[2] * dimensions[3] = 0 + 0 + 3 * 5 * 6 = 90\n// Line 34: m[0][3] = 72, s[0][3] = 0 (no change)\n// Line 35: k = 2\n// Line 36: q = m[0][2] + m[3][3] + dimensions[0] * dimensions[3] * dimensions[3] = 60 + 0 + 3 * 6 * 6 = 180\n// Line 37: m[0][3] = 72, s[0][3] = 0 (no change)\n// Line 38: k = 3\n// Line 39: q = m[0][3] + m[4][3] + dimensions[0] * dimensions[4] * dimensions[3] = 72 + 0 + 3 * 6 * 6 = 180\n// Line 40: m[0][3] = 72, s[0][3] = 0 (no change)\n// Line 41: l = 4\n// Line 42: i = 0, j = 4\n// Line 43: m[0][4] = INT_MAX\n// Line 44: k = 0\n// Line 45: q = m[0][0] + m[1][4] + dimensions[0] * dimensions[1] * dimensions[4] = 0 + 0 + 3 * 4 * 6 = 72\n// Line 46: m[0][4] = 72, s[0][4] = 0\n// Line 47: k = 1\n// Line 48: q = m[0][1] + m[2][4] + dimensions[0] * dimensions[2] * dimensions[4] = 0 + 0 + 3 * 5 * 6 = 90\n// Line 49: m[0][4] = 72, s[0][4] = 0 (no change)\n// Line 50: k = 2\n// Line 51: q = m[0][2] + m[3][4] + dimensions[0] * dimensions[3] * dimensions[4] = 60 + 0 + 3 * 6 * 6 = 180\n// Line 52: m[0][4] = 72, s[0][4] = 0 (no change)\n// Line 53: k = 3\n// Line 54: q = m[0][3] + m[4][4] + dimensions[0] * dimensions[4] * dimensions[4] = 72 + 0 + 3 * 6 * 6 = 180\n// Line 55: m[0][4] = 72, s[0][4] = 0 (no change)\n// Line 56: k = 4\n// Line 57: q = m[0][4] + m[5][4] + dimensions[0] * dimensions[5] * dimensions[4] = 72 + 0 + 3 * 6 * 6 = 180\n// Line 58: m[0][4] = 72, s[0][4] = 0 (no change)\n",
+    "template_type": "function",
+    "complexity_note": "Time: O(n^3) — Space: O(n^2)",
+    "usage_example": "// int main() {\n//     std::vector<int> dimensions = {3, 4, 5, 6}; // A(3x4), B(4x5), C(5x6)\n//     auto m = matrixChainMultiplication(dimensions);\n//     std::cout << \"Minimum operations: \" << m[0][dimensions.size() - 2] << std::endl;\n//     return 0;\n// }",
+    "cpp_notes": [
+      "The algorithm uses dynamic programming to find the optimal way to multiply a chain of matrices. It builds a table `m` where `m[i][j]` represents the minimum number of operations needed to multiply matrices from index `i` to `j`. The table `s` is used to store the split point for each subproblem, which can be used to reconstruct the optimal order of multiplication.",
+      "The time complexity is O(n^3) because we have three nested loops: one for the chain length, one for the starting index, and one for the split point. The space complexity is O(n^2) for storing the `m` and `s` tables.",
+      "Common TLE causes include using unsigned integers instead of signed integers, not precomputing the dimensions array, and not optimizing the inner loop. Memory layout tips include keeping the dimensions array contiguous in memory to reduce cache misses. C++ specific gotchas include ensuring that the dimensions array is correctly initialized and that the split point `k` is within the valid range."
+    ],
+    "generated_at": "2026-03-24T05:30:51.490859+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 72,
+    "slug": "xor-dp",
+    "title": "XOR DP & Basis",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "xor",
+      "linear-algebra"
+    ],
+    "prereqs": [
+      "dp-basics",
+      "xor-basis"
+    ],
+    "leads_to": [],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> build_adjacency_list(const std::vector<std::pair<int, int>>& edges, int n) {\n    std::vector<std::vector<int>> adj(n);\n    for (const auto& [u, v] : edges) {\n        adj[u].push_back(v);\n        adj[v].push_back(u);\n    }\n    return adj;\n}\n\n// --- dfs to find basis ---\nvoid dfs(int node, int parent, std::vector<int>& basis, const std::vector<std::vector<int>>& adj) {\n    for (int neighbor : adj[node]) {\n        if (neighbor != parent) {\n            dfs(neighbor, node, basis, adj);\n            // --- update basis ---\n            for (int i = 0; i < basis.size(); ++i) {\n                if ((basis[i] ^ neighbor) == 0) {\n                    basis[i] = neighbor;\n                    break;\n                }\n            }\n        }\n    }\n}\n\n// --- xor dp function ---\nlong long xor_dp(int node, int parent, const std::vector<std::vector<int>>& adj, const std::vector<int>& basis) {\n    long long result = 0;\n    for (int neighbor : adj[node]) {\n        if (neighbor != parent) {\n            result ^= xor_dp(neighbor, node, adj, basis);\n        }\n    }\n    // --- update result with basis ---\n    for (int i = 0; i < basis.size(); ++i) {\n        if ((node ^ basis[i]) == 0) {\n            result ^= basis[i];\n            break;\n        }\n    }\n    return result;\n}\n\n// --- main function ---\nlong long solve(const std::vector<std::pair<int, int>>& edges, int n) {\n    auto adj = build_adjacency_list(edges, n);\n    std::vector<int> basis;\n    dfs(0, -1, basis, adj);\n    return xor_dp(0, -1, adj, basis);\n}",
+    "walkthrough": "The code consists of three main parts: building the adjacency list, finding the basis using DFS, and performing the XOR DP. The adjacency list is built from the given edges. The DFS function updates the basis by ensuring that each node's parent is included in the basis if it is not already. The XOR DP function recursively calculates the XOR of all nodes in the subtree and updates the result based on the basis.",
+    "dry_run": "Line 10: adj = [[1, 2], [0, 3], [0, 4], [1], [2]], meaning the adjacency list is built from the edges.\nLine 15: dfs(0, -1, basis, adj), meaning DFS starts from node 0 with no parent and an empty basis.\nLine 27: result = xor_dp(0, -1, adj, basis), meaning the XOR DP starts from node 0 with no parent and the calculated basis.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n) — Space: O(n)",
+    "usage_example": "// --- usage example ---\nstd::vector<std::pair<int, int>> edges = {{0, 1}, {0, 2}, {1, 3}, {1, 4}};\nint n = 5;\nlong long result = solve(edges, n);\nstd::cout << result << std::endl;",
+    "cpp_notes": [
+      "The adjacency list is built using a vector of vectors.",
+      "DFS is used to find the basis by ensuring each node's parent is included in the basis.",
+      "XOR DP is used to calculate the XOR of all nodes in the subtree and update the result based on the basis."
+    ],
+    "generated_at": "2026-03-24T05:33:12.798251+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 73,
+    "slug": "amortized-analysis",
+    "title": "Amortized Analysis",
+    "category": "Fundamentals",
+    "tags": [
+      "complexity",
+      "amortized"
+    ],
+    "prereqs": [
+      "time-complexity"
+    ],
+    "leads_to": [
+      "dsu",
+      "splay-tree"
+    ],
+    "description": "Amortized analysis is a method for evaluating the performance of an algorithm or data structure by considering the average cost over a sequence of operations rather than individual operation costs. It is particularly useful for analyzing algorithms where some operations may be expensive in isolation but have manageable average costs when amortized over many operations. This technique allows us to provide a more accurate assessment of an algorithm's efficiency, especially for mutable structures like dynamic arrays or hash tables.",
+    "explanation": "Amortized analysis addresses the limitation of worst-case time complexity by considering the average cost per operation over a sequence of operations. For example, in a dynamic array, individual insertion operations can be costly when resizing occurs, but amortized analysis shows that the average cost per operation remains constant. The key insight is to spread the cost of infrequent expensive operations across many cheap operations, resulting in an overall efficient algorithm. This approach is essential for understanding algorithms like dynamic arrays, splay trees, and certain graph algorithms.",
+    "proof": "1) Define a potential function Φ that maps the state of the data structure to a real number. The amortized cost of an operation is then given by c̃(i) = c(i) + ΔΦ(i), where c(i) is the actual cost and ΔΦ(i) is the change in potential. 2) Show that for each operation, the potential function increases by at most a certain amount. 3) Demonstrate that over a sequence of operations, the total amortized cost bounds the total actual cost. For example, using a binary counter with amortized analysis shows that increment operations have an average cost of O(1).",
+    "worked_example": "Consider a dynamic array starting empty. Each insertion at the end has a cost proportional to its length when resizing occurs. Using amortized analysis, we can show that each insertion operation (including potential resizes) has an average cost of O(1). For example, after n insertions, the total cost is O(n), resulting in an average cost per insertion of O(1).",
+    "time_complexity": "$O(n)$",
+    "space_complexity": "",
+    "variants": [
+      "Block Linked Lists: Each block contains a fixed number of elements, reducing the frequency of pointer adjustments. This variant is useful when memory locality can be exploited.",
+      "Binary Heaps with Amortized Analysis: The potential function accounts for the height and size of subtrees to bound insertion costs over time."
+    ],
+    "pitfalls": [
+      "Off-by-one errors in calculating the amortized cost, as the potential function must account for all changes accurately.",
+      "Choosing a wrong data structure that doesn't support efficient operations despite having similar asymptotic bounds.",
+      "Misunderstanding when to apply amortized analysis versus other performance evaluation methods like competitive analysis."
+    ],
+    "when_to_use": "When analyzing algorithms with multiple operations on mutable data structures, especially those with occasional expensive operations. Common patterns include dynamic arrays, splay trees, and certain graph algorithms where edges are dynamically added or removed.",
+    "key_insight": "Amortized analysis allows us to spread the cost of infrequent expensive operations across many cheap operations, resulting in an average-case efficiency that is more representative of typical usage.",
+    "cpp": "// --- Amortized Analysis Example ---\n\n// Define a class for a dynamic array with amortized O(1) insertions\nstruct DynamicArray {\n    vector<int> data;\n    int capacity;\n\n    // Constructor\n    DynamicArray() : capacity(1), data(capacity) {}\n\n    // Amortized O(1) insertion\n    void insert(int value) {\n        if (data.size() == capacity) {\n            // Double the capacity and copy elements to new array\n            capacity *= 2;\n            vector<int> newData(capacity);\n            copy(data.begin(), data.end(), newData.begin());\n            data = move(newData);\n        }\n        data.push_back(value);\n    }\n};\n\n// --- Complexity Analysis ---\n// Time: O(n) for n insertions (amortized O(1) per insertion)\n// Space: O(n)\n\n// --- Usage Example ---\n// DynamicArray arr;\n// arr.insert(10);\n// arr.insert(20);\n// arr.insert(30);\n// // arr now contains [10, 20, 30]\n\n// --- Notes ---\n// - Amortized analysis spreads the cost of resizing across multiple insertions\n// - Use vector for dynamic array implementation\n// - Avoid unnecessary copies by using move semantics\n// - Be mindful of iterator invalidation during resize\n",
+    "walkthrough": "The `DynamicArray` class implements a dynamic array with an amortized O(1) insertion time. The constructor initializes the array with a capacity of 1. The `insert` method checks if the array is full. If so, it doubles the capacity and copies all elements to a new array using move semantics to avoid unnecessary copying. This ensures that each insertion operation (including potential resizes) has an average cost of O(1).",
+    "dry_run": "Line 10: data = {10}, capacity = 2, meaning the array is initialized with one element and a capacity of 2.\nLine 15: data = {10, 20}, capacity = 2, meaning the second element is inserted without resizing.\nLine 20: data = {10, 20, 30}, capacity = 4, meaning the third element is inserted and triggers a resize, doubling the capacity and copying elements.",
+    "template_type": "class",
+    "complexity_note": "Time: O(n) for n insertions (amortized O(1) per insertion)\nSpace: O(n)",
+    "usage_example": "// DynamicArray arr;\n// arr.insert(10);\n// arr.insert(20);\n// arr.insert(30);\n// // arr now contains [10, 20, 30]\n",
+    "cpp_notes": [
+      "Subtle implementation detail: Using `move` semantics during resize to avoid unnecessary copying.",
+      "When to swap to a different variant: This implementation is efficient for dynamic arrays with frequent insertions. For other operations, different data structures might be more appropriate.",
+      "Common TLE causes: Ensure that the capacity doubling logic is efficient and does not cause excessive reallocations.",
+      "Memory layout tips: Use contiguous memory for efficient access and resizing.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and ensure iterators remain valid during operations."
+    ],
+    "generated_at": "2026-03-24T05:35:47.821587+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 74,
+    "slug": "convex-hull",
+    "title": "Convex Hull",
+    "category": "Geometry",
+    "tags": [
+      "geometry",
+      "convex-hull",
+      "graham-scan"
+    ],
+    "prereqs": [
+      "geometry-basics",
+      "sorting"
+    ],
+    "leads_to": [
+      "rotating-calipers",
+      "convex-hull-trick",
+      "half-plane"
+    ],
+    "description": "The convex hull of a set of points is the smallest convex polygon that contains all the points. It is widely used in computational geometry for tasks such as shape analysis, collision detection, and geographic information systems.",
+    "explanation": "The Graham Scan algorithm constructs the convex hull by first sorting the points based on their polar angle with respect to an arbitrary point (typically the lowest y-coordinate). The algorithm then iteratively builds the lower and upper parts of the hull. For each new point, it checks whether turning from the previous two points makes a left turn; if not, the middle point is removed. This process continues until all points are processed, resulting in a convex polygon.",
+    "proof": "1) The algorithm maintains an invariant that the current set of points forms a convex chain. 2) After sorting by polar angle, each new point is added to either the lower or upper hull. 3) For each addition, the algorithm ensures that consecutive triplets make left turns, maintaining convexity. 4) By induction, all intermediate steps preserve convexity, leading to the final convex hull.",
+    "worked_example": "Consider points A(0,0), B(1,0), C(2,1), D(3,0). After sorting by x-coordinate: A, B, C, D. Lower hull starts with A and B; adding C makes a left turn. Upper hull then adds D, ensuring all turns are left.",
+    "time_complexity": "$O(n \\log n)$ due to the initial sorting step. The convex hull construction using stacks runs in linear time after sorting.",
+    "space_complexity": "$O(n)$ for storing points and intermediate structures. No additional space beyond input.",
+    "variants": [
+      "Andrew's Monotone Chain: Does not require explicit angle calculations, handles colinear points by including them only once in the hull."
+    ],
+    "pitfalls": [
+      "Colinear points may cause incorrect inclusion/exclusion if not handled properly; ensure correct handling of right turns during stack operations. Another pitfall is sorting based on x-coordinate alone without considering y-coordinate for tie-breaking, which can lead to incorrect hull construction.",
+      "Sorting must be done correctly by polar angle and then x-coordinate to avoid issues in the lower and upper hull construction."
+    ],
+    "when_to_use": "When computing the minimal enclosing convex polygon of a set of points. Common in problems involving shape analysis, collision detection, or geographic data where convexity is beneficial.",
+    "key_insight": "Sorting by polar angle allows incremental construction of the convex hull using left turn checks with stacks to maintain convexity.",
+    "cpp": "// --- Time Complexity: O(n log n) due to sorting\n// --- Space Complexity: O(n) for storing the hull points\n\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\nstruct Point {\n    long long x, y;\n};\n\n// Function to calculate the orientation of ordered triplet (p, q, r)\n// 0 -> p, q and r are collinear\n// 1 -> Clockwise\n// 2 -> Counterclockwise\nint orientation(Point p, Point q, Point r) {\n    long long val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);\n    if (val == 0) return 0;  // collinear\n    return (val > 0) ? 1 : 2; // clock or counterclock wise\n}\n\n// Function to compare two points based on polar angle with respect to p\nbool compare(const Point &p1, const Point &p2) {\n    int o = orientation(p1, p2, hull[0]);\n    if (o == 0)\n        return (dist(p1, hull[0]) >= dist(p2, hull[0]));\n    return (o == 2);\n}\n\n// Function to calculate the distance between two points\nlong long dist(Point p1, Point p2) {\n    return (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y);\n}\n\n// Function to find the convex hull using Graham Scan algorithm\nstd::vector<Point> convexHull(std::vector<Point> points) {\n    if (points.size() <= 3) return points;\n\n    // Find the leftmost point\n    int l = 0;\n    for (int i = 1; i < points.size(); i++)\n        if (points[i].x < points[l].x)\n            l = i;\n\n    // Place the leftmost point at the beginning of the array\n    std::swap(points[0], points[l]);\n\n    // Sort the remaining points by polar angle with respect to the first point\n    std::sort(points.begin() + 1, points.end(), compare);\n\n    // Create an empty stack and push the first three points to it\n    hull.clear();\n    hull.push_back(points[0]);\n    hull.push_back(points[1]);\n    hull.push_back(points[2]);\n\n    // Process remaining points\n    for (int i = 3; i < points.size(); i++) {\n        while (hull.size() >= 2 && orientation(hull[hull.size() - 2], hull.back(), points[i]) != 2)\n            hull.pop_back();\n        hull.push_back(points[i]);\n    }\n\n    return hull;\n}",
+    "walkthrough": "// --- build adjacency list ---\n// The code defines a Point struct and functions to calculate orientation, distance, and the convex hull using Graham Scan.\n// The orientation function determines if three points are collinear or form a clockwise or counterclockwise turn.\n// The compare function is used to sort points based on their polar angle with respect to the leftmost point.\n// The dist function calculates the squared distance between two points to avoid floating-point precision issues.\n// The convexHull function first finds the leftmost point, sorts the remaining points, and then iteratively builds the convex hull by ensuring all turns are counterclockwise.\n\n// --- Time Complexity: O(n log n) due to sorting\n// The time complexity is dominated by the sorting step, which takes O(n log n).\n\n// --- Space Complexity: O(n) for storing the hull points\n// The space complexity is O(n) as we store the input points and the resulting convex hull.",
+    "dry_run": "// Line 10: p = {0, 0}, q = {1, 0}, r = {2, 1}, orientation = 2 (counterclockwise)\n// Line 18: l = 0\n// Line 26: points[0] and points[l] swapped\n// Line 34: points sorted by polar angle with respect to {0, 0}\n// Line 42: hull initialized with {0, 0}, {1, 0}, {2, 1}\n// Line 50: i = 3, orientation of {2, 1} and {3, 0} is 2 (counterclockwise)\n// Line 54: hull remains unchanged\n// Line 58: i = 4, orientation of {2, 1} and {3, 0} is 2 (counterclockwise)\n// Line 62: hull remains unchanged",
+    "template_type": "function",
+    "complexity_note": "Time: O(n log n) — Space: O(n)",
+    "usage_example": "// Example usage\nstd::vector<Point> points = {{0, 0}, {1, 0}, {2, 1}, {3, 0}};\nstd::vector<Point> hull = convexHull(points);\nfor (const auto &p : hull) {\n    std::cout << p.x << \" \" << p.y << std::endl;\n}",
+    "cpp_notes": [
+      "The orientation function uses a determinant to determine the turn direction.",
+      "Sorting by polar angle ensures that points are processed in a way that maintains convexity.",
+      "The use of a stack (hull) allows efficient removal of points that do not contribute to the convex hull."
+    ],
+    "generated_at": "2026-03-24T05:36:59.162248+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 75,
+    "slug": "geometry-basics",
+    "title": "Geometry Basics (Points, Lines, Cross Product)",
+    "category": "Geometry",
+    "tags": [
+      "geometry",
+      "vectors",
+      "cross-product"
+    ],
+    "prereqs": [
+      "complex-numbers"
+    ],
+    "leads_to": [
+      "convex-hull",
+      "line-intersection",
+      "polygon-area",
+      "closest-pair",
+      "rotating-calipers"
+    ],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- Point structure ---\nstruct Point {\n    long long x, y;\n    Point(long long x = 0, long long y = 0) : x(x), y(y) {}\n};\n\n// --- Cross product of two vectors ---\nlong long crossProduct(const Point& a, const Point& b) {\n    return a.x * b.y - a.y * b.x;\n}\n\n// --- Distance between two points ---\nlong long distance(const Point& a, const Point& b) {\n    return abs(a.x - b.x) + abs(a.y - b.y);\n}\n\n// --- Check if point is on the left of the line defined by two points ---\nbool isLeft(const Point& p, const Point& q, const Point& r) {\n    return crossProduct(q - p, r - p) > 0;\n}\n\n// --- Check if point is on the right of the line defined by two points ---\nbool isRight(const Point& p, const Point& q, const Point& r) {\n    return crossProduct(q - p, r - p) < 0;\n}\n\n// --- Check if point is collinear with the line defined by two points ---\nbool isCollinear(const Point& p, const Point& q, const Point& r) {\n    return crossProduct(q - p, r - p) == 0;\n}\n\n// --- Minimal usage example ---\n// Point p1(1, 2), p2(3, 4), p3(5, 6);\n// bool left = isLeft(p1, p2, p3); // true if p3 is on the left of line p1-p2\n// long long dist = distance(p1, p2); // distance between p1 and p2",
+    "walkthrough": "The code defines a `Point` structure to represent points in a 2D plane. It includes functions to calculate the cross product of two vectors, the distance between two points, and checks if a point is on the left, right, or collinear with a line defined by two other points. Each function is explained inline with comments.",
+    "dry_run": "Line 10: p1 = (1, 2), p2 = (3, 4), p3 = (5, 6)\nLine 11: crossProduct(q - p, r - p) = crossProduct((3-1, 4-2), (5-1, 6-2)) = crossProduct((2, 2), (4, 4)) = 2*4 - 2*4 = 0\nLine 12: isLeft(p1, p2, p3) = true because the cross product is positive",
+    "template_type": "function",
+    "complexity_note": "Time: O(1) — Space: O(1)",
+    "usage_example": "// Point p1(1, 2), p2(3, 4), p3(5, 6);\n// bool left = isLeft(p1, p2, p3); // true if p3 is on the left of line p1-p2\n// long long dist = distance(p1, p2); // distance between p1 and p2",
+    "cpp_notes": [
+      "The cross product is used to determine the relative orientation of two vectors.",
+      "The distance function uses Manhattan distance for simplicity.",
+      "Cross product can be negative, zero, or positive to indicate left, collinear, or right orientation."
+    ],
+    "generated_at": "2026-03-24T05:39:40.053159+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 76,
+    "slug": "line-intersection",
+    "title": "Line Intersection & Sweep Line",
+    "category": "Geometry",
+    "tags": [
+      "geometry",
+      "sweep-line",
+      "intersection"
+    ],
+    "prereqs": [
+      "geometry-basics",
+      "sorting"
+    ],
+    "leads_to": [
+      "closest-pair",
+      "voronoi"
+    ],
+    "description": "The sweep line algorithm is a computational geometry technique used to determine all intersection points among a set of lines. It works by processing lines in sorted order, maintaining an active set of lines that could potentially intersect with the current line being processed. This method efficiently reduces the problem from O(n²) complexity to O(n log n), making it suitable for large datasets where n is up to 10^4 or more.",
+    "explanation": "The naive approach involves checking every pair of lines, resulting in a time complexity of O(n²). However, this becomes impractical for large n. The sweep line algorithm improves efficiency by first sorting all lines based on their x-coordinates. As the sweep line moves from left to right, it processes each line and checks only against adjacent lines in the sorted list for intersections. This leverages the fact that any intersection must occur between consecutive lines after sorting. By maintaining an active set of lines intersected so far, the algorithm efficiently detects new intersections as the sweep line progresses.",
+    "proof": "1) The invariant is that after processing each line, all potential intersections with subsequent lines are accounted for in the active set. 2) Base case: For the first line, there are no intersections. 3) Inductive step: Assume up to line i, all intersections involving line i have been recorded. When processing line i+1, any intersection must involve this line due to sorting by x-coordinates and checking only adjacent lines. Thus, adding line i+1 and checking against the active set captures all new intersections.",
+    "worked_example": "Consider four lines: L1 (y = x), L2 (y = -x + 4), L3 (y = 2x - 2), and L4 (y = x + 1). After sorting by x-intercept, the order is L1, L3, L4, L2. The sweep line processes each in this order: adding L1 to the active set. Then adds L3, checking for intersections with L1—no intersection since they are not parallel and do not cross within their segments. Next, adds L4, checking against L1 (no intersection) and L3 (no intersection). Finally, adds L2, checking against all lines in the active set: intersects with L1 at (2, 2), and with L3 at (1, -1). Thus, two intersections are found.",
+    "time_complexity": "$O(n \\log n)$; The algorithm sorts the lines, which takes $O(n \\log n)$ time. Each line is inserted into and removed from a balanced binary search tree or similar structure, each operation taking $O(\\log k)$ time where k is the number of active lines. Since each line is processed twice (once for insertion and once for removal), the total complexity is $2n \times O(\\log n) = O(n \\log n)$.",
+    "space_complexity": "$O(n)$; The algorithm uses an active set to store all previously added lines that could intersect with the current line. In the worst case, this requires storing all n lines, leading to a space complexity of $O(n)$.",
+    "variants": [
+      "Handling horizontal lines by treating them as vertical and adjusting intersection checks",
+      "Using a sorted list instead of a balanced BST for active set operations"
+    ],
+    "pitfalls": [
+      "Off-by-one errors in sorting indices can lead to missed intersections or incorrect processing order",
+      "Integer overflow during calculations, though less likely in C++ with 64-bit integers",
+      "Failing to handle edge cases where lines are parallel or coincident"
+    ],
+    "when_to_use": "When the problem requires finding all intersection points among a set of lines and n is up to around $10^4$; it's particularly useful for problems involving polygon edges, line segment intersections, or computing geometric arrangements.",
+    "key_insight": "By sorting the lines based on their x-coordinates and checking only adjacent lines after sorting, the sweep line algorithm efficiently reduces the problem of finding all intersections from O(n²) to O(n log n).",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::pair<long long, long long>> lines;\nfor (const auto& line : input_lines) {\n    lines.emplace_back(line.x1, line.y1);\n    lines.emplace_back(line.x2, line.y2);\n}\nsort(lines.begin(), lines.end());\n\n// --- sweep line algorithm ---\nstd::set<long long> active_lines;\nstd::vector<std::pair<long long, long long>> intersections;\nfor (const auto& line : lines) {\n    // Remove lines that are no longer in the sweep line's range\n    while (!active_lines.empty() && active_lines.begin()->second < line.first) {\n        active_lines.erase(active_lines.begin());\n    }\n    // Check for intersections with active lines\n    for (auto it = active_lines.lower_bound(line.first); it != active_lines.end(); ++it) {\n        long long x = line.first;\n        long long y1 = (*it).first;\n        long long y2 = (*std::next(it, -1)).first;\n        if (y1 != y2) {\n            intersections.emplace_back(x, (y1 * x - y2 * x) / (y1 - y2));\n        }\n    }\n    // Add the current line to the active set\n    active_lines.insert({line.second, line.first});\n}\n\n// --- output results ---\nfor (const auto& intersection : intersections) {\n    std::cout << intersection.first << \" \" << intersection.second << std::endl;\n}",
+    "walkthrough": "The code first builds an adjacency list of all line endpoints and sorts them by x-coordinate. It then iterates through the sorted lines, maintaining an active set of lines that could intersect with the current line. For each line, it removes lines from the active set that are no longer in the sweep line's range, checks for intersections with the remaining active lines, and adds the current line to the active set. Finally, it outputs all found intersections.",
+    "dry_run": "Line 10: lines = [(0, 0), (4, 0), (0, 2), (2, 2), (2, 3), (4, 3)], meaning ... Line 11: sorted lines = [(0, 0), (0, 2), (2, 2), (2, 3), (4, 0), (4, 3)], meaning ... Line 15: active_lines = [(0, 0)], intersections = [], meaning ... Line 16: active_lines = [(0, 0), (0, 2)], intersections = [], meaning ... Line 17: active_lines = [(0, 0), (0, 2), (2, 2)], intersections = [(2, 2)], meaning ... Line 18: active_lines = [(0, 0), (0, 2), (2, 2), (2, 3)], intersections = [(2, 2)], meaning ... Line 19: active_lines = [(0, 0), (0, 2), (2, 2), (2, 3), (4, 0)], intersections = [(2, 2), (1, -1)], meaning ...",
+    "template_type": "function",
+    "complexity_note": "Time: O(n log n) — Space: O(n)",
+    "usage_example": "// Read input lines\nstd::vector<Line> input_lines;\nfor (int i = 0; i < n; ++i) {\n    long long x1, y1, x2, y2;\n    std::cin >> x1 >> y1 >> x2 >> y2;\n    input_lines.emplace_back(x1, y1, x2, y2);\n}\n\n// Find intersections\nstd::vector<std::pair<long long, long long>> intersections = findIntersections(input_lines);\n\n// Output results\nfor (const auto& intersection : intersections) {\n    std::cout << intersection.first << \" \" << intersection.second << std::endl;\n}",
+    "cpp_notes": [
+      "Subtle implementation detail: The use of a set to maintain the active lines ensures that we can efficiently check for intersections and remove lines that are no longer in the sweep line's range.",
+      "When to swap to a different variant: This implementation assumes that the input lines are sorted by x-coordinate. If the lines are not sorted, you would need to sort them first.",
+      "Common TLE causes: Ensure that the input/output operations are efficient and that the algorithm does not have any unnecessary computations.",
+      "Memory layout tips: Use `long long` instead of `int` to avoid overflow issues with large coordinates.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and ensure that iterators are not invalidated during the algorithm."
+    ],
+    "generated_at": "2026-03-24T05:40:57.166493+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 77,
+    "slug": "point-in-polygon",
+    "title": "Point in Polygon",
+    "category": "Geometry",
+    "tags": [
+      "geometry",
+      "polygon",
+      "ray-casting"
+    ],
+    "prereqs": [
+      "polygon-area"
+    ],
+    "leads_to": [],
+    "description": "Determines whether a given point lies inside, outside, or on the boundary of a polygon.",
+    "explanation": "The ray-casting algorithm works by drawing an imaginary horizontal ray from the query point and counting how many times this ray intersects with the edges of the polygon. If the number of intersections is odd, the point is inside; if even, it's outside. This method efficiently handles all edge cases except when the point lies exactly on a polygon edge.",
+    "proof": "1) The algorithm relies on the invariant that each horizontal ray from an interior point crosses the polygon boundary an odd number of times (entering or exiting). For exterior points, this count is even. 2) When the point is on the boundary, it may be considered inside depending on the implementation's definition. 3) The parity change ensures accurate classification.",
+    "worked_example": "Consider a square with vertices at $(0,0)$, $(2,0)$, $(2,2)$, and $(0,2)$. Testing point $(1,1)$: Drawing a horizontal ray to the right from $(1,1)$ intersects each edge once. The total intersections are 4 (even), so the point is inside.",
+    "time_complexity": "$O(n)$",
+    "space_complexity": "",
+    "variants": [
+      "Winding Number Method: Counts polygon winding around the point for more accurate results.",
+      "Even-Odd Rule: Similar to ray-casting but handles complex polygons better."
+    ],
+    "pitfalls": [
+      "Off-by-one errors in intersection counting can lead to incorrect inside/outside classification.",
+      "Integer overflow during coordinate calculations may cause bugs or incorrect comparisons.",
+      "Handling points exactly on polygon edges requires special conditions to avoid misclassification."
+    ],
+    "when_to_use": "When the problem involves determining if a point lies within, outside, or on the boundary of a polygon. Suitable for large polygons with up to $10^5$ vertices.",
+    "key_insight": "The parity (odd/even) of the number of edge intersections determines whether the point is inside or outside the polygon.",
+    "cpp": "// --- Point in Polygon ---\n\n// Time: O(n) — Space: O(1)\n\n#include <vector>\n#include <utility>\n\nstruct Point {\n    double x, y;\n};\n\nbool isPointInPolygon(const std::vector<Point>& polygon, const Point& point) {\n    int n = polygon.size();\n    if (n < 3) return false; // A polygon must have at least 3 vertices\n\n    bool inside = false;\n    for (int i = 0, j = n - 1; i < n; j = i++) {\n        const Point& pi = polygon[i];\n        const Point& pj = polygon[j];\n        if ((pi.y > point.y) != (pj.y > point.y) &&\n            (point.x < (pj.x - pi.x) * (point.y - pi.y) / (pj.y - pi.y) + pi.x)) {\n            inside = !inside;\n        }\n    }\n    return inside;\n}",
+    "walkthrough": "// --- Point in Polygon ---\n\n// Time: O(n) — Space: O(1)\n\n#include <vector>\n#include <utility>\n\nstruct Point {\n    double x, y;\n};\n\nbool isPointInPolygon(const std::vector<Point>& polygon, const Point& point) {\n    int n = polygon.size();\n    if (n < 3) return false; // A polygon must have at least 3 vertices\n\n    bool inside = false;\n    for (int i = 0, j = n - 1; i < n; j = i++) {\n        const Point& pi = polygon[i];\n        const Point& pj = polygon[j];\n        if ((pi.y > point.y) != (pj.y > point.y) &&\n            (point.x < (pj.x - pi.x) * (point.y - pi.y) / (pj.y - pi.y) + pi.x)) {\n            inside = !inside;\n        }\n    }\n    return inside;\n}",
+    "dry_run": "// --- Point in Polygon ---\n\n// Time: O(n) — Space: O(1)\n\n#include <vector>\n#include <utility>\n\nstruct Point {\n    double x, y;\n};\n\nbool isPointInPolygon(const std::vector<Point>& polygon, const Point& point) {\n    int n = polygon.size();\n    if (n < 3) return false; // A polygon must have at least 3 vertices\n\n    bool inside = false;\n    for (int i = 0, j = n - 1; i < n; j = i++) {\n        const Point& pi = polygon[i];\n        const Point& pj = polygon[j];\n        if ((pi.y > point.y) != (pj.y > point.y) &&\n            (point.x < (pj.x - pi.x) * (point.y - pi.y) / (pj.y - pi.y) + pi.x)) {\n            inside = !inside;\n        }\n    }\n    return inside;\n}",
+    "template_type": "function",
+    "complexity_note": "Time: O(n) — Space: O(1)",
+    "usage_example": "// --- Point in Polygon ---\n\n// Time: O(n) — Space: O(1)\n\n#include <vector>\n#include <utility>\n\nstruct Point {\n    double x, y;\n};\n\nbool isPointInPolygon(const std::vector<Point>& polygon, const Point& point) {\n    int n = polygon.size();\n    if (n < 3) return false; // A polygon must have at least 3 vertices\n\n    bool inside = false;\n    for (int i = 0, j = n - 1; i < n; j = i++) {\n        const Point& pi = polygon[i];\n        const Point& pj = polygon[j];\n        if ((pi.y > point.y) != (pj.y > point.y) &&\n            (point.x < (pj.x - pi.x) * (point.y - pi.y) / (pj.y - pi.y) + pi.x)) {\n            inside = !inside;\n        }\n    }\n    return inside;\n}",
+    "cpp_notes": [
+      "This implementation uses the ray-casting algorithm to determine if a point is inside a polygon.",
+      "The algorithm iterates over each edge of the polygon and checks if the point intersects with it.",
+      "If the number of intersections is odd, the point is inside; if even, it's outside."
+    ],
+    "generated_at": "2026-03-24T05:41:57.686362+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 78,
+    "slug": "0-1-bfs",
+    "title": "0-1 BFS",
+    "category": "Graph Traversal",
+    "tags": [
+      "0-1-bfs",
+      "deque",
+      "shortest-path"
+    ],
+    "prereqs": [
+      "bfs",
+      "dijkstra"
+    ],
+    "leads_to": [
+      "dial-algorithm"
+    ],
+    "description": "0-1 BFS is an optimized version of Breadth-First Search (BFS) designed for graphs where all edge weights are either 0 or 1. It efficiently finds the shortest path in terms of the sum of edge weights, offering a linear time complexity compared to Dijkstra's algorithm which uses a priority queue.",
+    "explanation": "The algorithm works by maintaining a deque (double-ended queue) to process nodes with 0-weight edges before those with 1-weight edges. This ensures that nodes are processed in the order of their shortest path distances, allowing for an optimal solution without the overhead of a priority queue. For example, consider a graph where moving east is free (weight 0) but moving north or south costs 1. The deque prioritizes processing east moves first, ensuring efficient exploration of paths.",
+    "proof": "The correctness of 0-1 BFS relies on the fact that all edges have weights 0 or 1. We maintain a distance array where each node's shortest path is known when it is removed from the front of the deque. Suppose there exists another path to a node with a higher total weight; since this path includes at least one edge with weight 1, its distance would already be accounted for by processing nodes in order of their weights.",
+    "worked_example": "Consider a graph where each horizontal edge has weight 0 and vertical edges have weight 1. Starting from node A, the deque processes all horizontally connected nodes first before moving to vertically connected ones. This ensures that reaching any node via horizontal moves is done with minimal steps, followed by those requiring one vertical move.",
+    "time_complexity": "$O(V + E)$",
+    "space_complexity": "$O(V + E)$",
+    "variants": [
+      "Handling multiple weight types requires a priority queue instead of deque for efficiency."
+    ],
+    "pitfalls": [
+      "Forgetting to process all 0-weight edges before 1-weight edges can lead to incorrect shortest paths.",
+      "Integer overflow issues arise when dealing with large weights, necessitating careful data type selection.",
+      "Misapplying this algorithm to graphs with negative weight edges is not allowed as it relies on non-negative edge properties."
+    ],
+    "when_to_use": "Use 0-1 BFS for finding shortest paths in unweighted or unit-weighted graphs where efficiency is crucial. It's particularly useful when the graph has a large number of nodes and edges, as its linear time complexity outperforms Dijkstra's algorithm which uses logarithmic operations.",
+    "key_insight": "The key insight is that by processing nodes with 0-weight edges before those with 1-weight edges, we can efficiently find the shortest path in terms of sum of weights without using a priority queue.",
+    "cpp": "// --- Time: O(V + E) where V is the number of vertices and E is the number of edges\n// --- Space: O(V)\n\n#include <vector>\n#include <deque>\n#include <limits>\n\nusing namespace std;\ntypedef long long ll;\n\nclass Graph {\npublic:\n    int n; // Number of vertices\n    vector<vector<pair<int, int>>> adj; // Adjacency list with weights\n\n    Graph(int n) : n(n), adj(n) {}\n\n    void addEdge(int u, int v, int w) {\n        adj[u].emplace_back(v, w);\n        adj[v].emplace_back(u, w); // For undirected graph\n    }\n\n    vector<ll> bfs01(int start) {\n        vector<ll> dist(n, numeric_limits<ll>::max());\n        deque<int> q;\n        dist[start] = 0;\n        q.push_front(start);\n\n        while (!q.empty()) {\n            int u = q.front();\n            q.pop_front();\n\n            for (auto [v, w] : adj[u]) {\n                if (dist[u] + w < dist[v]) {\n                    dist[v] = dist[u] + w;\n                    if (w == 0) {\n                        q.push_front(v);\n                    } else {\n                        q.push_back(v);\n                    }\n                }\n            }\n        }\n\n        return dist;\n    }\n};\n\n// Usage example:\n// int main() {\n//     Graph g(4);\n//     g.addEdge(0, 1, 0);\n//     g.addEdge(0, 2, 1);\n//     g.addEdge(1, 3, 0);\n//     g.addEdge(2, 3, 1);\n//     vector<ll> dist = g.bfs01(0);\n//     for (int i = 0; i < dist.size(); ++i) {\n//         cout << dist[i] << \" \";\n//     }\n//     return 0;\n// }",
+    "walkthrough": "// --- build adjacency list ---\n// The Graph class is initialized with the number of vertices and an empty adjacency list.\n// Each edge is added to both the source and destination nodes for an undirected graph.\n\n// --- bfs01 function ---\n// This function performs the 0-1 BFS starting from a given node.\n// A deque is used to process nodes with 0-weight edges before those with 1-weight edges.\n// The distance array is initialized with infinity, except for the start node which is set to 0.\n// Nodes are processed in order of their shortest path distances, ensuring an optimal solution.\n\n// --- updating distances and deque ---\n// For each neighbor of the current node, if a shorter path is found, the distance is updated,\n// and the neighbor is added to the front or back of the deque based on the edge weight.\n// Nodes with 0-weight edges are processed first to ensure minimal steps are taken first.",
+    "dry_run": "// Line 15: dist = [0, inf, inf, inf], q = [0]\n// Line 24: u = 0, q = []\n// Line 30: v = 1, w = 0, dist = [0, 0, inf, inf], q = [1]\n// Line 24: u = 1, q = []\n// Line 30: v = 3, w = 0, dist = [0, 0, inf, 0], q = [3]\n// Line 24: u = 3, q = []\n// Line 30: v = 2, w = 1, dist = [0, 0, 1, 0], q = [2]\n// Line 24: u = 2, q = []\n// Line 30: v = 3, w = 1, dist = [0, 0, 1, 1], q = []",
+    "template_type": "class",
+    "complexity_note": "Time: O(V + E) — Space: O(V)",
+    "usage_example": "// int main() {\n//     Graph g(4);\n//     g.addEdge(0, 1, 0);\n//     g.addEdge(0, 2, 1);\n//     g.addEdge(1, 3, 0);\n//     g.addEdge(2, 3, 1);\n//     vector<ll> dist = g.bfs01(0);\n//     for (int i = 0; i < dist.size(); ++i) {\n//         cout << dist[i] << \" \";\n//     }\n//     return 0;\n// }",
+    "cpp_notes": [
+      "The use of a deque allows efficient processing of nodes with 0-weight edges first.",
+      "For undirected graphs, edges are added to both the source and destination nodes.",
+      "Common TLE causes include large input sizes or inefficient data structures."
+    ],
+    "generated_at": "2026-03-24T05:43:07.079987+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 79,
+    "slug": "2-edge-connected",
+    "title": "2-Edge-Connected Components",
+    "category": "Graph Traversal",
+    "tags": [
+      "2ecc",
+      "bridges",
+      "connectivity"
+    ],
+    "prereqs": [
+      "bridges-articulation"
+    ],
+    "leads_to": [
+      "bridge-tree"
+    ],
+    "description": "The 2-Edge-Connected Components (2-ECC) of a graph are subgraphs where there exist at least two distinct paths between any pair of nodes, ensuring that the removal of any single edge does not disconnect the subgraph. This concept is crucial for identifying bridge edges and analyzing the robustness of connectivity in a graph.",
+    "explanation": "The problem solved by 2-ECC is determining which edges are bridges (edges whose removal increases the number of connected components) and decomposing the graph into its biconnected components, where each component has no bridge edges. The naive approach involves performing a DFS for every edge to check if it's a bridge, resulting in an O(n * m) time complexity, which is too slow for large graphs (n <= 1e5). The key insight is that all bridges can be found efficiently using Tarjan's algorithm, and then the graph can be decomposed into biconnected components by excluding these bridges. This approach reduces the problem to finding bridge edges in linear time (O(n + m)) and then processing each node once during component decomposition, resulting in an overall O(n + m) time complexity.",
+    "proof": "1) The algorithm first finds all bridge edges using Tarjan's algorithm in linear time. 2) After identifying the bridges, a modified DFS is performed to decompose the graph into biconnected components by excluding bridge edges. 3) Each node and edge is processed exactly once during this decomposition, ensuring correctness. 4) The result is that each node belongs to exactly one 2-edge-connected component.",
+    "worked_example": "Consider a graph with nodes [1, 2, 3, 4] and edges [(1-2), (2-3), (3-4), (4-1)]. Step 1: Identify bridge edges. In this case, all edges are part of a cycle, so there are no bridge edges. Step 2: Decompose the graph into biconnected components. The entire graph forms one 2-edge-connected component.",
+    "time_complexity": "$O(n + m)$ where n is the number of nodes and m is the number of edges. This complexity arises from finding all bridge edges in linear time followed by decomposing the graph into biconnected components, which also takes linear time.",
+    "space_complexity": "$O(m)$ for storing the adjacency list representation of the graph. Additional space is used for discovery times and component IDs, but this remains manageable within typical constraints.",
+    "variants": [
+      "Tarjan's algorithm can be implemented using Union-Find data structure to detect bridges in O(n + m) time.",
+      "BFS-based approaches can also be used to find 2-edge-connected components by iteratively removing bridge edges and identifying connected components without them."
+    ],
+    "pitfalls": [
+      "Off-by-one errors when counting the number of biconnected components due to miscounting bridge edges.",
+      "Integer overflow in variables tracking discovery times or component IDs for large graphs (n > 1e9).",
+      "Forgetting that multiple bridge edges can exist and their removal affects the decomposition order."
+    ],
+    "when_to_use": "When dealing with large graphs (n <= 1e5) where bridge detection is required, such as in network reliability analysis or finding robust connectivity beyond bridges. The problem may involve queries about edge connectivity or determining if a graph remains connected after removing certain edges.",
+    "key_insight": "The key insight is that all bridge edges can be found efficiently using linear-time algorithms like Tarjan's, and the remaining graph (without bridges) consists of biconnected components which are maximally 2-edge-connected.",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> build_adjacency_list(int n, const std::vector<std::pair<int, int>>& edges) {\n    std::vector<std::vector<int>> adj(n + 1);\n    for (const auto& [u, v] : edges) {\n        adj[u].push_back(v);\n        adj[v].push_back(u);\n    }\n    return adj;\n}\n\n// --- Tarjan's algorithm to find bridges ---\nvoid tarjan(int u, int p, std::vector<int>& disc, std::vector<int>& low, std::vector<bool>& in_stack, std::stack<int>& st, std::vector<std::pair<int, int>>& bridges) {\n    static int time = 0;\n    disc[u] = low[u] = ++time;\n    in_stack[u] = true;\n    st.push(u);\n\n    for (int v : adj[u]) {\n        if (v == p) continue; // Skip parent edge\n        if (!disc[v]) {\n            tarjan(v, u, disc, low, in_stack, st, bridges);\n            low[u] = std::min(low[u], low[v]);\n            if (low[v] > disc[u]) {\n                bridges.push_back({u, v}); // (u, v) is a bridge\n            }\n        } else if (in_stack[v]) {\n            low[u] = std::min(low[u], disc[v]);\n        }\n    }\n\n    if (disc[u] == low[u]) {\n        while (st.top() != u) {\n            int v = st.top(); st.pop();\n            in_stack[v] = false;\n        }\n        st.pop();\n        in_stack[u] = false;\n    }\n}\n\n// --- 2-Edge-Connected Components ---\nstd::vector<std::vector<int>> two_edge_connected_components(int n, const std::vector<std::pair<int, int>>& edges) {\n    std::vector<std::vector<int>> adj = build_adjacency_list(n, edges);\n    std::vector<int> disc(n + 1, 0), low(n + 1, 0);\n    std::vector<bool> in_stack(n + 1, false);\n    std::stack<int> st;\n    std::vector<std::pair<int, int>> bridges;\n\n    for (int i = 1; i <= n; ++i) {\n        if (!disc[i]) {\n            tarjan(i, -1, disc, low, in_stack, st, bridges);\n        }\n    }\n\n    // Remove bridges from the graph\n    std::vector<std::vector<int>> new_adj(n + 1);\n    for (int i = 1; i <= n; ++i) {\n        for (int v : adj[i]) {\n            if (std::find(bridges.begin(), bridges.end(), std::make_pair(i, v)) == bridges.end()) {\n                new_adj[i].push_back(v);\n                new_adj[v].push_back(i);\n            }\n        }\n    }\n\n    // Find biconnected components\n    std::vector<std::vector<int>> bcc;\n    std::vector<bool> visited(n + 1, false);\n\n    for (int i = 1; i <= n; ++i) {\n        if (!visited[i]) {\n            std::vector<int> component;\n            dfs(i, -1, new_adj, visited, component);\n            bcc.push_back(component);\n        }\n    }\n\n    return bcc;\n}\n\n// --- DFS for finding biconnected components ---\nvoid dfs(int u, int p, const std::vector<std::vector<int>>& adj, std::vector<bool>& visited, std::vector<int>& component) {\n    visited[u] = true;\n    component.push_back(u);\n\n    for (int v : adj[u]) {\n        if (v == p) continue; // Skip parent edge\n        if (!visited[v]) {\n            dfs(v, u, adj, visited, component);\n        }\n    }\n}\n\n// --- usage example ---\n// int main() {\n//     int n = 4;\n//     std::vector<std::pair<int, int>> edges = {{1, 2}, {2, 3}, {3, 4}, {4, 1}};\n//     auto bcc = two_edge_connected_components(n, edges);\n//     for (const auto& comp : bcc) {\n//         for (int v : comp) {\n//             std::cout << v << \" \";\n//         }\n//         std::cout << std::endl;\n//     }\n//     return 0;\n// }",
+    "walkthrough": "1. **Build Adjacency List**: Converts the edge list into an adjacency list for easier traversal.\n2. **Tarjan's Algorithm**: Identifies bridges in linear time by maintaining discovery and low-link values for each node.\n3. **Remove Bridges**: Constructs a new adjacency list excluding identified bridges.\n4. **DFS for BCCs**: Finds biconnected components in the modified graph using DFS.",
+    "dry_run": "Line 10: adj = [[], [2, 4], [1, 3], [2, 4], [1, 3]], meaning the adjacency list is built.\nLine 25: disc = [0, 1, 0, 0, 0], low = [0, 1, 0, 0, 0], meaning discovery and low-link values are initialized.\nLine 40: bridges = [], meaning no bridges are found initially.\nLine 65: new_adj = [[], [2, 4], [1, 3], [2, 4], [1, 3]], meaning the graph without bridges is constructed.\nLine 80: bcc = [[1, 2, 3, 4]], meaning the entire graph forms one biconnected component.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n + m) — Space: O(n + m)",
+    "usage_example": "// int main() {\n//     int n = 4;\n//     std::vector<std::pair<int, int>> edges = {{1, 2}, {2, 3}, {3, 4}, {4, 1}};\n//     auto bcc = two_edge_connected_components(n, edges);\n//     for (const auto& comp : bcc) {\n//         for (int v : comp) {\n//             std::cout << v << \" \";\n//         }\n//         std::cout << std::endl;\n//     }\n//     return 0;\n// }",
+    "cpp_notes": [
+      "Subtle implementation details: Tarjan's algorithm uses recursion and stack to manage nodes.",
+      "When to swap to a different variant: Not applicable for this problem.",
+      "Common TLE causes: Ensure efficient data structures and avoid unnecessary computations.",
+      "Memory layout tips: Use contiguous memory for vectors to improve cache locality.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and iterator invalidation."
+    ],
+    "generated_at": "2026-03-24T07:20:21.193159+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 80,
+    "slug": "biconnected-components",
+    "title": "Biconnected Components",
+    "category": "Graph Traversal",
+    "tags": [
+      "bcc",
+      "bridge-tree"
+    ],
+    "prereqs": [
+      "bridges-articulation"
+    ],
+    "leads_to": [
+      "bridge-tree"
+    ],
+    "description": "Biconnected components (BCCs) are maximal subgraphs of a graph where there are at least two distinct paths between any pair of nodes. These components form the building blocks for understanding the 2-node-connected parts of a graph, which are resilient to node failures. BCCs are fundamental in identifying articulation points and bridges, enabling efficient solutions to problems involving graph connectivity.",
+    "explanation": "Biconnected components solve the problem of decomposing a graph into subgraphs that cannot be disconnected by removing a single node. While connected components focus on maximal sets of nodes connected without considering articulation points, BCCs provide a more refined view by ensuring each component is maximally 2-node-connected (i.e., no articulation points exist within the component). The key insight is to use depth-first search (DFS) to track discovery times and low values for each node. When a back edge is found that does not decrease the low value of the ancestor beyond its discovery time, it indicates the start of a new biconnected component. Tarjan's algorithm efficiently computes these components in linear time by maintaining discovery times and low values for each node during DFS traversal.",
+    "proof": "1) The invariant is that for each node \\( u \\), the low value \\( \text{low}[u] \\) represents the smallest discovery time reachable from \\( u \\) without going through its parent. 2) During DFS, when a node \\( u \\) is processed after all its children are finished, if \\( \text{low}[v] = \text{disc}[u] \\), then the subtree rooted at \\( v \\) forms a biconnected component with \\( u \\). 3) This process ensures that each biconnected component is identified correctly as nodes and edges are processed in linear time. The correctness follows from the properties of DFS trees and low values, ensuring all articulation points are detected.",
+    "worked_example": "Consider a graph with nodes \\( A, B, C, D \\) and edges \\( (A,B), (B,C), (C,D), (D,A), (B,D) \\). The algorithm processes the graph as follows: 1. Start DFS at node \\( A \\), marking discovery times \\( \text{disc}[A] = 1 \\). 2. Visit \\( B \\), mark \\( \text{disc}[B] = 2 \\), and process its children. 3. Process edge \\( (B,D) \\), which is a back edge since \\( D \\)'s discovery time is less than \\( B \\)'s low value. This indicates that nodes \\( A, B, C, D \\) form a single biconnected component. The algorithm then traces back to node \\( A \\) and processes the remaining edges. In this case, all nodes are part of one biconnected component since there are no articulation points.",
+    "time_complexity": "The time complexity is \\( O(V + E) \\), where \\( V \\) is the number of vertices and \\( E \\) is the number of edges. This is because Tarjan's algorithm processes each vertex and edge exactly once during the DFS traversal, maintaining discovery times and low values for efficient computation.",
+    "space_complexity": "The space complexity is \\( O(V + E) \\), as it requires storing adjacency lists for all vertices and their incident edges. Additional space is used to store discovery times, low values, and parent pointers for each node during the DFS traversal.",
+    "variants": [
+      "Efficient implementation using iterative DFS to avoid recursion stack overflow in large graphs",
+      "Optimized version that precomputes biconnected components incrementally as edges are added"
+    ],
+    "pitfalls": [
+      "Off-by-one errors when computing discovery times and low values",
+      "Integer overflow issues when dealing with large node indices or discovery times",
+      "Incorrectly handling single-node components, which are trivially biconnected",
+      "Confusing articulation points with biconnected components in certain edge cases"
+    ],
+    "when_to_use": "This algorithm is used in problems where the robustness of graph connectivity is critical. For example, identifying bridges and articulation points for network reliability analysis, analyzing social networks' resilience to node removals, or solving infrastructure planning problems where maintaining connectivity is essential.",
+    "key_insight": "Each biconnected component can be treated as a single super-node in higher-level algorithms without introducing articulation points within the component.",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> build_adjacency_list(int n, const std::vector<std::pair<int, int>>& edges) {\n    std::vector<std::vector<int>> adj(n);\n    for (const auto& [u, v] : edges) {\n        adj[u].push_back(v);\n        adj[v].push_back(u);\n    }\n    return adj;\n}\n\n// --- Tarjan's algorithm for BCCs ---\nstd::vector<std::vector<int>> bccs(const std::vector<std::vector<int>>& adj) {\n    int time = 0;\n    std::vector<int> disc(adj.size(), -1);\n    std::vector<int> low(adj.size(), -1);\n    std::vector<bool> in_stack(adj.size(), false);\n    std::stack<int> stack;\n    std::vector<std::vector<int>> bccs;\n\n    auto dfs = [&](auto&& dfs, int u, int parent) -> void {\n        disc[u] = low[u] = time++;\n        stack.push(u);\n        in_stack[u] = true;\n\n        for (int v : adj[u]) {\n            if (v == parent) continue;\n            if (disc[v] == -1) {\n                dfs(dfs, v, u);\n                low[u] = std::min(low[u], low[v]);\n                if (low[v] >= disc[u]) {\n                    bccs.push_back({u, v});\n                    while (true) {\n                        int w = stack.top();\n                        stack.pop();\n                        in_stack[w] = false;\n                        if (w == v) break;\n                    }\n                }\n            } else if (in_stack[v]) {\n                low[u] = std::min(low[u], disc[v]);\n            }\n        }\n    };\n\n    for (int i = 0; i < adj.size(); ++i) {\n        if (disc[i] == -1) {\n            dfs(dfs, i, -1);\n        }\n    }\n\n    return bccs;\n}\n\n// --- usage example ---\n// int main() {\n//     int n = 4;\n//     std::vector<std::pair<int, int>> edges = {{0, 1}, {1, 2}, {2, 3}, {3, 0}, {1, 3}};\n//     auto adj = build_adjacency_list(n, edges);\n//     auto bccs = bccs(adj);\n//     for (const auto& bcc : bccs) {\n//         std::cout << bcc[0] << \" <-> \" << bcc[1] << std::endl;\n//     }\n//     return 0;\n// }",
+    "walkthrough": "// --- build adjacency list ---\n// This function builds an adjacency list from the given number of nodes and edges.\n\n// --- Tarjan's algorithm for BCCs ---\n// This function implements Tarjan's algorithm to find all biconnected components in a graph.\n// It uses DFS to traverse the graph, maintaining discovery times and low values for each node.\n// When a back edge is found that does not decrease the low value of the ancestor beyond its discovery time,\n// it indicates the start of a new biconnected component.\n\n// --- usage example ---\n// This example demonstrates how to use the build_adjacency_list and bccs functions to find biconnected components in a graph.",
+    "dry_run": "Line 1: adj = {{1, 3}, {0, 2, 3}, {1, 3}, {0, 1, 2}}, meaning the adjacency list is built.\nLine 14: dfs(dfs, 0, -1), meaning DFS starts at node 0 with no parent.\nLine 18: disc[0] = 0, low[0] = 0, meaning node 0 is discovered and its low value is set.\nLine 23: stack = [0], in_stack[0] = true, meaning node 0 is pushed onto the stack and marked as in the stack.\nLine 28: disc[1] = 1, low[1] = 1, meaning node 1 is discovered and its low value is set.\nLine 33: stack = [0, 1], in_stack[1] = true, meaning node 1 is pushed onto the stack and marked as in the stack.\nLine 38: disc[2] = 2, low[2] = 2, meaning node 2 is discovered and its low value is set.\nLine 43: stack = [0, 1, 2], in_stack[2] = true, meaning node 2 is pushed onto the stack and marked as in the stack.\nLine 48: disc[3] = 3, low[3] = 3, meaning node 3 is discovered and its low value is set.\nLine 53: stack = [0, 1, 2, 3], in_stack[3] = true, meaning node 3 is pushed onto the stack and marked as in the stack.\nLine 58: low[3] = 1, meaning the low value of node 3 is updated to 1.\nLine 60: bccs.push_back({0, 3}), meaning a biconnected component {0, 3} is found.\nLine 62: stack.pop(), in_stack[3] = false, meaning node 3 is popped from the stack and marked as not in the stack.\nLine 64: stack.pop(), in_stack[2] = false, meaning node 2 is popped from the stack and marked as not in the stack.\nLine 66: stack.pop(), in_stack[1] = false, meaning node 1 is popped from the stack and marked as not in the stack.\nLine 68: stack.pop(), in_stack[0] = false, meaning node 0 is popped from the stack and marked as not in the stack.",
+    "template_type": "function",
+    "complexity_note": "Time: O(V + E) — Space: O(V + E)",
+    "usage_example": "// int main() {\n//     int n = 4;\n//     std::vector<std::pair<int, int>> edges = {{0, 1}, {1, 2}, {2, 3}, {3, 0}, {1, 3}};\n//     auto adj = build_adjacency_list(n, edges);\n//     auto bccs = bccs(adj);\n//     for (const auto& bcc : bccs) {\n//         std::cout << bcc[0] << \" <-> \" << bcc[1] << std::endl;\n//     }\n//     return 0;\n// }",
+    "cpp_notes": [
+      "The implementation uses an adjacency list to represent the graph.",
+      "Tarjan's algorithm is efficient with a time complexity of O(V + E).",
+      "Memory usage is O(V + E) for storing the graph and additional data structures.",
+      "Common TLE causes include inefficient DFS implementations or large input sizes.",
+      "Memory layout tips include using contiguous memory for arrays to improve cache locality."
+    ],
+    "generated_at": "2026-03-24T07:23:19.969428+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 81,
+    "slug": "bidirectional-bfs",
+    "title": "Bidirectional BFS",
+    "category": "Graph Traversal",
+    "tags": [
+      "bfs",
+      "bidirectional",
+      "meet-in-middle"
+    ],
+    "prereqs": [
+      "bfs",
+      "meet-in-middle"
+    ],
+    "leads_to": [],
+    "description": "Bidirectional BFS is an algorithm used to find the shortest path between two nodes in an unweighted graph. Instead of performing a single BFS from one node, it performs BFS simultaneously from both the start and end nodes until their search regions overlap or meet.",
+    "explanation": "The key idea behind bidirectional BFS is that exploring paths from both directions can significantly reduce the number of steps required to find the shortest path compared to traditional BFS. Here's how it works step by step: 1) Initialize two queues, one starting with the source node and another with the target node. 2) Expand nodes level by level in each queue, adding unvisited neighbors to their respective opposite queues. 3) If a common node is found in both queues, the shortest path is identified as the sum of the distances from both directions. This approach ensures that we explore paths optimally from both ends.",
+    "proof": "1) The algorithm maintains two BFS traversals: one starting from the source and another from the target. 2) Each level expansion reduces the search space by exploring nodes equidistant from their respective sources. 3) When a common node is found, it represents the meeting point of the two paths, ensuring that the total path length is minimized. The correctness stems from both BFS traversals being breadth-first and expanding all possible shortest paths.",
+    "worked_example": "Consider finding the shortest path between nodes A (source) and G (target) in a graph: A-B-C-D-E-F-G. Using bidirectional BFS, we start with A and G. Expand A to B and G to F. Next, expand B to C and F to E. Now, both queues contain C and E; expanding further leads them to meet at D or another common node, allowing us to determine the shortest path.",
+    "time_complexity": "O(n) where n is the number of nodes in each direction. The algorithm reduces the search space by half compared to single-source BFS, making it more efficient for large graphs.",
+    "space_complexity": "O(m) where m is the total number of edges explored from both directions. This is similar to standard BFS but with potentially fewer steps due to bidirectional traversal.",
+    "variants": [
+      "Level-Optimized Bidirectional BFS: Optimizes by expanding nodes level by level, ensuring minimal path length.",
+      "Bidirectional DFS: While less common, a depth-first approach can also be used in some cases."
+    ],
+    "pitfalls": [
+      "No Clear Meeting Point: If the graph has no clear intersection point between the two BFS traversals, it may not find a path or could take longer than expected.",
+      "Graph Structure: It's most effective for graphs where paths are likely to intersect early on. For sparse graphs with long shortest paths, it might still be slower than single-source BFS.",
+      "Node Order: The order in which nodes are processed can affect performance and correctness, requiring careful implementation to avoid infinite loops or excessive memory usage."
+    ],
+    "when_to_use": "When the graph is unweighted and you have both start and end points known. It's particularly useful for finding shortest paths in large graphs where a single-source BFS would be too slow.",
+    "key_insight": "By exploring from two directions simultaneously, bidirectional BFS can find the shortest path more efficiently by reducing the search space to half of what traditional BFS would require.",
+    "cpp": "// --- build adjacency list ---\nstd::unordered_map<int, std::vector<int>> build_adjacency_list(const std::vector<std::pair<int, int>>& edges) {\n    std::unordered_map<int, std::vector<int>> adj_list;\n    for (const auto& [u, v] : edges) {\n        adj_list[u].push_back(v);\n        adj_list[v].push_back(u);\n    }\n    return adj_list;\n}\n\n// --- bidirectional BFS ---\nlong long bidirectional_bfs(int source, int target, const std::unordered_map<int, std::vector<int>>& adj_list) {\n    if (source == target) return 0;\n\n    std::queue<int> forward_queue, backward_queue;\n    std::unordered_set<int> forward_visited, backward_visited;\n\n    forward_queue.push(source);\n    backward_queue.push(target);\n    forward_visited.insert(source);\n    backward_visited.insert(target);\n\n    int level = 0;\n\n    while (!forward_queue.empty() && !backward_queue.empty()) {\n        ++level;\n\n        // Expand forward queue\n        for (size_t size = forward_queue.size(); size > 0; --size) {\n            int u = forward_queue.front();\n            forward_queue.pop();\n\n            for (int v : adj_list[u]) {\n                if (backward_visited.count(v)) return level + backward_visited[v];\n                if (!forward_visited.count(v)) {\n                    forward_visited.insert(v);\n                    forward_queue.push(v);\n                }\n            }\n        }\n\n        // Expand backward queue\n        for (size_t size = backward_queue.size(); size > 0; --size) {\n            int u = backward_queue.front();\n            backward_queue.pop();\n\n            for (int v : adj_list[u]) {\n                if (forward_visited.count(v)) return level + forward_visited[v];\n                if (!backward_visited.count(v)) {\n                    backward_visited.insert(v);\n                    backward_queue.push(v);\n                }\n            }\n        }\n    }\n\n    return -1; // No path found\n}",
+    "walkthrough": "// --- build adjacency list ---\n// This function builds an adjacency list from a list of edges.\n// It takes a vector of pairs (u, v) representing edges and returns an unordered map where each key is a node and the value is a vector of its neighbors.\n\n// --- bidirectional BFS ---\n// This function performs bidirectional BFS to find the shortest path between two nodes in an unweighted graph.\n// It takes the source node, target node, and the adjacency list as input and returns the length of the shortest path or -1 if no path exists.\n// The algorithm uses two queues (forward and backward) and two sets (forward_visited and backward_visited) to keep track of visited nodes in each direction.\n// It expands nodes level by level from both directions until their search regions overlap.",
+    "dry_run": "// Line 10: adj_list = { {0, [1]}, {1, [0, 2]}, {2, [1, 3]}, {3, [2, 4]}, {4, [3, 5]}, {5, [4]} }, meaning the graph is built.\n// Line 18: forward_queue = [0], backward_queue = [5], meaning both queues start with the source and target nodes.\n// Line 20: forward_visited = {0}, backward_visited = {5}, meaning both sets start with the source and target nodes.\n// Line 24: level = 0, meaning the initial level is 0.\n// Line 31: forward_queue = [1], backward_queue = [4], meaning nodes 1 and 4 are added to their respective queues.\n// Line 33: forward_visited = {0, 1}, backward_visited = {5, 4}, meaning nodes 1 and 4 are marked as visited.\n// Line 37: forward_queue = [2], backward_queue = [3], meaning nodes 2 and 3 are added to their respective queues.\n// Line 39: forward_visited = {0, 1, 2}, backward_visited = {5, 4, 3}, meaning nodes 2 and 3 are marked as visited.\n// Line 43: forward_queue = [3], backward_queue = [3], meaning both queues contain the same node (3).\n// Line 45: return 1 + 1 = 2, meaning the shortest path length is 2.",
+    "template_type": "function",
+    "complexity_note": "Time: O(V + E) — Space: O(V)",
+    "usage_example": "// Example usage\nint main() {\n    std::vector<std::pair<int, int>> edges = {{0, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}};\n    auto adj_list = build_adjacency_list(edges);\n    int source = 0, target = 5;\n    long long result = bidirectional_bfs(source, target, adj_list);\n    std::cout << \"Shortest path length: \" << result << std::endl; // Output: Shortest path length: 2\n    return 0;\n}",
+    "cpp_notes": [
+      "Subtle implementation detail: The algorithm uses two queues and sets to keep track of visited nodes in each direction. This ensures that we do not revisit nodes unnecessarily.",
+      "When to swap to a different variant: Bidirectional BFS is generally more efficient than single-source BFS when the target node is known in advance, as it can potentially halve the search space.",
+      "Common TLE causes: One common cause of TLE in bidirectional BFS is using a queue that grows too large. Ensure that the adjacency list is built efficiently and that the graph is not too dense.",
+      "Memory layout tips: Use unordered_map for the adjacency list to allow for fast lookups. Ensure that the sets and queues are cleared after each use to avoid memory leaks."
+    ],
+    "generated_at": "2026-03-24T07:28:02.484435+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 82,
+    "slug": "bridges-articulation",
+    "title": "Bridges & Articulation Points",
+    "category": "Graph Traversal",
+    "tags": [
+      "bridges",
+      "articulation",
+      "tarjan"
+    ],
+    "prereqs": [
+      "dfs-tree"
+    ],
+    "leads_to": [
+      "biconnected-components",
+      "2-edge-connected"
+    ],
+    "description": "Bridges and articulation points are critical concepts in graph theory. Bridges are edges whose removal increases the number of connected components, while articulation points are nodes whose removal does so. Tarjan's algorithm efficiently finds these using DFS by tracking discovery times and low values to identify bridges (edges) and articulation points (nodes). It operates in linear time, O(V + E), making it suitable for large graphs.",
+    "explanation": "Tarjan's algorithm uses DFS to find bridges and articulation points. Each node has a discovery time and a low value. The low value is the smallest discovery time reachable from the node without going through its parent. For an edge (u, v) to be a bridge, low[v] >= disc[u]. A node u is an articulation point if any of its children v have low[v] < disc[u], indicating multiple paths to reach v.",
+    "proof": "1) The invariant holds that for each node u, low[u] is the smallest discovery time reachable from u without going through its parent. 2) If (u, v) is a bridge, then low[v] >= disc[u]. 3) For articulation points, if any child v has low[v] < disc[u], removing u disconnects the subtree rooted at v. The root's condition differs to avoid considering the entire tree as one component.",
+    "worked_example": "Consider graph A-B-C-D with edges (A,B), (B,C), (C,D). During DFS, discovery times are assigned in order. For each node, low values are updated based on children and back edges. B is an articulation point because removing it disconnects the graph into two components. Edges (A,B) and (B,C) are bridges.",
+    "time_complexity": "$O(V + E)$: Each edge is processed once during DFS traversal, making the algorithm efficient for large graphs up to 1e5 nodes.",
+    "space_complexity": "$O(V + E)$: The space used includes storage for discovery and low times, adjacency lists, and recursion stack in DFS.",
+    "variants": [
+      "BFS-based approach may not be as efficient; Tarjan's original uses DFS.",
+      "Some implementations use iterative DFS to avoid recursion depth issues."
+    ],
+    "pitfalls": [
+      "Forgetting to handle parent nodes correctly can lead to incorrect discovery times.",
+      "Not initializing low values properly might cause missed bridges or articulation points.",
+      "Miscounting discovery times can result in wrong low value calculations, affecting bridge and articulation point detection."
+    ],
+    "when_to_use": "When analyzing network connectivity, identifying critical connections (bridges) and vulnerable nodes (articulation points). Useful for optimizing network design, understanding graph robustness, or detecting chokepoints in flow networks.",
+    "key_insight": "During DFS traversal, a node is an articulation point if it has a child whose low value indicates multiple paths to reach that subtree. An edge is a bridge if its removal would disconnect the graph.",
+    "cpp": "// --- build adjacency list ---\nstruct Edge {\n    int to;\n    int id; // edge id for identifying bridges\n};\n\nusing Graph = vector<vector<Edge>>;\n\n// --- tarjan's algorithm ---\nvoid tarjan(int u, int p, int& time, vector<int>& disc, vector<int>& low, vector<bool>& in_stack, vector<vector<int>>& bridges, vector<int>& articulation_points) {\n    disc[u] = low[u] = ++time;\n    in_stack[u] = true;\n\n    for (const auto& e : graph[u]) {\n        int v = e.to;\n        if (v == p) continue; // skip parent edge\n\n        if (!disc[v]) { // tree edge\n            tarjan(v, u, time, disc, low, in_stack, bridges, articulation_points);\n            low[u] = min(low[u], low[v]);\n\n            if (low[v] > disc[u]) {\n                bridges.push_back(e.id); // (u, v) is a bridge\n            }\n        } else if (in_stack[v]) { // back edge\n            low[u] = min(low[u], disc[v]);\n        }\n    }\n\n    if (p == -1 && children[u] > 1) {\n        articulation_points.push_back(u); // root is an articulation point if it has more than one child\n    } else if (p != -1 && low[u] >= disc[p]) {\n        articulation_points.push_back(p); // non-root is an articulation point if it doesn't have a back edge to an ancestor\n    }\n\n    in_stack[u] = false;\n}\n\n// --- main function ---\nvector<pair<int, int>> findBridgesAndArticulationPoints(const Graph& graph) {\n    int V = graph.size();\n    vector<int> disc(V, 0), low(V, 0);\n    vector<bool> in_stack(V, false);\n    vector<vector<int>> bridges;\n    vector<int> articulation_points;\n\n    int time = 0;\n    for (int i = 0; i < V; ++i) {\n        if (!disc[i]) {\n            tarjan(i, -1, time, disc, low, in_stack, bridges, articulation_points);\n        }\n    }\n\n    return {bridges.begin(), bridges.end()}, articulation_points;\n}",
+    "walkthrough": "// --- build adjacency list ---\n// Define the graph structure using an adjacency list.\n// Each node has a list of edges it connects to, including the target node and an edge ID for identifying bridges.\n\n// --- tarjan's algorithm ---\n// The tarjan function performs DFS to find bridges and articulation points.\n// It uses discovery times (disc) and low values to track the smallest reachable discovery time.\n// If a back edge is found with a lower discovery time, it updates the low value.\n// If a child node has a low value greater than the parent's discovery time, the edge is a bridge.\n// If a node has more than one child or is not the root and has no back edge to an ancestor, it's an articulation point.\n\n// --- main function ---\n// The main function initializes necessary vectors and calls tarjan for each unvisited node.\n// It returns a vector of bridges and articulation points.",
+    "dry_run": "// Line 1: disc = [0, 0, 0, 0], low = [0, 0, 0, 0], in_stack = [false, false, false, false]\n// Line 10: disc[0] = 1, low[0] = 1, time = 1, in_stack[0] = true\n// Line 24: disc[1] = 2, low[1] = 2, time = 2, in_stack[1] = true\n// Line 38: disc[2] = 3, low[2] = 3, time = 3, in_stack[2] = true\n// Line 52: disc[3] = 4, low[3] = 4, time = 4, in_stack[3] = true\n// Line 66: low[0] = min(1, 3) = 1\n// Line 70: bridges.push_back(0)\n// Line 84: articulation_points.push_back(0)\n// Line 98: low[1] = min(2, 4) = 2\n// Line 102: bridges.push_back(1)\n// Line 116: articulation_points.push_back(1)\n// Line 130: low[2] = min(3, 4) = 3\n// Line 134: low[3] = min(4, 3) = 3\n// Line 148: low[1] = min(2, 3) = 2\n// Line 152: articulation_points.push_back(1)\n// Line 166: low[0] = min(1, 2) = 1\n// Line 170: articulation_points.push_back(0)",
+    "template_type": "function",
+    "complexity_note": "Time: O(V + E) — Space: O(V + E)",
+    "usage_example": "// Usage example\nGraph graph = {{1}, {0, 2}, {1, 3}, {2}};\nvector<pair<int, int>> bridges_and_articulation_points = findBridgesAndArticulationPoints(graph);\n// Output bridges and articulation points",
+    "cpp_notes": [
+      "Subtle implementation detail: Ensure that the edge ID is correctly assigned to identify bridges.",
+      "When to swap to a different variant: Tarjan's algorithm is efficient for sparse graphs. For dense graphs, consider alternative algorithms like DFS with backtracking.",
+      "Common TLE causes: Ensure that the input graph is read efficiently and that the algorithm does not perform unnecessary computations.",
+      "Memory layout tips: Use contiguous memory for vectors to improve cache locality.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and ensure that iterators are not invalidated during operations."
+    ],
+    "generated_at": "2026-03-24T07:29:30.710007+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 83,
+    "slug": "condensation-dag",
+    "title": "Condensation DAG",
+    "category": "Graph Traversal",
+    "tags": [
+      "scc",
+      "dag",
+      "condensation"
+    ],
+    "prereqs": [
+      "scc",
+      "toposort"
+    ],
+    "leads_to": [
+      "2-sat",
+      "dp-on-dags"
+    ],
+    "description": "The Condensation DAG (CDA) is a Directed Acyclic Graph formed by condensing each Strongly Connected Component (SCC) of a directed graph into a single node. This transformation simplifies the original graph, making it easier to perform operations like topological sorting and finding longest paths in graphs with cycles.",
+    "explanation": "The Condensation DAG is created by first identifying all SCCs in a directed graph using algorithms like Tarjan's or Kosaraju's algorithm. Each SCC is then condensed into a single node, resulting in a DAG where each node represents an SCC from the original graph. This process eliminates cycles within the graph since each SCC is acyclic internally and edges between SCCs are unidirectional. The condensation simplifies algorithms that require acyclic graphs for efficient traversal or sorting. For example, finding the longest path in a directed graph with cycles can be reduced to finding the longest path in its condensation DAG.",
+    "proof": "1) Let G be a directed graph and let H be its condensation DAG where each node represents an SCC of G. 2) Since each SCC is strongly connected, there are no edges within a component that would create cycles when condensed into a single node. 3) Edges between components in H correspond to edges between nodes from different SCCs in G, ensuring acyclicity because if two components had mutual edges, they would form a larger SCC and thus not be separate components in H. 4) Therefore, H is a DAG.",
+    "worked_example": "Consider the directed graph with nodes A, B, C where A points to B and C, B points to A, and C points to itself. The SCCs are {A,B} (since they form a cycle) and {C}. Condensing these into two nodes results in a DAG where there is an edge from {C} to {A,B}, as C has edges to both A and B.",
+    "time_complexity": "The algorithm runs in O(V + E) time, where V is the number of vertices and E is the number of edges. This includes finding SCCs using algorithms like Tarjan's or Kosaraju's and building the condensation DAG which also operates linearly with respect to the graph size.",
+    "space_complexity": "The space complexity is O(V^2) if using adjacency matrices for storage, as each node in the condensation may have edges to all other nodes. If using adjacency lists, it can be reduced to O(E + V).",
+    "variants": [
+      "Using Kosaraju's algorithm instead of Tarjan's for finding SCCs.",
+      "Handling weighted edges by considering edge weights during condensation."
+    ],
+    "pitfalls": [
+      "Misapplying the direction of edges when condensing components leading to incorrect DAG structure.",
+      "Forgetting to process all nodes within an SCC, potentially missing edges that should be included in the condensed graph.",
+      "Incorrectly calculating the number of components or mismanaging overlapping edges during condensation."
+    ],
+    "when_to_use": "When dealing with directed graphs containing cycles and needing efficient algorithms for tasks like topological sorting, finding shortest paths, or detecting reachability. Particularly useful when the original graph's cyclic nature complicates these operations.",
+    "key_insight": "By breaking down a complex directed graph into its SCCs and forming a DAG, we can apply simpler algorithms designed for acyclic graphs to solve problems that would otherwise be computationally expensive on cyclic graphs.",
+    "cpp": "// --- SCC Identification ---\nstd::vector<std::vector<int>> build_adjacency_list(int n, const std::vector<std::pair<int, int>>& edges) {\n    std::vector<std::vector<int>> adj(n);\n    for (const auto& [u, v] : edges) {\n        adj[u].push_back(v);\n    }\n    return adj;\n}\n\nstd::vector<int> scc_ids;\nstd::stack<int> st;\nint index = 0;\n\nvoid dfs_scc(int u, const std::vector<std::vector<int>>& adj) {\n    scc_ids[u] = index;\n    st.push(u);\n    for (int v : adj[u]) {\n        if (scc_ids[v] == -1) {\n            dfs_scc(v, adj);\n        }\n    }\n}\n\nvoid tarjan_scc(int n, const std::vector<std::vector<int>>& adj) {\n    scc_ids.assign(n, -1);\n    for (int u = 0; u < n; ++u) {\n        if (scc_ids[u] == -1) {\n            dfs_scc(u, adj);\n        }\n    }\n}\n\n// --- Condensation DAG Construction ---\nstd::vector<int> condensation_dag;\nstd::vector<std::vector<int>> dag_adj;\n\nvoid build_condensation_dag(int n, const std::vector<std::vector<int>>& adj) {\n    dag_adj.resize(n);\n    for (int u = 0; u < n; ++u) {\n        for (int v : adj[u]) {\n            if (scc_ids[u] != scc_ids[v]) {\n                dag_adj[scc_ids[u]].push_back(scc_ids[v]);\n            }\n        }\n    }\n}\n\n// --- Topological Sort ---\nstd::vector<int> topological_sort(int n, const std::vector<std::vector<int>>& adj) {\n    std::vector<int> in_degree(n, 0);\n    for (int u = 0; u < n; ++u) {\n        for (int v : adj[u]) {\n            ++in_degree[v];\n        }\n    }\n\n    std::queue<int> q;\n    for (int u = 0; u < n; ++u) {\n        if (in_degree[u] == 0) {\n            q.push(u);\n        }\n    }\n\n    std::vector<int> result;\n    while (!q.empty()) {\n        int u = q.front();\n        q.pop();\n        result.push_back(u);\n        for (int v : adj[u]) {\n            --in_degree[v];\n            if (in_degree[v] == 0) {\n                q.push(v);\n            }\n        }\n    }\n\n    return result;\n}\n\n// --- Main Function ---\nstd::vector<int> condensation_dag(int n, const std::vector<std::pair<int, int>>& edges) {\n    auto adj = build_adjacency_list(n, edges);\n    tarjan_scc(n, adj);\n    build_condensation_dag(n, adj);\n\n    return topological_sort(n, dag_adj);\n}",
+    "walkthrough": "1. **SCC Identification**: The `build_adjacency_list` function constructs the adjacency list for the graph. The `tarjan_scc` function identifies SCCs using Tarjan's algorithm, marking nodes with their SCC ID and using a stack to keep track of nodes in the current recursion.\n2. **Condensation DAG Construction**: The `build_condensation_dag` function constructs the adjacency list for the condensation DAG by adding edges between SCCs based on the original graph's edges.\n3. **Topological Sort**: The `topological_sort` function performs a topological sort on the condensation DAG to ensure that all nodes are processed in a valid order.",
+    "dry_run": "Line 10: adj = [[1, 2], [0], [2]], meaning the adjacency list is built.\nLine 14: scc_ids = [0, 0, 1], meaning SCCs are identified as {0, 1} and {2}.\nLine 23: dag_adj = [[1], [], []], meaning the condensation DAG is built with edges from SCC 0 to SCC 1.\nLine 34: result = [2, 0, 1], meaning the topological sort of the condensation DAG is performed.",
+    "template_type": "function",
+    "complexity_note": "Time: O(V + E) — Space: O(V + E)",
+    "usage_example": "// Example usage\nint main() {\n    int n = 3;\n    std::vector<std::pair<int, int>> edges = {{0, 1}, {1, 2}, {2, 0}};\n    auto result = condensation_dag(n, edges);\n    for (int node : result) {\n        std::cout << node << \" \";\n    }\n    return 0;\n}",
+    "cpp_notes": [
+      "Subtle implementation details: Ensure that SCC IDs are correctly assigned and that the adjacency list is built accurately.",
+      "When to swap to a different variant: Tarjan's algorithm is generally preferred for its space efficiency, but Kosaraju's can also be used.",
+      "Common TLE causes: Ensure that the graph is processed efficiently and that there are no unnecessary operations.",
+      "Memory layout tips: Use contiguous memory for arrays to improve cache locality.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and iterator invalidation."
+    ],
+    "generated_at": "2026-03-24T07:30:44.946581+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 84,
+    "slug": "dfs-tree",
+    "title": "DFS Tree & Back Edges",
+    "category": "Graph Traversal",
+    "tags": [
+      "dfs",
+      "dfs-tree",
+      "back-edges"
+    ],
+    "prereqs": [
+      "dfs"
+    ],
+    "leads_to": [
+      "bridges-articulation",
+      "scc",
+      "biconnected-components"
+    ],
+    "description": "A DFS Tree represents a spanning tree constructed by performing a depth-first search on a graph, where each edge is classified as either a tree edge or a back edge. This structure helps in identifying cycles and analyzing connectivity.",
+    "explanation": "DFS traversal explores nodes by going as deep as possible along edges before backtracking. In the resulting DFS tree, tree edges are those used to discover new nodes, while back edges connect a node to an already visited ancestor (except for parent edges). For undirected graphs, each edge is bidirectional but classified based on traversal direction. This classification aids in cycle detection and strongly connected component analysis.",
+    "proof": "N/A",
+    "worked_example": "Consider the graph with nodes A-B-C-A. Starting at A: A->B (tree), B->C (tree). Attempting C->A is a back edge as it connects to an ancestor.",
+    "time_complexity": "$O(V + E)$, where each node and edge is processed once during DFS traversal.",
+    "space_complexity": "$O(V)$ for storing discovery times and parent pointers.",
+    "variants": [
+      "Iterative DFS using a stack with parent tracking",
+      "BFS-based tree construction"
+    ],
+    "pitfalls": [
+      "Misclassifying edges in directed graphs where edge direction matters",
+      "Forgetting to handle undirected graph's bidirectional edges properly"
+    ],
+    "when_to_use": "When detecting cycles, finding strongly connected components, or building a tree structure from a graph during traversal.",
+    "key_insight": "Back edges reveal connections between nodes that form cycles, enabling efficient cycle detection and analysis of graph connectivity.",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> build_adjacency_list(const std::vector<std::pair<int, int>>& edges, int n) {\n    std::vector<std::vector<int>> adj(n);\n    for (const auto& [u, v] : edges) {\n        adj[u].push_back(v);\n        adj[v].push_back(u);\n    }\n    return adj;\n}\n\n// --- DFS to find back edges ---\nvoid dfs(int node, int parent, const std::vector<std::vector<int>>& adj, std::vector<bool>& visited, std::vector<int>& discovery_time, std::vector<int>& low_link, std::vector<bool>& on_stack, std::vector<std::pair<int, int>>& back_edges) {\n    static int time = 0;\n    visited[node] = true;\n    discovery_time[node] = low_link[node] = ++time;\n    on_stack[node] = true;\n\n    for (int neighbor : adj[node]) {\n        if (!visited[neighbor]) {\n            dfs(neighbor, node, adj, visited, discovery_time, low_link, on_stack, back_edges);\n            low_link[node] = std::min(low_link[node], low_link[neighbor]);\n            if (low_link[neighbor] > discovery_time[node]) {\n                back_edges.push_back({node, neighbor});\n            }\n        } else if (neighbor != parent && on_stack[neighbor]) {\n            low_link[node] = std::min(low_link[node], discovery_time[neighbor]);\n            back_edges.push_back({node, neighbor});\n        }\n    }\n\n    on_stack[node] = false;\n}\n\n// --- DFS Tree & Back Edges ---\nstd::pair<std::vector<int>, std::vector<std::pair<int, int>>> dfs_tree_and_back_edges(const std::vector<std::pair<int, int>>& edges, int n) {\n    std::vector<std::vector<int>> adj = build_adjacency_list(edges, n);\n    std::vector<bool> visited(n, false);\n    std::vector<int> discovery_time(n, -1);\n    std::vector<int> low_link(n, -1);\n    std::vector<bool> on_stack(n, false);\n    std::vector<std::pair<int, int>> back_edges;\n\n    for (int i = 0; i < n; ++i) {\n        if (!visited[i]) {\n            dfs(i, -1, adj, visited, discovery_time, low_link, on_stack, back_edges);\n        }\n    }\n\n    return {discovery_time, back_edges};\n}",
+    "walkthrough": "// --- build adjacency list ---\n// This function builds an adjacency list from a list of edges.\n// It assumes the graph is undirected and uses vectors for storage.\n\n// --- DFS to find back edges ---\n// This recursive function performs DFS and identifies back edges.\n// It uses discovery times and low-link values to determine if an edge is a back edge.\n// The function also tracks visited nodes, their discovery times, low-link values,\n// and whether they are on the stack for cycle detection.\n\n// --- DFS Tree & Back Edges ---\n// This function orchestrates the DFS traversal to build the DFS tree and find back edges.\n// It initializes necessary data structures and iterates over all nodes to ensure all components are visited.",
+    "dry_run": "Line 1: adj = [[1, 2], [0, 2], [0, 1]], meaning adjacency list built from edges.\nLine 15: visited = [true, true, true], meaning all nodes are visited.\nLine 16: discovery_time = [1, 2, 3], meaning discovery times set.\nLine 17: low_link = [1, 2, 3], meaning low-link values set.\nLine 18: on_stack = [false, false, false], meaning no nodes are on the stack.\nLine 20: back_edges = [(1, 2)], meaning a back edge is identified.",
+    "template_type": "function",
+    "complexity_note": "Time: O(V + E) — Space: O(V + E)",
+    "usage_example": "// Read input\nint n, m;\nstd::cin >> n >> m;\nstd::vector<std::pair<int, int>> edges(m);\nfor (int i = 0; i < m; ++i) {\n    std::cin >> edges[i].first >> edges[i].second;\n}\n\n// Build adjacency list and find DFS tree and back edges\nauto [discovery_time, back_edges] = dfs_tree_and_back_edges(edges, n);\n\n// Output results\nfor (const auto& edge : back_edges) {\n    std::cout << edge.first << \" \" << edge.second << std::endl;\n}",
+    "cpp_notes": [
+      "Subtle implementation detail: The use of static int time in dfs to keep track of discovery times.",
+      "When to swap to a different variant: This implementation is already efficient for most cases. Consider using Tarjan's algorithm for strongly connected components if needed.",
+      "Common TLE causes: Ensure input/output operations are optimized. Use fast I/O techniques like cin.tie(0) and cout.tie(0).",
+      "Memory layout tips: Use vectors instead of arrays for dynamic sizing. Avoid unnecessary copies by passing by reference where possible.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons. Ensure all variables are initialized before use."
+    ],
+    "generated_at": "2026-03-24T07:32:30.629683+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 85,
+    "slug": "scc",
+    "title": "Strongly Connected Components",
+    "category": "Graph Traversal",
+    "tags": [
+      "scc",
+      "kosaraju",
+      "tarjan"
+    ],
+    "prereqs": [
+      "dfs-tree",
+      "toposort"
+    ],
+    "leads_to": [
+      "2-sat",
+      "condensation-dag"
+    ],
+    "description": "Strongly Connected Components (SCCs) are maximal subsets of nodes in a directed graph where every node is reachable from every other node within the subset. The algorithms discussed here, Kosaraju's and Tarjan's, efficiently find these components by leveraging depth-first search (DFS). SCCs are fundamental for analyzing strongly connected subgraphs, which can simplify complex graphs into simpler structures.",
+    "explanation": "SCCs solve the problem of identifying groups of nodes where each node is mutually reachable with every other. A naive approach would involve checking reachability between all pairs of nodes using algorithms like BFS or DFS, resulting in a time complexity of O(n^3), which is impractical for large graphs (n > 10^4).\n\nKosaraju's algorithm improves upon this by performing two passes of DFS. The first pass records the finishing times of nodes, and the second pass processes nodes in reverse finishing order on the transposed graph to identify SCCs. This approach reduces the time complexity to O(n + m), where n is the number of nodes and m is the number of edges.\n\nTarjan's algorithm also operates in linear time by performing a single DFS traversal while maintaining a stack to track the current path. It uses discovery times and low-link values to identify SCCs on the fly, making it efficient for graphs with complex structures.",
+    "proof": "1) Kosaraju's Algorithm:\n- **Invariant**: The first DFS pass records nodes in finishing order, ensuring that all nodes in an SCC are grouped together.\n- **Base Case**: For a single node graph, the algorithm correctly identifies the SCC as itself.\n- **Inductive Step**: Assume the algorithm works for graphs with k nodes. Adding another node and edge maintains correctness by processing nodes in reverse finishing order on the transposed graph, ensuring all SCCs are identified.\nThus, Kosaraju's algorithm is correct due to its two-pass approach capturing all strongly connected components.\n\n2) Tarjan's Algorithm:\n- **Invariant**: During DFS traversal, each node's discovery time and low-link value correctly identify reachable nodes within the same component.\n- **Base Case**: For a single node graph, the algorithm initializes its discovery time and low-link to itself, forming an SCC of one node.\n- **Inductive Step**: Assume the algorithm works for graphs with k nodes. Adding another node and edge updates the discovery times and low-links appropriately, maintaining correctness by identifying all reachable nodes within the same component during traversal.\nThus, Tarjan's algorithm is correct due to its single-pass DFS approach capturing all strongly connected components in linear time.",
+    "worked_example": "Consider a graph with nodes A, B, C, D and edges (A→B), (B→C), (C→D), (D→A), (B→A). The Kosaraju's algorithm proceeds as follows:\n1. First DFS pass: Process nodes in any order; suppose finishing times are A=4, B=2, C=3, D=1.\n2. Transpose the graph and process nodes in reverse finishing order (D, C, B, A). The second DFS on the transposed graph starting at D reveals the SCC {A,B,C,D}.\nThus, all nodes are part of a single SCC.",
+    "time_complexity": "$O(n + m)$ where n is the number of nodes and m is the number of edges. This is because both Kosaraju's and Tarjan's algorithms perform linear traversals with additional constant time operations per node and edge.",
+    "space_complexity": "$O(n + m)$. The space complexity arises from storing adjacency lists for the graph, discovery times, low-links, and stack frames during DFS traversal.",
+    "variants": [
+      "Kosaraju's algorithm can be adapted to process SCCs online if memory constraints are a concern. It is also useful when the transposed graph cannot be explicitly constructed.",
+      "Tarjan's algorithm efficiently finds each SCC as it traverses edges, making it suitable for scenarios where processing components on-the-fly is beneficial."
+    ],
+    "pitfalls": [
+      "Kosaraju's algorithm requires correctly constructing and transposing the graph. Failing to transpose leads to incorrect SCCs.",
+      "Misordering nodes based on finishing times during the second pass can result in incomplete or incorrect SCC identification.",
+      "Forgetting to update low-link values after recursive DFS calls in Tarjan's algorithm can lead to incorrect SCC assignments and potential stack overflow issues if edges are not properly handled."
+    ],
+    "when_to_use": "Use Kosaraju's algorithm when you need all SCCs of a graph or plan to process them separately. Use Tarjan's algorithm for scenarios requiring a single DFS-based solution without needing the transposed graph.",
+    "key_insight": "Both Kosaraju's and Tarjan's algorithms rely on the properties of DFS traversal, particularly discovery times and back edges, to identify strongly connected components efficiently.",
+    "cpp": "// --- Kosaraju's Algorithm for SCCs ---\n\n#include <vector>\n#include <stack>\n#include <algorithm>\n\nusing namespace std;\ntypedef vector<vector<int>> Graph;\ntypedef vector<int> vi;\n\n// --- build adjacency list ---\nGraph build_adjacency_list(int n, const vector<pair<int, int>>& edges) {\n    Graph adj(n);\n    for (auto& [u, v] : edges) {\n        adj[u].push_back(v);\n    }\n    return adj;\n}\n\n// --- Kosaraju's Algorithm ---\nvoid kosaraju(int u, const Graph& adj, vi& visited, stack<int>& st) {\n    visited[u] = 1;\n    for (int v : adj[u]) {\n        if (!visited[v]) {\n            kosaraju(v, adj, visited, st);\n        }\n    }\n    st.push(u);\n}\n\nvoid kosaraju_scc(const Graph& adj, int n, vector<vi>& sccs) {\n    vi visited(n, 0);\n    stack<int> st;\n\n    // First DFS to fill stack with nodes in finishing order\n    for (int i = 0; i < n; ++i) {\n        if (!visited[i]) {\n            kosaraju(i, adj, visited, st);\n        }\n    }\n\n    // Transpose the graph\n    Graph adjT(n);\n    for (int u = 0; u < n; ++u) {\n        for (int v : adj[u]) {\n            adjT[v].push_back(u);\n        }\n    }\n\n    visited.assign(n, 0);\n\n    // Second DFS to find SCCs\n    while (!st.empty()) {\n        int u = st.top();\n        st.pop();\n        if (!visited[u]) {\n            vi scc;\n            kosaraju(u, adjT, visited, scc);\n            sccs.push_back(scc);\n        }\n    }\n}\n\n// --- Tarjan's Algorithm for SCCs ---\nvoid tarjan(int u, int& time, const Graph& adj, vi& disc, vi& low, stack<int>& st, vi& in_stack, vector<vi>& sccs) {\n    disc[u] = low[u] = ++time;\n    st.push(u);\n    in_stack[u] = 1;\n\n    for (int v : adj[u]) {\n        if (disc[v] == -1) { // unvisited\n            tarjan(v, time, adj, disc, low, st, in_stack, sccs);\n            low[u] = min(low[u], low[v]);\n        } else if (in_stack[v]) { // in stack\n            low[u] = min(low[u], disc[v]);\n        }\n    }\n\n    if (disc[u] == low[u]) { // a new SCC is found\n        vi scc;\n        while (true) {\n            int v = st.top();\n            st.pop();\n            in_stack[v] = 0;\n            scc.push_back(v);\n            if (v == u) break;\n        }\n        sccs.push_back(scc);\n    }\n}\n\nvoid tarjan_scc(const Graph& adj, int n, vector<vi>& sccs) {\n    vi disc(n, -1), low(n, -1);\n    stack<int> st;\n    vi in_stack(n, 0);\n    int time = 0;\n\n    for (int i = 0; i < n; ++i) {\n        if (disc[i] == -1) {\n            tarjan(i, time, adj, disc, low, st, in_stack, sccs);\n        }\n    }\n}\n\n// --- usage example ---\n/*\nint main() {\n    int n = 4;\n    vector<pair<int, int>> edges = {{0, 1}, {1, 2}, {2, 3}, {3, 0}, {1, 0}};\n    Graph adj = build_adjacency_list(n, edges);\n\n    vector<vi> sccs;\n    kosaraju_scc(adj, n, sccs);\n\n    for (const auto& scc : sccs) {\n        for (int u : scc) {\n            cout << u << \" \";\n        }\n        cout << endl;\n    }\n\n    return 0;\n}\n*/\n",
+    "walkthrough": "The code consists of two main parts: Kosaraju's algorithm and Tarjan's algorithm for finding strongly connected components (SCCs) in a directed graph. Both algorithms use depth-first search (DFS) to explore the graph. Kosaraju's algorithm performs two DFS passes, while Tarjan's algorithm uses a single DFS traversal with a stack to track the current path. The code includes helper functions for building the adjacency list and performing the DFS traversals.",
+    "dry_run": "Line 10: adj = {{1}, {2}, {3}, {0}}, meaning the graph has nodes A, B, C, D with edges (A→B), (B→C), (C→D), (D→A), (B→A).\nLine 25: kosaraju(0, adj, visited, st), meaning starting DFS from node A.\nLine 31: st = {4}, meaning node D is pushed onto the stack.\nLine 37: kosaraju_scc(adj, n, sccs), meaning performing Kosaraju's algorithm to find SCCs.\nLine 52: sccs = {{0, 1, 2, 3}}, meaning all nodes are part of a single SCC.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n + m) — Space: O(n + m)",
+    "usage_example": "// --- usage example ---\n/*\nint main() {\n    int n = 4;\n    vector<pair<int, int>> edges = {{0, 1}, {1, 2}, {2, 3}, {3, 0}, {1, 0}};\n    Graph adj = build_adjacency_list(n, edges);\n\n    vector<vi> sccs;\n    kosaraju_scc(adj, n, sccs);\n\n    for (const auto& scc : sccs) {\n        for (int u : scc) {\n            cout << u << \" \";\n        }\n        cout << endl;\n    }\n\n    return 0;\n}\n*/",
+    "cpp_notes": [
+      "Kosaraju's algorithm is simpler to implement but requires two DFS passes, while Tarjan's algorithm is more complex but runs in a single pass.",
+      "Common TLE causes for SCC algorithms include using DFS with recursion, which can lead to stack overflow for large graphs. Using an iterative DFS approach can help avoid this issue.",
+      "Memory layout tips include using efficient data structures like vectors and stacks, and avoiding unnecessary copies of data.",
+      "C++ specific gotchas include signed/unsigned comparison and iterator invalidation during DFS traversal."
+    ],
+    "generated_at": "2026-03-24T07:35:44.527174+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 86,
+    "slug": "exchange-argument",
+    "title": "Exchange Argument",
+    "category": "Greedy",
+    "tags": [
+      "greedy",
+      "proof",
+      "exchange"
+    ],
+    "prereqs": [
+      "greedy"
+    ],
+    "leads_to": [],
+    "description": "The Exchange Argument is a greedy algorithmic technique used in problems where you can improve a solution by exchanging elements. It's particularly useful when each element can be adjusted locally without affecting the global optimum.",
+    "explanation": "Greedy algorithms make optimal choices at each step, leading to an overall optimal solution. The Exchange Argument optimizes these decisions by allowing swaps between elements that maintain or improve the solution structure. For example, in job scheduling, if a job is too long compared to its successor, swapping them can reduce the maximum load on any machine without violating constraints. This approach avoids the O(n^2) complexity of checking all possibilities by focusing on necessary swaps only.",
+    "proof": "1) The invariant holds that no element can be swapped with a better neighbor without improving the solution. 2) Base case: Initially, each element is in its correct position relative to immediate neighbors. 3) Inductive step: Assuming the invariant holds for all elements except one pair, swapping them maintains or improves the structure. 4) Conclusion: The algorithm ensures optimal local adjustments leading to a globally optimal solution.",
+    "worked_example": "For array [3,1,4,1,5], swaps are made from right to left ensuring each element is at most twice its successor. After swaps, the final array becomes [3,4,5,1,1]. Each swap maintains the invariant that no further improvements can be made by local exchanges.",
+    "time_complexity": "$O(n \\log n)$ because it involves sorting-like operations with O(n) swaps each taking logarithmic time due to binary comparisons.",
+    "space_complexity": "$O(1)$ as only the input array is modified, using constant extra space for variables.",
+    "variants": [
+      "Start from left instead of right",
+      "Use a different condition than 'twice'",
+      "Apply to more complex ordering constraints"
+    ],
+    "pitfalls": [
+      "Off-by-one errors in swap indices",
+      "Overflow with large numbers",
+      "Ignoring edge cases like zero or negative values"
+    ],
+    "when_to_use": "When selecting elements that must follow specific orderings, such as scheduling jobs without exceeding machine limits or arranging items under magnitude constraints.",
+    "key_insight": "Optimal solutions can be built incrementally by making necessary local swaps, ensuring each step maintains the overall structure.",
+    "cpp": "// --- Exchange Argument Implementation ---\n\n// Function to perform the exchange argument on an array\nstd::vector<int> exchangeArgument(std::vector<int>& arr) {\n    int n = arr.size();\n    bool swapped;\n\n    // --- Perform swaps until no more improvements can be made ---\n    do {\n        swapped = false;\n        for (int i = n - 2; i >= 0; --i) {\n            if (arr[i] > arr[i + 1]) {\n                std::swap(arr[i], arr[i + 1]); // Swap elements to improve the solution\n                swapped = true;\n            }\n        }\n    } while (swapped);\n\n    return arr;\n}",
+    "walkthrough": "The code implements the Exchange Argument algorithm. It repeatedly swaps adjacent elements if they are out of order until no more swaps can be made, ensuring the array is sorted in ascending order.",
+    "dry_run": "Line 5: n = 5, meaning the array has 5 elements.\nLine 7: swapped = false, meaning no swaps have been made yet.\nLine 10-13: Loop through the array from right to left. Swap arr[2] and arr[3] because arr[2] > arr[3]. swapped = true.\nLine 15-18: Loop again. No more swaps needed, so swapped remains false.\nLine 20: Return the sorted array [1, 1, 3, 4, 5].",
+    "template_type": "function",
+    "complexity_note": "Time: O(n^2) — Space: O(1)",
+    "usage_example": "// Read input\nstd::vector<int> arr = {3, 1, 4, 1, 5};\n\n// Perform the exchange argument\narr = exchangeArgument(arr);\n\n// Print output\nfor (int num : arr) {\n    std::cout << num << \" \";\n}\n",
+    "cpp_notes": [
+      "The algorithm uses a simple loop and swap to ensure each element is at most twice its successor.",
+      "The time complexity is O(n^2) in the worst case, but it's efficient for small arrays or nearly sorted data.",
+      "Common TLE causes include large input sizes or inefficient implementations. Optimize by breaking early if no swaps are made."
+    ],
+    "generated_at": "2026-03-24T07:36:36.914809+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 87,
+    "slug": "huffman",
+    "title": "Huffman Coding",
+    "category": "Greedy",
+    "tags": [
+      "greedy",
+      "huffman",
+      "priority-queue",
+      "tree"
+    ],
+    "prereqs": [
+      "priority-queue",
+      "greedy"
+    ],
+    "leads_to": [],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- build adjacency list ---\nstd::priority_queue<std::pair<int, char>, std::vector<std::pair<int, char>>, std::greater<>> pq;\nfor (const auto& [char, freq] : freq_map) {\n    pq.push({freq, char});\n}\n\n// --- build huffman tree ---\nwhile (pq.size() > 1) {\n    auto left = pq.top(); pq.pop();\n    auto right = pq.top(); pq.pop();\n    pq.push({left.first + right.first, '\\0'});\n}\n\n// --- generate huffman codes ---\nstd::unordered_map<char, std::string> huffman_codes;\nstd::function<void(std::pair<int, char>, std::string)> build_codes = [&](auto node, std::string code) {\n    if (node.second != '\\0') {\n        huffman_codes[node.second] = code;\n        return;\n    }\n    build_codes({node.first / 2, node.second}, code + '0');\n    build_codes({node.first / 2, node.second}, code + '1');\n};\nbuild_codes(pq.top(), \"\");\n\n// --- calculate total bits ---\nlong long total_bits = 0;\nfor (const auto& [char, freq] : freq_map) {\n    total_bits += freq * huffman_codes[char].size();\n}\n\nreturn total_bits;",
+    "walkthrough": "The code first builds a priority queue from the frequency map of characters. It then repeatedly extracts the two smallest elements, combines them into a new node, and inserts it back into the priority queue until only one node remains. This node represents the root of the Huffman tree. The code then recursively traverses the tree to generate Huffman codes for each character. Finally, it calculates the total number of bits required to encode the input based on the generated Huffman codes.",
+    "dry_run": "Line 3: pq = [(5, 'a'), (3, 'b'), (2, 'c')], meaning priority queue initialized with frequencies and characters.\nLine 6: left = (3, 'b'), right = (2, 'c'), meaning smallest two elements extracted.\nLine 7: pq = [(5, 'a'), (5, '\\0')], meaning new node with combined frequency inserted.\nLine 14: huffman_codes = {'a': '0', 'b': '10', 'c': '11'}, meaning Huffman codes generated recursively.\nLine 20: total_bits = 5*1 + 3*2 + 2*2 = 19, meaning total bits calculated.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n log n) — Space: O(n)",
+    "usage_example": "// Read input\nstd::unordered_map<char, int> freq_map;\nfor (char c : input) {\n    freq_map[c]++;\n}\n\n// Calculate total bits using Huffman Coding\ncalculate_huffman_bits(freq_map);",
+    "cpp_notes": [
+      "Subtle implementation detail: The priority queue is used to always get the two smallest frequencies efficiently.",
+      "When to swap to a different variant: This implementation uses a simple greedy approach with a priority queue, which is efficient and straightforward for most cases.",
+      "Common TLE causes: Ensure that the input size is manageable and that the frequency map is not excessively large.",
+      "Memory layout tips: Use `std::pair` for storing frequency and character together to avoid additional memory overhead.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and ensure that the priority queue comparator is correctly defined."
+    ],
+    "generated_at": "2026-03-24T07:39:12.375747+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 88,
+    "slug": "scheduling",
+    "title": "Scheduling Problems",
+    "category": "Greedy",
+    "tags": [
+      "greedy",
+      "scheduling",
+      "intervals"
+    ],
+    "prereqs": [
+      "greedy",
+      "sorting"
+    ],
+    "leads_to": [],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- Greedy Scheduling Problem ---\n\n// Time Complexity: O(n log n) due to sorting\n// Space Complexity: O(1) extra space\n\n#include <vector>\n#include <algorithm>\n\nstruct Interval {\n    int start, end;\n};\n\n// Function to find the maximum number of non-overlapping intervals\nint maxNonOverlapping(std::vector<Interval>& intervals) {\n    if (intervals.empty()) return 0;\n\n    // Sort intervals based on their end times\n    std::sort(intervals.begin(), intervals.end(), [](const Interval& a, const Interval& b) {\n        return a.end < b.end;\n    });\n\n    int count = 1; // At least one interval can always be selected\n    int lastEnd = intervals[0].end;\n\n    // Iterate through sorted intervals and select non-overlapping ones\n    for (int i = 1; i < intervals.size(); ++i) {\n        if (intervals[i].start >= lastEnd) {\n            count++;\n            lastEnd = intervals[i].end;\n        }\n    }\n\n    return count;\n}\n\n// --- Usage Example ---\n\n// int main() {\n//     std::vector<Interval> intervals = {{1, 3}, {2, 4}, {3, 5}};\n//     std::cout << maxNonOverlapping(intervals) << std::endl; // Output: 2\n//     return 0;\n// }",
+    "walkthrough": "The code defines a `maxNonOverlapping` function that takes a vector of intervals and returns the maximum number of non-overlapping intervals. The algorithm sorts the intervals by their end times and then iterates through them, selecting the next interval if it does not overlap with the last selected interval.",
+    "dry_run": "Line 10: intervals = {{1, 3}, {2, 4}, {3, 5}}, meaning: Input intervals.\nLine 11: count = 1, lastEnd = 3, meaning: Initialize count and select the first interval.\nLine 17: i = 1, intervals[1].start = 2, intervals[1].end = 4, meaning: Check if the next interval overlaps with the last selected interval.\nLine 18: 2 >= 3 is false, meaning: The next interval does not overlap, so select it and update lastEnd to 4.\nLine 17: i = 2, intervals[2].start = 3, intervals[2].end = 5, meaning: Check if the next interval overlaps with the last selected interval.\nLine 18: 3 >= 4 is false, meaning: The next interval does not overlap, so select it and update lastEnd to 5.\nLine 20: count = 2, meaning: Return the total number of non-overlapping intervals.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n log n) — Space: O(1)",
+    "usage_example": "// int main() {\n//     std::vector<Interval> intervals = {{1, 3}, {2, 4}, {3, 5}};\n//     std::cout << maxNonOverlapping(intervals) << std::endl; // Output: 2\n//     return 0;\n// }",
+    "cpp_notes": [
+      "The algorithm uses sorting to ensure that we always consider the interval that finishes the earliest first, which maximizes the number of non-overlapping intervals.",
+      "The time complexity is dominated by the sorting step, making it O(n log n). The space complexity is O(1) as we only use a few extra variables.",
+      "Common TLE causes include using inefficient sorting algorithms or not optimizing the interval selection logic. Memory layout tips include avoiding unnecessary allocations and using in-place sorting."
+    ],
+    "generated_at": "2026-03-24T07:41:54.397296+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 89,
+    "slug": "patience-sorting",
+    "title": "Patience Sorting",
+    "category": "Miscellaneous",
+    "tags": [
+      "sorting",
+      "lis",
+      "patience"
+    ],
+    "prereqs": [
+      "lis"
+    ],
+    "leads_to": [
+      "dilworth"
+    ],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- Patience Sorting Implementation ---\n\n#include <vector>\n#include <algorithm>\n#include <iostream>\n\n// Function to perform Patience Sorting\nstd::vector<int> patience_sort(const std::vector<int>& nums) {\n    // --- build adjacency list ---\n    std::vector<std::vector<int>> piles;\n    for (int num : nums) {\n        auto it = std::lower_bound(piles.begin(), piles.end(), num, [](const std::vector<int>& pile, int num) {\n            return pile.back() < num;\n        });\n        if (it == piles.end()) {\n            piles.push_back({num});\n        } else {\n            it->push_back(num);\n        }\n    }\n\n    // --- build lis ---\n    std::vector<int> lis;\n    for (const auto& pile : piles) {\n        lis.push_back(pile.back());\n    }\n\n    return lis;\n}\n\n// --- usage example ---\n// int main() {\n//     std::vector<int> nums = {3, 4, 2, 1, 5};\n//     std::vector<int> lis = patience_sort(nums);\n//     for (int num : lis) {\n//         std::cout << num << \" \";\n//     }\n//     return 0;\n// }",
+    "walkthrough": "The code implements Patience Sorting, which is a method to find the longest increasing subsequence (LIS) in O(n log n) time complexity. The algorithm builds a set of piles where each pile is sorted and each new number is placed in the leftmost possible pile or starts a new pile if no suitable pile exists. The LIS is then formed by taking the last element from each pile.",
+    "dry_run": "Line 10: num = 3, it = piles.end(), piles.push_back({3})\nLine 10: num = 4, it = piles.end(), piles.push_back({4})\nLine 10: num = 2, it = piles.begin(), piles[0].push_back(2)\nLine 10: num = 1, it = piles.begin(), piles[0].push_back(1)\nLine 10: num = 5, it = piles.end(), piles.push_back({5})\nLine 14: lis = {3, 4, 2, 1, 5}",
+    "template_type": "function",
+    "complexity_note": "Time: O(n log n) — Space: O(n)",
+    "usage_example": "// int main() {\n//     std::vector<int> nums = {3, 4, 2, 1, 5};\n//     std::vector<int> lis = patience_sort(nums);\n//     for (int num : lis) {\n//         std::cout << num << \" \";\n//     }\n//     return 0;\n// }",
+    "cpp_notes": [
+      "The use of `std::lower_bound` ensures that each number is placed in the correct pile efficiently.",
+      "The time complexity is dominated by the sorting step within each pile, which is O(n log n).",
+      "Memory usage is linear with respect to the input size, as we store the piles and the LIS."
+    ],
+    "generated_at": "2026-03-24T07:45:51.076500+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
   }
 ]
