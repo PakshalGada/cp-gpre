@@ -615,3 +615,77 @@
 ⚠️  Interrupted. Progress saved.
 [19:19:45] 
 === Done. 58 entries in data/db.json ===
+[10:24:55] === cp-gpre pipeline starting ===
+[10:24:55] Topics: 233  |  already done: 58  |  pending: 175
+[10:24:55] Estimated time: ~175 minutes
+[10:24:55] 
+[1/175] Segment Tree with Lazy Propagation  (Advanced Data Structures)
+[10:24:55]   [lazy-seg-tree] math model...
+[10:25:41]   [lazy-seg-tree] math attempt 1 failed: Invalid \escape: line 6 column 30 (char 2352)
+[10:26:25]   [lazy-seg-tree] math attempt 2 failed: Invalid control character at: line 4 column 286 (char 715)
+[10:27:05]   [lazy-seg-tree] code model...
+[10:27:59]   ✓  saved  |  ETA 532.3 min remaining
+[10:27:59] 
+[2/175] Sparse Table & RMQ  (Advanced Data Structures)
+[10:27:59]   [sparse-table] math model...
+[10:28:41]   [sparse-table] math attempt 1 failed: Invalid control character at: line 4 column 243 (char 1091)
+[10:29:30]   [sparse-table] math attempt 2 failed: Invalid \escape: line 10 column 30 (char 2530)
+[10:30:26]   [sparse-table] math attempt 3 failed: Invalid control character at: line 3 column 337 (char 760)
+[10:30:28]   [sparse-table] code model...
+[10:30:55]   ✓  saved  |  ETA 518.3 min remaining
+[10:30:55] 
+[3/175] Expression Parsing & Shunting Yard  (Basic Data Structures)
+[10:30:55]   [expression-parsing] math model...
+[10:31:37]   [expression-parsing] math attempt 1 failed: Invalid control character at: line 4 column 361 (char 751)
+[10:32:29]   [expression-parsing] math attempt 2 failed: Invalid control character at: line 4 column 340 (char 747)
+[10:32:59]   [expression-parsing] math attempt 3 failed: Invalid control character at: line 4 column 151 (char 587)
+[10:33:01]   [expression-parsing] code model...
+[10:33:44]   ✓  saved  |  ETA 505.3 min remaining
+[10:33:44] 
+[4/175] Largest Rectangle in Histogram  (Basic Data Structures)
+[10:33:44]   [largest-rectangle] math model...
+[10:34:36]   [largest-rectangle] code model...
+[10:35:04]   ✓  saved  |  ETA 434.0 min remaining
+[10:35:04] 
+[5/175] Monotonic Deque  (Basic Data Structures)
+[10:35:04]   [monotonic-deque] math model...
+[10:35:46]   [monotonic-deque] math attempt 1 failed: Invalid control character at: line 3 column 258 (char 720)
+[10:36:22]   [monotonic-deque] code model...
+[10:36:50]   ✓  saved  |  ETA 405.3 min remaining
+[10:36:50] 
+[6/175] Bitmask DP  (Dynamic Programming)
+[10:36:50]   [bitmask-dp] math model...
+[10:37:28]   [bitmask-dp] code model...
+[10:37:56]   ✓  saved  |  ETA 366.5 min remaining
+[10:37:56] 
+[7/175] Bounded & Unbounded Knapsack  (Dynamic Programming)
+[10:37:56]   [bounded-knapsack] math model...
+[10:38:23]   [bounded-knapsack] code model...
+[10:38:56]   ✓  saved  |  ETA 336.5 min remaining
+[10:38:56] 
+[8/175] DP Counting & Combinatorics  (Dynamic Programming)
+[10:38:56]   [dp-counting] math model...
+[10:39:35]   [dp-counting] math attempt 1 failed: Invalid control character at: line 4 column 142 (char 1419)
+[10:40:59]   [dp-counting] math attempt 2 failed: No JSON found in:
+
+[10:41:43]   [dp-counting] math attempt 3 failed: Invalid control character at: line 4 column 256 (char 641)
+[10:41:45]   [dp-counting] code model...
+[10:42:11]   ✓  saved  |  ETA 360.3 min remaining
+[10:42:11] 
+[9/175] DP on DAGs  (Dynamic Programming)
+[10:42:11]   [dp-on-dags] math model...
+[10:42:51]   [dp-on-dags] math attempt 1 failed: Expecting ':' delimiter: line 10 column 212 (char 2337)
+[10:43:32]   [dp-on-dags] code model...
+[10:44:08]   [dp-on-dags] code attempt 1 failed: Expecting ',' delimiter: line 2 column 1897 (char 1898)
+[10:44:44]   [dp-on-dags] code attempt 2 failed: Expecting ',' delimiter: line 2 column 1781 (char 1782)
+[10:45:19]   [dp-on-dags] code attempt 3 failed: Expecting ',' delimiter: line 2 column 1754 (char 1755)
+[10:45:21]   ✓  saved  |  ETA 376.8 min remaining
+[10:45:21] 
+[10/175] Digit DP  (Dynamic Programming)
+[10:45:21]   [digit-dp] math model...
+[10:46:07]   [digit-dp] math attempt 1 failed: Invalid control character at: line 3 column 305 (char 761)
+[10:46:54]   [digit-dp] code model...
+[10:46:55] 
+⚠️  Interrupted. Progress saved.
+[10:46:55] 
+=== Done. 67 entries in data/db.json ===

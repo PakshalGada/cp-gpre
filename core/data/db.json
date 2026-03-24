@@ -2786,5 +2786,413 @@
     "generated_at": "2026-03-23T13:49:05.350064+00:00",
     "math_model": "cp-math",
     "code_model": "cp-code"
+  },
+  {
+    "id": 59,
+    "slug": "lazy-seg-tree",
+    "title": "Segment Tree with Lazy Propagation",
+    "category": "Advanced Data Structures",
+    "tags": [
+      "segment-tree",
+      "lazy-propagation"
+    ],
+    "prereqs": [
+      "segment-tree"
+    ],
+    "leads_to": [
+      "seg-tree-beats",
+      "chtholly-tree"
+    ],
+    "description": "A segment tree with lazy propagation is a data structure that efficiently handles range queries and updates on an array. It is particularly useful for problems where both point updates and range queries are common operations. This structure allows these operations to be performed in O(log n) time after an initial O(n log n) preprocessing step.",
+    "explanation": "Segment trees are built by recursively dividing the array into segments, storing segment information at each node. The naive approach for range queries involves checking every element in the range, which is too slow for large arrays (O(n)). Lazy propagation optimizes this by deferring updates to segments until necessary, reducing both time and space complexity. For example, when updating a range, instead of immediately applying changes to all affected nodes, we mark the node as needing an update and propagate it only when a query or another update requires its children. This approach ensures that each operation is processed efficiently in O(log n) time.",
+    "proof": "1) The segment tree maintains a lazy propagation tag for each node, indicating pending updates to its range. 2) When a node's range is fully contained within the current query/update range, we apply the update (or mark it if further propagation is needed). 3) For point updates or queries, we traverse the tree, applying any pending tags and ensuring they are only processed when necessary. 4) This ensures correctness as all operations respect the invariant that each node's value accurately reflects its current state.",
+    "worked_example": "Consider an array [3, 1, 4, 1, 5]. Building a segment tree for range sum queries would involve constructing nodes representing individual elements and then combining them into larger segments. For example, after building the tree, querying the sum from index 1 to 3 (0-based) would combine the values of [3], [1], and [4] efficiently. Lazy propagation allows us to defer updates, such as adding a value to a range, until it is needed, ensuring that each update operation remains efficient.",
+    "time_complexity": "$O(n \\log n)$ for building the tree and $O(\\log n)$ per query/update after initial construction. The time complexity arises from the logarithmic height of the segment tree structure, allowing each operation to be processed in a constant number of steps proportional to the log of the array size.",
+    "space_complexity": "$O(n)$ as the segment tree requires space for each node, which is approximately twice the size of the original array due to its complete binary tree structure. This ensures efficient memory usage while maintaining logarithmic access times.",
+    "variants": [
+      "Range updates with addition or setting a value: used when applying an update to a range and then querying specific points. Range updates with multiplication (order-sensitive): applicable in scenarios where updates involve multiplicative factors that must be applied in a specific order, such as certain types of lazy propagation for segment trees."
+    ],
+    "pitfalls": [
+      "Off-by-one errors: crucial to ensure correct boundaries when implementing the tree structure and applying updates. Overflow issues: using integer types without sufficient size can lead to incorrect results during summation or other operations. Handling edge cases incorrectly: failing to test with all possible input ranges can result in incorrect query or update outcomes."
+    ],
+    "when_to_use": "When dealing with problems that require frequent range queries and point updates, especially when the array size is large (n ≥ 1e5). Segment trees with lazy propagation are ideal for handling these operations efficiently, providing a significant performance improvement over naive methods.",
+    "key_insight": "Lazy propagation allows us to defer updates to segments until they are necessary, ensuring that each update and query operation remains efficient. This is achieved by marking nodes as needing an update and propagating the changes only when required.",
+    "cpp": "// --- Segment Tree with Lazy Propagation ---\n\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\n// --- Segment Tree Node ---\nstruct Node {\n    int value; // Value of the segment\n    int lazy;  // Lazy propagation tag\n};\n\n// --- Segment Tree Class ---\nclass SegmentTree {\nprivate:\n    vector<Node> tree; // Segment tree array\n    int n;              // Size of the input array\n\npublic:\n    // Constructor to initialize the segment tree\n    SegmentTree(const vector<int>& arr) : n(arr.size()), tree(4 * n) {\n        build(arr, 0, n - 1, 1);\n    }\n\n    // Build the segment tree\n    void build(const vector<int>& arr, int tl, int tr, int pos) {\n        if (tl == tr) {\n            tree[pos].value = arr[tl];\n            tree[pos].lazy = 0;\n        } else {\n            int tm = (tl + tr) / 2;\n            build(arr, tl, tm, pos * 2);\n            build(arr, tm + 1, tr, pos * 2 + 1);\n            tree[pos].value = tree[pos * 2].value + tree[pos * 2 + 1].value;\n            tree[pos].lazy = 0;\n        }\n    }\n\n    // Update a range with a value\n    void updateRange(int l, int r, int val, int tl, int tr, int pos) {\n        if (l > r) return; // Invalid range\n        if (tl == l && tr == r) {\n            tree[pos].value += (tr - tl + 1) * val;\n            tree[pos].lazy += val;\n        } else {\n            push(pos);\n            int tm = (tl + tr) / 2;\n            updateRange(l, min(r, tm), val, tl, tm, pos * 2);\n            updateRange(max(l, tm + 1), r, val, tm + 1, tr, pos * 2 + 1);\n            tree[pos].value = tree[pos * 2].value + tree[pos * 2 + 1].value;\n        }\n    }\n\n    // Query the sum of a range\n    int query(int l, int r, int tl, int tr, int pos) {\n        if (l > r) return 0; // Invalid range\n        if (tl == l && tr == r) return tree[pos].value;\n        push(pos);\n        int tm = (tl + tr) / 2;\n        return query(l, min(r, tm), tl, tm, pos * 2) + query(max(l, tm + 1), r, tm + 1, tr, pos * 2 + 1);\n    }\n\nprivate:\n    // Push lazy updates to children\n    void push(int pos) {\n        if (tree[pos].lazy != 0) {\n            tree[pos * 2].value += (tree[pos * 2].lazy * (tree[pos * 2].lazy + 1)) / 2;\n            tree[pos * 2].lazy += tree[pos].lazy;\n            tree[pos * 2 + 1].value += (tree[pos * 2 + 1].lazy * (tree[pos * 2 + 1].lazy + 1)) / 2;\n            tree[pos * 2 + 1].lazy += tree[pos].lazy;\n            tree[pos].lazy = 0;\n        }\n    }\n};\n\n// --- Complexity Note ---\n// Time: O(n log n) for build, O(log n) for update and query\n// Space: O(n)\n\n// --- Usage Example ---\n// vector<int> arr = {3, 1, 4, 1, 5};\n// SegmentTree st(arr);\n// st.updateRange(1, 3, 2); // Add 2 to elements from index 1 to 3\n// cout << st.query(0, 4) << endl; // Output the sum of all elements\n\n// --- Template Type ---\n// class\n\n// --- Complexity Note ---\n// Time: O(n log n) — Space: O(n)\n\n// --- Usage Example ---\n// vector<int> arr = {3, 1, 4, 1, 5};\n// SegmentTree st(arr);\n// st.updateRange(1, 3, 2); // Add 2 to elements from index 1 to 3\n// cout << st.query(0, 4) << endl; // Output the sum of all elements\n\n// --- C++ Notes ---\n// - Use long long for values if overflow is possible\n// - Ensure lazy propagation tags are propagated correctly\n// - Be cautious with signed/unsigned comparisons\n// - Avoid iterator invalidation during updates\n",
+    "walkthrough": "The SegmentTree class implements a segment tree with lazy propagation. The constructor initializes the tree by calling the build function. The build function recursively constructs the tree, storing segment sums and initializing lazy tags to zero. The updateRange function updates a range of elements by deferring updates until necessary, using the lazy tag to accumulate changes. The query function retrieves the sum of a range, applying any pending lazy updates before combining segment values. The push function propagates lazy updates from a node to its children.",
+    "dry_run": "Line 10: arr = {3, 1, 4, 1, 5}, meaning Initialize input array\nLine 27: tl = 0, tr = 4, pos = 1, meaning Build segment tree for the entire array\nLine 38: tl = 0, tr = 2, tm = 1, meaning Recursively build left child\nLine 49: tl = 3, tr = 4, tm = 3, meaning Recursively build right child\nLine 60: tl = 0, tr = 2, pos = 2, meaning Combine left and right children for parent node\nLine 71: l = 1, r = 3, val = 2, tl = 0, tr = 4, pos = 1, meaning Update range [1, 3]\nLine 82: push(1), meaning Propagate lazy updates to children\nLine 93: tl = 1, tr = 2, tm = 1, meaning Recursively update left child\nLine 104: tl = 3, tr = 4, tm = 3, meaning Recursively update right child\nLine 115: tl = 0, tr = 2, pos = 2, meaning Combine left and right children for parent node\nLine 126: l = 0, r = 4, tl = 0, tr = 4, pos = 1, meaning Query range [0, 4]\nLine 137: push(1), meaning Propagate lazy updates to children\nLine 148: tl = 0, tr = 2, tm = 1, meaning Recursively query left child\nLine 159: tl = 3, tr = 4, tm = 3, meaning Recursively query right child\nLine 170: return 10, meaning Sum of elements in range [0, 4]",
+    "template_type": "class",
+    "complexity_note": "Time: O(n log n) — Space: O(n)",
+    "usage_example": "// vector<int> arr = {3, 1, 4, 1, 5};\n// SegmentTree st(arr);\n// st.updateRange(1, 3, 2); // Add 2 to elements from index 1 to 3\n// cout << st.query(0, 4) << endl; // Output the sum of all elements",
+    "cpp_notes": [],
+    "generated_at": "2026-03-24T04:57:59.205885+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 60,
+    "slug": "sparse-table",
+    "title": "Sparse Table & RMQ",
+    "category": "Advanced Data Structures",
+    "tags": [
+      "sparse-table",
+      "rmq",
+      "lca"
+    ],
+    "prereqs": [
+      "prefix-sums",
+      "binary-search"
+    ],
+    "leads_to": [
+      "lca-rmq",
+      "disjoint-sparse-table"
+    ],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- build sparse table ---\nstd::vector<std::vector<long long>> st;\nint n = arr.size(), k = ceil(log2(n));\nst.resize(n, std::vector<long long>(k + 1));\n\n// initialize first column with array values\nfor (int i = 0; i < n; ++i) {\n    st[i][0] = arr[i];\n}\n\n// build sparse table using dynamic programming\nfor (int j = 1; j <= k; ++j) {\n    for (int i = 0; i + (1 << j) <= n; ++i) {\n        st[i][j] = std::min(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]);\n    }\n}\n\n// --- query range minimum ---\nlong long query(int l, int r) {\n    int j = floor(log2(r - l + 1));\n    return std::min(st[l][j], st[r - (1 << j) + 1][j]);\n}",
+    "walkthrough": "// --- build sparse table ---\n// Initialize the sparse table with the array values.\n// Each entry st[i][0] is set to arr[i].\n\n// --- query range minimum ---\n// To query the minimum in the range [l, r], determine the largest power of 2 less than or equal to the length of the range.\n// Use this power to find the minimum between two subranges: one starting at l and having length 2^j, and the other starting at r - 2^j + 1 and having the same length.",
+    "dry_run": "// Line 10: st[0][0] = arr[0], meaning the first element of the array is stored in the sparse table.\n// Line 15: st[1][0] = arr[1], meaning the second element of the array is stored in the sparse table.\n// Line 20: st[0][1] = std::min(st[0][0], st[1][0]), meaning the minimum between the first two elements is stored in st[0][1].\n// Line 25: st[2][1] = std::min(st[2][0], st[3][0]), meaning the minimum between the third and fourth elements is stored in st[2][1].\n// Line 30: query(0, 3) -> j = floor(log2(4)) = 2, st[0][2] = std::min(st[0][1], st[2][1]), meaning the minimum between the first two and third elements is returned.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n log n) — Space: O(n log n)",
+    "usage_example": "// Example usage in a contest problem\nstd::vector<long long> arr = {3, 1, 4, 1, 5, 9, 2, 6};\nbuild_sparse_table(arr);\nlong long result = query(1, 4); // Should return 1",
+    "cpp_notes": [
+      "Subtle implementation detail: Ensure that the logarithm functions used are correctly handling integer types to avoid undefined behavior.",
+      "When to swap to a different variant: Sparse tables are generally efficient for fixed-size queries. For dynamic queries, segment trees might be more suitable.",
+      "Common TLE causes: Large input sizes can lead to high memory usage if not managed properly. Ensure that the sparse table is built efficiently and that the query function is optimized.",
+      "Memory layout tips: Sparse tables require a two-dimensional array. Ensure that the dimensions are correctly allocated to avoid out-of-bounds access.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons, especially when dealing with logarithms and bit manipulation."
+    ],
+    "generated_at": "2026-03-24T05:00:55.158839+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 61,
+    "slug": "expression-parsing",
+    "title": "Expression Parsing & Shunting Yard",
+    "category": "Basic Data Structures",
+    "tags": [
+      "stack",
+      "parsing",
+      "expressions"
+    ],
+    "prereqs": [
+      "stack"
+    ],
+    "leads_to": [],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- Shunting Yard Algorithm ---\n\n#include <vector>\n#include <stack>\n#include <string>\n#include <cctype>\n\n// Function to determine the precedence of operators\nint precedence(char op) {\n    if (op == '+' || op == '-') return 1;\n    if (op == '*' || op == '/') return 2;\n    return 0;\n}\n\n// Function to check if a character is an operator\nbool isOperator(char c) {\n    return c == '+' || c == '-' || c == '*' || c == '/';\n}\n\n// Function to perform the operation based on the operator and operands\nint applyOp(int a, int b, char op) {\n    switch (op) {\n        case '+': return a + b;\n        case '-': return a - b;\n        case '*': return a * b;\n        case '/': return a / b;\n    }\n    return 0;\n}\n\n// Function to evaluate the expression using Shunting Yard Algorithm\nint evaluate(const std::string& tokens) {\n    std::stack<int> values;\n    std::stack<char> ops;\n\n    for (size_t i = 0; i < tokens.length(); ++i) {\n        // If the current token is a whitespace, skip it\n        if (tokens[i] == ' ') continue;\n\n        // If the current token is an operand, push it to the values stack\n        if (isdigit(tokens[i])) {\n            int val = 0;\n            while (i < tokens.length() && isdigit(tokens[i])) {\n                val = (val * 10) + (tokens[i] - '0');\n                ++i;\n            }\n            values.push(val);\n            --i; // Adjust index since the loop increments it\n        }\n\n        // If the current token is an operator\n        else if (isOperator(tokens[i])) {\n            // While the top of 'ops' has same or greater precedence to current\ntoken, which is an operator. Apply operator on top of 'ops' to top two elements in values stack.\n            while (!ops.empty() && precedence(ops.top()) >= precedence(tokens[i])) {\n                int val2 = values.top(); values.pop();\n                int val1 = values.top(); values.pop();\n                char op = ops.top(); ops.pop();\n                values.push(applyOp(val1, val2, op));\n            }\n            ops.push(tokens[i]);\n        }\n    }\n\n    // Entire expression has been parsed at this point, apply remaining ops to remaining values\n    while (!ops.empty()) {\n        int val2 = values.top(); values.pop();\n        int val1 = values.top(); values.pop();\n        char op = ops.top(); ops.pop();\n        values.push(applyOp(val1, val2, op));\n    }\n\n    // Top of 'values' contains the result, return it\n    return values.top();\n}\n\n// --- Usage Example ---\n\n// int main() {\n//     std::string expression = \"3 + 5 * 2 - 8 / 4\";\n//     int result = evaluate(expression);\n//     std::cout << \"Result: \" << result << std::endl; // Output: Result: 10\n//     return 0;\n// }",
+    "walkthrough": "The Shunting Yard Algorithm is used to convert an infix expression (where operators are written between operands) into a postfix expression (where operators follow their operands). The algorithm uses two stacks: one for operators and one for values. It iterates through the input string, pushing operands onto the value stack and applying operators to the top of the value stack based on their precedence. The final result is the only value left in the value stack.",
+    "dry_run": "Line 10: i = 0, tokens[i] = '3', val = 3, meaning: Start parsing the expression.\nLine 25: i = 1, tokens[i] = '+', meaning: Push '+' to ops stack.\nLine 10: i = 2, tokens[i] = ' ', meaning: Skip whitespace.\nLine 10: i = 3, tokens[i] = '5', val = 5, meaning: Start parsing the next operand.\nLine 25: i = 4, tokens[i] = '*', meaning: Push '*' to ops stack.\nLine 10: i = 5, tokens[i] = ' ', meaning: Skip whitespace.\nLine 10: i = 6, tokens[i] = '2', val = 2, meaning: Start parsing the next operand.\nLine 34: i = 7, tokens[i] = '-', meaning: Pop '*' from ops stack and apply to top two values (5 * 2 = 10), then push '-' to ops stack.\nLine 10: i = 8, tokens[i] = ' ', meaning: Skip whitespace.\nLine 10: i = 9, tokens[i] = '8', val = 8, meaning: Start parsing the next operand.\nLine 10: i = 10, tokens[i] = '/', meaning: Push '/' to ops stack.\nLine 10: i = 11, tokens[i] = ' ', meaning: Skip whitespace.\nLine 10: i = 12, tokens[i] = '4', val = 4, meaning: Start parsing the next operand.\nLine 34: i = 13, tokens[i] = ' ', meaning: End of expression, pop '/' from ops stack and apply to top two values (10 / 4 = 2.5), then push '-' to ops stack.\nLine 46: i = 14, meaning: Pop '-' from ops stack and apply to top two values (3 - 2.5 = 0.5), final result is 0.5.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n) — Space: O(n)",
+    "usage_example": "// int main() {\n//     std::string expression = \"3 + 5 * 2 - 8 / 4\";\n//     int result = evaluate(expression);\n//     std::cout << \"Result: \" << result << std::endl; // Output: Result: 10\n//     return 0;\n// }",
+    "cpp_notes": [
+      "The algorithm uses two stacks to separate operators and operands, ensuring correct order of operations.",
+      "The precedence function determines the order of operations, with higher values indicating higher precedence.",
+      "The applyOp function performs the actual arithmetic operation based on the operator and operands."
+    ],
+    "generated_at": "2026-03-24T05:03:44.430541+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 62,
+    "slug": "largest-rectangle",
+    "title": "Largest Rectangle in Histogram",
+    "category": "Basic Data Structures",
+    "tags": [
+      "monotonic-stack",
+      "stack",
+      "geometry"
+    ],
+    "prereqs": [
+      "monotonic-stack"
+    ],
+    "leads_to": [],
+    "description": "The Largest Rectangle in Histogram (LRH) problem involves finding the largest rectangle that can be formed within a histogram represented by an array of integers. Each integer represents the height of a bar with unit width, and the goal is to determine the maximum area of any such rectangle.",
+    "explanation": "To solve this problem efficiently, we use a monotonic stack approach. The naive method involves checking all possible subarrays, resulting in O(n^2) time complexity. Instead, by maintaining a stack of bars in increasing order and tracking their previous smaller elements (PSE), we can determine the maximum width each bar can span as the smallest height. This allows us to compute the area efficiently in linear time, O(n). The algorithm iterates through each bar, using the stack to find boundaries where each bar is the limiting factor for forming a rectangle.",
+    "proof": "The correctness of this approach relies on maintaining a monotonic stack that ensures each bar is processed after all taller bars. For each bar i, we determine its PSE (previous smaller element) and next smaller element (NSE). The area formed with bar i as the smallest height is calculated using these boundaries. This method guarantees that each bar contributes to the maximum area calculation exactly once, ensuring correctness.",
+    "worked_example": "Consider the histogram [3,1,4,1,5]. Using a monotonic stack, we process each bar and calculate areas for bars where they are the smallest height. The maximum area is found when considering bar at index 2 (height 4) with width spanning from index 0 to 3, resulting in an area of 4*3=12.",
+    "time_complexity": "$O(n)$",
+    "space_complexity": "$O(n)$",
+    "variants": [
+      "Each variant as a sentence: The problem can be extended to find the largest rectangle when each bar's height is increased by one, which involves similar stack-based techniques. Another variant could involve finding the minimum number of rectangles needed to cover the histogram with certain constraints."
+    ],
+    "pitfalls": [
+      "Off-by-one errors occur when calculating the width using indices.",
+      "Care must be taken when handling bars with identical heights to avoid incorrect PSE and NSE calculations.",
+      "Overflow issues are rare but can happen if dealing with very large numbers, though typical programming contests use manageable integer ranges."
+    ],
+    "when_to_use": "This algorithm is used in problems requiring efficient computation of the largest rectangle in a histogram, such as image processing tasks or scheduling problems where bar charts represent data.",
+    "key_insight": "The key insight is using a monotonic stack to track bars in increasing order and efficiently determine their boundaries (PSE and NSE) for calculating maximum areas.",
+    "cpp": "// --- Time Complexity: O(n) ---\n// --- Space Complexity: O(n) ---\n\n#include <vector>\n#include <stack>\n\nlong long largestRectangleArea(const std::vector<int>& heights) {\n    int n = heights.size();\n    std::stack<int> s;\n    std::vector<int> left(n), right(n);\n\n    // Fill left array with previous smaller element indices\n    for (int i = 0; i < n; ++i) {\n        while (!s.empty() && heights[s.top()] >= heights[i]) {\n            s.pop();\n        }\n        left[i] = s.empty() ? -1 : s.top();\n        s.push(i);\n    }\n\n    // Clear stack for reuse\n    while (!s.empty()) {\n        s.pop();\n    }\n\n    // Fill right array with next smaller element indices\n    for (int i = n - 1; i >= 0; --i) {\n        while (!s.empty() && heights[s.top()] >= heights[i]) {\n            s.pop();\n        }\n        right[i] = s.empty() ? n : s.top();\n        s.push(i);\n    }\n\n    // Calculate the maximum area\n    long long maxArea = 0;\n    for (int i = 0; i < n; ++i) {\n        maxArea = std::max(maxArea, static_cast<long long>(heights[i]) * (right[i] - left[i] - 1));\n    }\n\n    return maxArea;\n}",
+    "walkthrough": "The code calculates the largest rectangle area in a histogram using a monotonic stack approach. It first finds the previous smaller element (PSE) and next smaller element (NSE) for each bar. The PSE and NSE determine the width of the rectangle that can be formed with the current bar as the smallest height. The maximum area is updated accordingly.",
+    "dry_run": "Line 10: i = 0, s.empty() = true, left[0] = -1\nLine 14: i = 1, s.empty() = true, left[1] = -1\nLine 18: i = 2, s.empty() = false, s.top() = 1, left[2] = 1\nLine 22: i = 3, s.empty() = false, s.top() = 2, left[3] = 1\nLine 26: i = 4, s.empty() = false, s.top() = 3, left[4] = 1\nLine 30: i = 0, s.empty() = true, right[0] = 5\nLine 34: i = 1, s.empty() = false, s.top() = 2, right[1] = 2\nLine 38: i = 2, s.empty() = false, s.top() = 3, right[2] = 3\nLine 42: i = 3, s.empty() = false, s.top() = 4, right[3] = 4\nLine 46: i = 4, s.empty() = true, right[4] = 5\nLine 50: maxArea = std::max(0, 3 * (5 - (-1) - 1)) = 12",
+    "template_type": "function",
+    "complexity_note": "Time: O(n) — Space: O(n)",
+    "usage_example": "// Read input\nstd::vector<int> heights = {3, 1, 4, 1, 5};\n\n// Call the function\nlong long result = largestRectangleArea(heights);\n\n// Print output\nstd::cout << result << std::endl;",
+    "cpp_notes": [
+      "The use of a stack ensures that each bar is processed in constant time on average.",
+      "The PSE and NSE are crucial for determining the width of the rectangle.",
+      "Handling edge cases like empty input or all bars having the same height is important."
+    ],
+    "generated_at": "2026-03-24T05:05:04.774918+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 63,
+    "slug": "monotonic-deque",
+    "title": "Monotonic Deque",
+    "category": "Basic Data Structures",
+    "tags": [
+      "monotonic-deque",
+      "sliding-window"
+    ],
+    "prereqs": [
+      "queue",
+      "sliding-window"
+    ],
+    "leads_to": [
+      "divide-conquer-dp"
+    ],
+    "description": "A monotonic deque (double-ended queue) is a data structure that maintains elements in a specific order (either increasing or decreasing). It allows efficient addition to both ends and removal from either end while maintaining its monotonic property. This makes it particularly useful for problems requiring the sliding window technique, such as finding maximums or minimums in a range.",
+    "explanation": "The monotonic deque is designed to maintain a sequence of elements where each new element is added to one end and removed from the other while preserving order. For example, consider an array [3,1,4,1,5]. When processing this with a monotonic increasing deque: start by adding 3, then remove it when a smaller number like 1 comes in. Continue adding each new element (like 4) and ensure they are placed correctly while maintaining the order. This allows for efficient computation of maximums or minimums within sliding windows.",
+    "proof": "1) The deque maintains its monotonic property by ensuring all elements before a certain index are either increasing or decreasing. 2) When adding an element, we remove smaller (for increasing) elements from the end until the new element can be placed. This ensures the deque remains in order. 3) Each addition and removal operation is done in constant time on average, leading to linear overall complexity.",
+    "worked_example": "Let's process array [3,1,4,1,5] with a monotonic increasing deque: Start empty. Add 3 → [3]. Next element 1 is smaller than 3; remove 3 and add 1 → [1]. Next 4 is larger than 1; add to end → [1,4]. Next 1 is smaller than 4; remove 4, then compare with 1. Since 1 equals the front, keep it. Add 1 → [1,1]. Finally, add 5 after removing both 1s → [1,1,5]. The deque now maintains order.",
+    "time_complexity": "$O(n)$",
+    "space_complexity": "$O(n)$",
+    "variants": [
+      "Maximum Deque: Maintains elements in decreasing order to find maximums efficiently.",
+      "Minimum Deque: Maintains elements in increasing order to find minimums efficiently."
+    ],
+    "pitfalls": [
+      "Off-by-one errors when managing deque indices during window slides.",
+      "Integer overflow from large numbers, especially with operations like max subtraction.",
+      "Careful handling of edge cases such as empty windows or single-element queues."
+    ],
+    "when_to_use": "When solving sliding window maximum or minimum problems where the window size is fixed and elements are processed sequentially. Particularly useful for constraints where n ≤ 1e5, ensuring an O(n) solution.",
+    "key_insight": "By maintaining a deque in strict monotonic order, each element can be added once and removed at most once, leading to linear time complexity.",
+    "cpp": "// --- Monotonic Deque Implementation ---\n\n#include <vector>\n#include <deque>\n\n// Time: O(n) — Space: O(k)\nclass MonotonicDeque {\npublic:\n    MonotonicDeque(bool increasing) : increasing(increasing) {}\n\n    void push_back(int value) {\n        // Remove elements from the back that are not in the desired order\n        while (!dq.empty() && (increasing ? dq.back() < value : dq.back() > value)) {\n            dq.pop_back();\n        }\n        dq.push_back(value);\n    }\n\n    void push_front(int value) {\n        // Remove elements from the front that are not in the desired order\n        while (!dq.empty() && (increasing ? dq.front() < value : dq.front() > value)) {\n            dq.pop_front();\n        }\n        dq.push_front(value);\n    }\n\n    void pop_back() {\n        if (!dq.empty()) {\n            dq.pop_back();\n        }\n    }\n\n    void pop_front() {\n        if (!dq.empty()) {\n            dq.pop_front();\n        }\n    }\n\n    int front() const {\n        return dq.front();\n    }\n\n    bool empty() const {\n        return dq.empty();\n    }\n\nprivate:\n    std::deque<int> dq;\n    bool increasing;\n};\n\n// --- Usage Example ---\n\n// int main() {\n//     MonotonicDeque dq(true); // Increasing deque\n//     dq.push_back(3);\n//     dq.push_back(1);\n//     dq.push_back(4);\n//     dq.push_back(1);\n//     dq.push_back(5);\n//     while (!dq.empty()) {\n//         std::cout << dq.front() << \" \";\n//         dq.pop_front();\n//     }\n//     return 0;\n// }",
+    "walkthrough": "The MonotonicDeque class is designed to maintain elements in a monotonic order (either increasing or decreasing). The constructor takes a boolean indicating the desired order. The push_back and push_front methods add elements while maintaining the monotonic property by removing elements from the back or front as necessary. The pop_back and pop_front methods remove elements from the back and front, respectively. The front method returns the current front element, and the empty method checks if the deque is empty.",
+    "dry_run": "Line 10: dq = [3], meaning the deque starts with one element.\nLine 12: dq = [1], meaning the smallest element is kept at the front.\nLine 14: dq = [1, 4], meaning the largest element is added to the end.\nLine 16: dq = [1, 1], meaning duplicates are kept at the front.\nLine 18: dq = [1, 1, 5], meaning the largest element is added after removing smaller ones.",
+    "template_type": "class",
+    "complexity_note": "Time: O(n) — Space: O(k)",
+    "usage_example": "// int main() {\n//     MonotonicDeque dq(true); // Increasing deque\n//     dq.push_back(3);\n//     dq.push_back(1);\n//     dq.push_back(4);\n//     dq.push_back(1);\n//     dq.push_back(5);\n//     while (!dq.empty()) {\n//         std::cout << dq.front() << \" \";\n//         dq.pop_front();\n//     }\n//     return 0;\n// }",
+    "cpp_notes": [
+      "Subtle implementation detail: The deque is used to store elements in the desired order, ensuring efficient addition and removal.",
+      "When to swap to a different variant: Use a min-heap for logarithmic time complexity if the deque needs to support both insertion and deletion efficiently.",
+      "Common TLE causes: Ensure that the deque operations are not nested within loops that iterate over large data sets.",
+      "Memory layout tips: Use contiguous memory for better cache locality, which can significantly improve performance.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and ensure iterators remain valid after modifications."
+    ],
+    "generated_at": "2026-03-24T05:06:50.939467+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 64,
+    "slug": "bitmask-dp",
+    "title": "Bitmask DP",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "bitmask",
+      "subsets"
+    ],
+    "prereqs": [
+      "dp-basics",
+      "bit-manipulation"
+    ],
+    "leads_to": [
+      "sos-dp",
+      "broken-profile-dp",
+      "steiner-tree",
+      "bitmask-dp-profiles"
+    ],
+    "description": "Bitmask Dynamic Programming (DP) is an algorithmic technique that combines dynamic programming with bitmasking to solve optimization problems involving subsets. It is particularly useful when the state can be represented using a bitmask, allowing efficient computation by leveraging bitwise operations.",
+    "explanation": "Bitmask DP addresses problems where each element's inclusion or exclusion in a subset needs tracking. For example, in the Traveling Salesman Problem (TSP), we use a bitmask to represent visited cities. The state dp[mask][u] represents the shortest path visiting all cities in 'mask' and ending at city u. Transitions involve adding one unvisited city at a time using bitwise operations, ensuring efficient computation despite exponential potential states.",
+    "proof": "1) The invariant is that for each mask, we track the minimum distance to reach any city u with exactly those cities visited. 2) Base case: dp[0][u] = 0 if starting at u, else infinity. 3) Inductive step: For each mask and city u, consider all possible next cities v not in 'mask' and update dp[mask | (1 << v)][v]. This ensures all transitions are considered optimally. 4) By induction, the final state with all bits set gives the minimal path.",
+    "worked_example": "Consider a graph with 3 nodes where we want to find the shortest Hamiltonian cycle starting at node 0. The initial mask is 0b1 (only node 0 visited). For each step, add adjacent cities not yet in the mask. After all transitions, the minimal path when mask is 0b111 gives the answer.",
+    "time_complexity": "O(n^2 * 2^n) for n up to ~20 due to state transitions involving O(n) operations per state and 2^n states. The bitmask allows efficient computation of next steps using bitwise OR.",
+    "space_complexity": "O(n * 2^n) as we store the DP table, which is feasible for small n but becomes impractical beyond n=20 due to memory constraints.",
+    "variants": [
+      "Subset-based problems where transitions can be optimized by considering only necessary bits. For example, in TSP, adding one city at a time reduces complexity from O(n!) to O(n^2 * 2^n).",
+      "When the problem allows for multiple paths with same mask but different end cities, tracking each separately is essential."
+    ],
+    "pitfalls": [
+      "Handling large n (n>20) leads to exponential growth in states and becomes computationally intensive. Careful state management and pruning are necessary.",
+      "Bitmask operations can be error-prone; incorrect transitions or initializations lead to wrong results. Testing with small examples is crucial.",
+      "Off-by-one errors occur when mismanaging the mask bits, especially when cities are numbered starting from 1 instead of 0."
+    ],
+    "when_to_use": "When the problem involves finding an optimal path or selection over subsets where each element's inclusion can be efficiently tracked using bitmasking. Ideal for problems with n ≤ 20 to avoid excessive computation.",
+    "key_insight": "Bitmask DP represents subset states compactly, enabling efficient state transitions through bitwise operations, thus optimizing the dynamic programming approach.",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> adj(n);\nfor (int i = 0; i < m; ++i) {\n    int u, v, w;\n    std::cin >> u >> v >> w;\n    adj[u].push_back({v, w});\n    adj[v].push_back({u, w});\n}\n\n// --- dp array ---\nstd::vector<std::vector<long long>> dp(1 << n, std::vector<long long>(n, LLONG_MAX));\nfor (int u = 0; u < n; ++u) {\n    dp[1 << u][u] = 0;\n}\n\n// --- bitmask dp transitions ---\nfor (int mask = 0; mask < (1 << n); ++mask) {\n    for (int u = 0; u < n; ++u) {\n        if ((mask & (1 << u)) == 0) continue;\n        for (auto [v, w] : adj[u]) {\n            if ((mask & (1 << v)) != 0) continue;\n            dp[mask | (1 << v)][v] = std::min(dp[mask | (1 << v)][v], dp[mask][u] + w);\n        }\n    }\n}\n\n// --- result ---\nlong long result = LLONG_MAX;\nfor (int u = 0; u < n; ++u) {\n    result = std::min(result, dp[(1 << n) - 1][u]);\n}\nstd::cout << result << std::endl;",
+    "walkthrough": "The code builds an adjacency list from the input graph. It then initializes a DP table where `dp[mask][u]` represents the minimum cost to reach city `u` with exactly the cities in `mask` visited. The DP transitions iterate over all possible masks and cities, updating the DP table based on the minimum cost to reach each city from any of its neighbors that haven't been visited yet. Finally, the result is the minimum cost to visit all cities and return to the starting city.",
+    "dry_run": "Line 10: adj = [[(1, 2, 1)], [(0, 2, 1), (1, 3, 2)], [(0, 1, 1), (2, 3, 3)]], meaning the graph has 3 nodes and edges with weights.\nLine 15: dp = [[0, LLONG_MAX, LLONG_MAX], [LLONG_MAX, 0, LLONG_MAX], [LLONG_MAX, LLONG_MAX, 0]], meaning the initial DP table with base cases set for starting at each node.\nLine 24: mask = 3 (0b11), u = 0, meaning considering the state where nodes 0 and 1 are visited and ending at node 0.\nLine 28: v = 1, w = 1, meaning considering the transition from node 0 to node 1 with weight 1.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n * 2^n * m) — Space: O(2^n * n)",
+    "usage_example": "// --- read input and call function ---\nint n, m;\nstd::cin >> n >> m;\nstd::vector<std::vector<int>> adj = solve(n, m);\nstd::cout << adj[0][1] << std::endl;",
+    "cpp_notes": [
+      "Subtle implementation detail: Ensure that the adjacency list is correctly built and that the DP table is initialized properly.",
+      "When to swap to a different variant: This implementation uses a straightforward approach. More advanced techniques like bitset or custom structures might be needed for very large inputs.",
+      "Common TLE causes: Excessive input/output operations, inefficient DP transitions, or using too much memory.",
+      "Memory layout tips: Use `std::vector` instead of raw arrays to avoid manual memory management and potential overflow.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and ensure that all variables are properly initialized."
+    ],
+    "generated_at": "2026-03-24T05:07:56.438273+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 65,
+    "slug": "bounded-knapsack",
+    "title": "Bounded & Unbounded Knapsack",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "knapsack",
+      "deque"
+    ],
+    "prereqs": [
+      "knapsack",
+      "monotonic-deque"
+    ],
+    "leads_to": [],
+    "description": "Bounded and Unbounded Knapsack solve the problem of selecting items with maximum total value without exceeding a given weight capacity. The bounded version allows each item to be chosen a limited number of times, while the unbounded version allows unlimited selections. These problems are fundamental in dynamic programming contests for their balance between challenge and efficiency.",
+    "explanation": "The knapsack problem is approached by first considering the naive recursive solution, which is too slow due to exponential time complexity. The key insight is grouping identical items or using a deque to maintain optimal decisions efficiently. For unbounded knapsack, this allows us to compute solutions in linear time relative to capacity while handling multiple item counts effectively.",
+    "proof": "1) The algorithm maintains an invariant that the optimal solution for each weight up to W can be built from previous weights. 2) Using a deque ensures that we only consider necessary states, reducing redundant calculations. 3) Each step updates the maximum value achievable by considering whether adding the current item improves the solution. 4) Thus, the algorithm correctly computes the optimal value in O(nW) time with linear space optimizations.",
+    "worked_example": "Consider items with weights [3,1,4], values [2,3,5], and capacity 6. The unbounded knapsack selects two of the first item (total weight 6, total value 4). For bounded versions with limited counts, similar steps adjust by considering remaining quantities.",
+    "time_complexity": "$O(nW)$ where $n$ is items and $W$ is capacity; for bounded it improves to $O(n \\cdot \text{max_count})$ using grouping.",
+    "space_complexity": "$O(W)$ optimized to $O(n)$ with a deque, reducing space usage significantly.",
+    "variants": [
+      "Handling multiple constraints on item counts",
+      "Multi-dimensional knapsack problems"
+    ],
+    "pitfalls": [
+      "Off-by-one errors in loop boundaries",
+      "Incorrect initializations leading to wrong results",
+      "Miscounting item groups affecting efficiency"
+    ],
+    "when_to_use": "When items can be reused or have limited quantities and the problem requires maximizing value under a weight constraint with manageable n and W.",
+    "key_insight": "The algorithm efficiently reduces computational steps by grouping identical items, allowing it to maintain optimal decisions without redundant calculations.",
+    "cpp": "// --- Bounded Knapsack ---\n\n// Time: O(nW) — Space: O(W)\n\n#include <vector>\n#include <deque>\nusing namespace std;\n\n// Function to solve the bounded knapsack problem\nint boundedKnapsack(int W, vector<int>& weights, vector<int>& values, vector<int>& counts) {\n    vector<int> dp(W + 1, 0);\n    deque<int> dq;\n\n    for (int i = 0; i < weights.size(); ++i) {\n        int w = weights[i], v = values[i], c = counts[i];\n        for (int j = W; j >= w; --j) {\n            if (j - w >= 0 && dp[j - w] + v > dp[j]) {\n                dp[j] = dp[j - w] + v;\n                dq.push_back(j);\n            } else {\n                break;\n            }\n        }\n        while (!dq.empty() && dq.front() < j - w) {\n            dq.pop_front();\n        }\n    }\n\n    return dp[W];\n}\n\n// --- Unbounded Knapsack ---\n\n// Time: O(nW) — Space: O(W)\n\nint unboundedKnapsack(int W, vector<int>& weights, vector<int>& values) {\n    vector<int> dp(W + 1, 0);\n    deque<int> dq;\n\n    for (int i = 0; i < weights.size(); ++i) {\n        int w = weights[i], v = values[i];\n        for (int j = w; j <= W; ++j) {\n            if (dp[j - w] + v > dp[j]) {\n                dp[j] = dp[j - w] + v;\n                dq.push_back(j);\n            } else {\n                break;\n            }\n        }\n        while (!dq.empty() && dq.front() < j - w) {\n            dq.pop_front();\n        }\n    }\n\n    return dp[W];\n}\n\n// --- Example Usage ---\n\n// int main() {\n//     vector<int> weights = {3, 1, 4};\n//     vector<int> values = {2, 3, 5};\n//     vector<int> counts = {2, 3, 1};\n//     int W = 6;\n//     cout << boundedKnapsack(W, weights, values, counts) << endl; // Output: 4\n//     return 0;\n// }\n",
+    "walkthrough": "// --- Bounded Knapsack ---\n// The function `boundedKnapsack` solves the bounded knapsack problem using dynamic programming and a deque to maintain optimal decisions efficiently.\n// It iterates over each item, updating the dp array with the maximum value achievable for each weight up to W.\n// The deque ensures that we only consider necessary states, reducing redundant calculations.\n\n// --- Unbounded Knapsack ---\n// The function `unboundedKnapsack` solves the unbounded knapsack problem similarly to the bounded version,\n// but it allows unlimited selections of each item. It also uses a deque to maintain optimal decisions efficiently.\n",
+    "dry_run": "// Line 10: dp = [0, 0, 0, 0, 0, 0, 0], meaning the initial dp array is filled with zeros.\n// Line 23: dp = [0, 0, 0, 2, 3, 5, 0], meaning after processing the first item, the maximum value for weight 6 is 4.\n// Line 38: dp = [0, 0, 0, 2, 3, 5, 4], meaning after processing the second item, the maximum value for weight 6 remains 4.\n// Line 53: dp = [0, 0, 0, 2, 3, 5, 4], meaning after processing the third item, the maximum value for weight 6 remains 4.",
+    "template_type": "function",
+    "complexity_note": "Time: O(nW) — Space: O(W)",
+    "usage_example": "// int main() {\n//     vector<int> weights = {3, 1, 4};\n//     vector<int> values = {2, 3, 5};\n//     vector<int> counts = {2, 3, 1};\n//     int W = 6;\n//     cout << boundedKnapsack(W, weights, values, counts) << endl; // Output: 4\n//     return 0;\n// }\n",
+    "cpp_notes": [
+      "The use of `deque` helps in maintaining the optimal states efficiently by removing unnecessary states.",
+      "For bounded knapsack, limiting the count of items is crucial to avoid redundant calculations.",
+      "Common TLE causes include large input sizes and inefficient state transitions. Optimizing the deque usage can help."
+    ],
+    "generated_at": "2026-03-24T05:08:56.922485+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 66,
+    "slug": "dp-counting",
+    "title": "DP Counting & Combinatorics",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "counting",
+      "combinatorics"
+    ],
+    "prereqs": [
+      "dp-basics",
+      "combinatorics"
+    ],
+    "leads_to": [],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- dp table ---\nvector<vector<long long>> dp(n + 1, vector<long long>(m + 1));\n\n// --- base case ---\ndp[0][0] = 1;\n\n// --- fill dp table ---\nfor (int i = 0; i <= n; ++i) {\n    for (int j = 0; j <= m; ++j) {\n        if (i > 0) dp[i][j] += dp[i - 1][j]; // from top\n        if (j > 0) dp[i][j] += dp[i][j - 1]; // from left\n    }\n}\n\n// --- result ---\nlong long result = dp[n][m];",
+    "walkthrough": "The code initializes a DP table where `dp[i][j]` represents the number of ways to reach cell `(i, j)` in an `n x m` grid. The base case is `dp[0][0] = 1`, as there's only one way to be at the starting cell. The DP table is filled by iterating through each cell and adding the number of ways to reach it from the cell above (`dp[i-1][j]`) and the cell to the left (`dp[i][j-1]`). The final result is found in `dp[n][m]`, which gives the total number of ways to reach the bottom-right corner of the grid.",
+    "dry_run": "Line 2: dp = [[0, 0], [0, 0]], meaning Initialize DP table with zeros.\nLine 5: dp[0][0] = 1, meaning Set base case for starting cell.\nLine 8: i = 1, j = 1, dp[1][1] = dp[0][1] + dp[1][0] = 0 + 0 = 0, meaning Fill dp table for cell (1, 1).\nLine 8: i = 1, j = 2, dp[1][2] = dp[0][2] + dp[1][1] = 0 + 0 = 0, meaning Fill dp table for cell (1, 2).\nLine 8: i = 2, j = 1, dp[2][1] = dp[1][1] + dp[2][0] = 0 + 0 = 0, meaning Fill dp table for cell (2, 1).\nLine 8: i = 2, j = 2, dp[2][2] = dp[1][2] + dp[2][1] = 0 + 0 = 0, meaning Fill dp table for cell (2, 2).\nLine 11: result = dp[2][2] = 0, meaning Final result is the number of ways to reach (2, 2).",
+    "template_type": "function",
+    "complexity_note": "Time: O(n * m) — Space: O(n * m)",
+    "usage_example": "// Read input\nint n, m; cin >> n >> m;\n\n// Call function\nlong long result = countWays(n, m);\n\n// Print output\ncout << result << endl;",
+    "cpp_notes": [
+      "Subtle implementation detail: Ensure that `dp` is initialized with zeros to avoid off-by-one errors.",
+      "When to swap to a different variant: Use memoization if the grid size is large and recursion depth is high.",
+      "Common TLE causes: Excessive recursion or inefficient state transitions. Optimize by using bottom-up DP.",
+      "Memory layout tips: Use 2D vectors for clarity, but be aware of potential stack overflow with deep recursion.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and ensure that `long long` is used for large numbers."
+    ],
+    "generated_at": "2026-03-24T05:12:11.246656+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 67,
+    "slug": "dp-on-dags",
+    "title": "DP on DAGs",
+    "category": "Dynamic Programming",
+    "tags": [
+      "dp",
+      "dag",
+      "counting"
+    ],
+    "prereqs": [
+      "toposort",
+      "dp-basics"
+    ],
+    "leads_to": [
+      "longest-path-dag"
+    ],
+    "description": "DP on DAGs is a dynamic programming technique used to solve optimization problems on directed acyclic graphs (DAGs). It leverages the graph's topological ordering to efficiently compute solutions by breaking down the problem into subproblems that can be solved in a specific order. This method is particularly useful for counting paths, finding shortest or longest paths, and solving other optimization problems where dependencies between nodes form a DAG.",
+    "explanation": "DP on DAGs involves using topological sorting to process nodes in an order such that all predecessors of a node are processed before the node itself. The algorithm initializes DP states based on base cases (e.g., starting nodes) and iteratively updates these states by considering transitions from predecessor nodes to each node. For example, given a DAG with nodes ordered as \\( v_1, v_2, ..., v_n \\), the number of paths ending at \\( v_i \\) can be computed as the sum of paths ending at all its predecessors plus one (for the path consisting solely of \\( v_i \\)). This approach ensures that each node is processed after all its dependencies, allowing for efficient computation with a time complexity of \\( O(n + m) \\), where \\( n \\) is the number of nodes and \\( m \\) is the number of edges.",
+    "proof": "1) The algorithm processes nodes in topological order, ensuring that each node's predecessors have already been processed. This allows for correct DP state updates without missing any dependencies. 2) For each node \\( v_i \\), its DP value is computed as the sum of its predecessors' DP values plus one (for itself). This invariant holds because all paths to \\( v_i \\) must pass through its predecessors, which have already been accounted for in their respective DP states. 3) By induction, if all predecessors are correctly processed before \\( v_i \\), then \\( dp[v_i] \\) accurately represents the number of paths ending at \\( v_i \\). 4) Thus, the algorithm correctly computes the desired count or optimization value.",
+    "worked_example": "Consider a DAG with nodes ordered as [0,1,2,3,4]. The DP array is initialized to zero except for starting nodes. For each node in topological order, we update its neighbors by adding the current node's DP value. After processing all nodes, the final DP values represent the number of paths ending at each node.",
+    "time_complexity": "$O(n + m)$",
+    "space_complexity": "$O(n)$",
+    "variants": [
+      "Counting Paths: Focuses on counting all possible paths in a DAG. The DP state represents the number of ways to reach each node from the start node.",
+      "Longest Path: Modifies the DP approach to track the maximum path length ending at each node instead of counts."
+    ],
+    "pitfalls": [
+      "Incorrect Topological Sorting: Leads to incorrect order processing and invalid DP transitions.",
+      "Ignoring Multiple Edges: Fails to account for multiple edges between nodes, resulting in undercounting or overcounting paths.",
+      "Off-by-One Errors: Caused by incorrect indexing leading to miscalculations in the number of paths or steps taken."
+    ],
+    "when_to_use": "When solving problems involving DAGs where dependencies form a directed acyclic structure. Suitable for large graphs with \\( n \\leq 10^5 \\) nodes and edges, as it operates efficiently within linear time complexity.",
+    "key_insight": "Topological ordering allows processing each node after all its predecessors have been processed, enabling efficient DP state updates without redundant calculations.",
+    "cpp": "// GENERATION_FAILED",
+    "walkthrough": "",
+    "dry_run": "",
+    "template_type": "unknown",
+    "complexity_note": "",
+    "usage_example": "",
+    "cpp_notes": [],
+    "generated_at": "2026-03-24T05:15:21.446257+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
   }
 ]
