@@ -1023,3 +1023,175 @@
 ⚠️  Interrupted. Progress saved.
 [16:59:28] 
 === Done. 114 entries in data/db.json ===
+[18:03:04] === cp-gpre pipeline starting ===
+[18:03:04] Topics: 233  |  already done: 114  |  pending: 119
+[18:03:04] Estimated time: ~119 minutes
+[18:03:04] 
+[1/119] Ternary Search  (Sorting & Searching)
+[18:03:04]   [ternary-search] math model...
+[18:03:51]   [ternary-search] code model...
+[18:04:34]   ✓  saved  |  ETA 178.1 min remaining
+[18:04:34] 
+[2/119] Binary Trie (XOR Trie)  (Strings)
+[18:04:34]   [binary-trie] math model...
+[18:05:13]   [binary-trie] math attempt 1 failed: Invalid control character at: line 3 column 324 (char 600)
+[18:06:10]   [binary-trie] math attempt 2 failed: Invalid control character at: line 3 column 164 (char 566)
+[18:07:07]   [binary-trie] math attempt 3 failed: Invalid control character at: line 4 column 348 (char 696)
+[18:07:09]   [binary-trie] code model...
+[18:07:36]   ✓  saved  |  ETA 265.8 min remaining
+[18:07:36] 
+[3/119] KMP — Prefix Function  (Strings)
+[18:07:36]   [kmp] math model...
+[18:08:19]   [kmp] code model...
+[18:08:49]   ✓  saved  |  ETA 222.7 min remaining
+[18:08:49] 
+[4/119] Trie  (Strings)
+[18:08:49]   [trie] math model...
+[18:09:28]   [trie] math attempt 1 failed: Invalid control character at: line 3 column 294 (char 650)
+[18:10:17]   [trie] math attempt 2 failed: Expecting ',' delimiter: line 16 column 5 (char 2657)
+[18:11:04]   [trie] math attempt 3 failed: Invalid control character at: line 4 column 408 (char 757)
+[18:11:06]   [trie] code model...
+[18:11:40]   ✓  saved  |  ETA 247.6 min remaining
+[18:11:40] 
+[5/119] Z-Function  (Strings)
+[18:11:40]   [z-function] math model...
+[18:12:12]   [z-function] code model...
+[18:12:51]   ✓  saved  |  ETA 223.1 min remaining
+[18:12:51] 
+[6/119] Euler Tour & Subtree Queries  (Trees & MST)
+[18:12:51]   [euler-tour] math model...
+[18:13:30]   [euler-tour] math attempt 1 failed: Invalid control character at: line 4 column 192 (char 1442)
+[18:14:15]   [euler-tour] math attempt 2 failed: Invalid control character at: line 4 column 186 (char 1189)
+[18:15:05]   [euler-tour] math attempt 3 failed: Invalid control character at: line 4 column 449 (char 945)
+[18:15:07]   [euler-tour] code model...
+[18:15:41]   ✓  saved  |  ETA 237.7 min remaining
+[18:15:41] 
+[7/119] Kruskal's Algorithm  (Trees & MST)
+[18:15:41]   [kruskal-mst] math model...
+[18:16:34]   [kruskal-mst] math attempt 1 failed: Invalid control character at: line 4 column 341 (char 1846)
+[18:17:13]   [kruskal-mst] math attempt 2 failed: Invalid control character at: line 3 column 287 (char 637)
+[18:18:04]   [kruskal-mst] math attempt 3 failed: Invalid \escape: line 10 column 30 (char 3143)
+[18:18:06]   [kruskal-mst] code model...
+[18:18:47]   ✓  saved  |  ETA 251.6 min remaining
+[18:18:47] 
+[8/119] Lowest Common Ancestor (Binary Lifting)  (Trees & MST)
+[18:18:47]   [lca] math model...
+[18:19:35]   [lca] math attempt 1 failed: Invalid control character at: line 4 column 193 (char 1078)
+[18:20:26]   [lca] math attempt 2 failed: Expecting ',' delimiter: line 10 column 16 (char 4023)
+[18:21:14]   [lca] code model...
+[18:21:57]   ✓  saved  |  ETA 262.1 min remaining
+[18:21:57] 
+[9/119] Path Queries on Trees  (Trees & MST)
+[18:21:57]   [path-queries] math model...
+[18:22:50]   [path-queries] math attempt 1 failed: Invalid control character at: line 4 column 335 (char 876)
+[18:23:36]   [path-queries] code model...
+[18:24:38]   ✓  saved  |  ETA 263.6 min remaining
+[18:24:38] 
+[10/119] Prim's Algorithm  (Trees & MST)
+[18:24:38]   [prim] math model...
+[18:25:35]   [prim] code model...
+[18:26:55]   [prim] code attempt 1 failed: Unterminated string starting at: line 2 column 10 (char 11)
+[18:28:18]   [prim] code attempt 2 failed: Unterminated string starting at: line 4 column 14 (char 1830)
+[18:28:49]   ✓  saved  |  ETA 280.8 min remaining
+[18:28:49] 
+[11/119] Tree DP  (Trees & MST)
+[18:28:49]   [tree-dp] math model...
+[18:29:36]   [tree-dp] math attempt 1 failed: Invalid control character at: line 4 column 154 (char 1380)
+[18:30:26]   [tree-dp] math attempt 2 failed: Invalid control character at: line 3 column 376 (char 836)
+[18:30:56]   [tree-dp] math attempt 3 failed: Expecting ':' delimiter: line 10 column 142 (char 1723)
+[18:30:58]   [tree-dp] code model...
+[18:31:23]   ✓  saved  |  ETA 278.0 min remaining
+[18:31:23] 
+[12/119] Tree Diameter & Paths  (Trees & MST)
+[18:31:23]   [tree-dp-diameter] math model...
+[18:32:01]   [tree-dp-diameter] math attempt 1 failed: Invalid control character at: line 4 column 101 (char 932)
+[18:32:47]   [tree-dp-diameter] math attempt 2 failed: Invalid control character at: line 4 column 250 (char 730)
+[18:33:27]   [tree-dp-diameter] code model...
+[18:33:59]   ✓  saved  |  ETA 275.7 min remaining
+[18:33:59] 
+[13/119] 2D Fenwick Tree  (Advanced Data Structures)
+[18:33:59]   [2d-fenwick] math model...
+[18:34:34]   [2d-fenwick] math attempt 1 failed: Invalid control character at: line 4 column 137 (char 844)
+[18:35:12]   [2d-fenwick] code model...
+[18:35:42]   ✓  saved  |  ETA 266.2 min remaining
+[18:35:42] 
+[14/119] Chtholly Tree (ODT)  (Advanced Data Structures)
+[18:35:42]   [chtholly-tree] math model...
+[18:36:19]   [chtholly-tree] math attempt 1 failed: Invalid control character at: line 4 column 397 (char 869)
+[18:37:07]   [chtholly-tree] code model...
+[18:37:47]   [chtholly-tree] code attempt 1 failed: Unterminated string starting at: line 2 column 10 (char 11)
+[18:38:18]   ✓  saved  |  ETA 264.3 min remaining
+[18:38:18] 
+[15/119] DSU on Tree (Small to Large)  (Advanced Data Structures)
+[18:38:18]   [dsu-on-tree] math model...
+[18:38:57]   [dsu-on-tree] math attempt 1 failed: Invalid control character at: line 4 column 152 (char 1234)
+[18:39:45]   [dsu-on-tree] math attempt 2 failed: Invalid control character at: line 4 column 208 (char 691)
+[18:40:27]   [dsu-on-tree] math attempt 3 failed: Invalid control character at: line 4 column 123 (char 982)
+[18:40:29]   [dsu-on-tree] code model...
+[18:40:59]   ✓  saved  |  ETA 263.0 min remaining
+[18:40:59] 
+[16/119] DSU with Rollback  (Advanced Data Structures)
+[18:40:59]   [dsu-rollback] math model...
+[18:41:44]   [dsu-rollback] code model...
+[18:42:13]   ✓  saved  |  ETA 252.1 min remaining
+[18:42:13] 
+[17/119] Disjoint Sparse Table  (Advanced Data Structures)
+[18:42:13]   [disjoint-sparse-table] math model...
+[18:42:44]   [disjoint-sparse-table] math attempt 1 failed: Invalid \escape: line 10 column 30 (char 1856)
+[18:43:24]   [disjoint-sparse-table] math attempt 2 failed: Invalid control character at: line 4 column 118 (char 1248)
+[18:44:20]   [disjoint-sparse-table] math attempt 3 failed: Invalid control character at: line 4 column 244 (char 1362)
+[18:44:22]   [disjoint-sparse-table] code model...
+[18:44:53]   ✓  saved  |  ETA 250.9 min remaining
+[18:44:53] 
+[18/119] Implicit Treap  (Advanced Data Structures)
+[18:44:53]   [implicit-treap] math model...
+[18:45:33]   [implicit-treap] math attempt 1 failed: Invalid control character at: line 3 column 314 (char 690)
+[18:46:14]   [implicit-treap] code model...
+[18:47:05] 
+⚠️  Interrupted. Progress saved.
+[18:47:05] 
+=== Done. 131 entries in data/db.json ===
+[20:44:48] === cp-gpre pipeline starting ===
+[20:44:48] Topics: 233  |  already done: 131  |  pending: 102
+[20:44:48] Estimated time: ~102 minutes
+[20:44:48] 
+[1/102] Implicit Treap  (Advanced Data Structures)
+[20:44:48]   [implicit-treap] math model...
+[20:45:26]   [implicit-treap] math attempt 1 failed: Expecting ':' delimiter: line 6 column 267 (char 2352)
+[20:46:04]   [implicit-treap] math attempt 2 failed: Invalid control character at: line 3 column 397 (char 786)
+[20:46:47]   [implicit-treap] code model...
+[20:47:39]   ✓  saved  |  ETA 286.8 min remaining
+[20:47:39] 
+[2/102] Merge Sort Tree  (Advanced Data Structures)
+[20:47:39]   [merge-sort-tree] math model...
+[20:48:26]   [merge-sort-tree] code model...
+[20:49:14]   ✓  saved  |  ETA 221.5 min remaining
+[20:49:14] 
+[3/102] Mo's Algorithm  (Advanced Data Structures)
+[20:49:14]   [mo-algorithm] math model...
+[20:50:09]   [mo-algorithm] math attempt 1 failed: Invalid control character at: line 4 column 430 (char 1020)
+[20:50:51]   [mo-algorithm] math attempt 2 failed: Invalid \escape: line 10 column 30 (char 2159)
+[20:51:34]   [mo-algorithm] code model...
+[20:52:19]   ✓  saved  |  ETA 247.7 min remaining
+[20:52:19] 
+[4/102] Square Root Decomposition  (Advanced Data Structures)
+[20:52:19]   [sqrt-decomposition] math model...
+[20:53:00]   [sqrt-decomposition] math attempt 1 failed: Invalid \escape: line 6 column 30 (char 1645)
+[20:54:23]   [sqrt-decomposition] math attempt 2 failed: No JSON found in:
+{
+  "description": "Square root decomposition is a technique used in competitive programming to optimize algorithms for problems involving multiple range queries or updates on an array. The idea involves dividing the array into blocks of size sqrt(n), where n is the length of the array. This allows 
+[20:55:12]   [sqrt-decomposition] math attempt 3 failed: Invalid \escape: line 6 column 30 (char 1540)
+[20:55:14]   [sqrt-decomposition] code model...
+[20:55:51]   ✓  saved  |  ETA 270.5 min remaining
+[20:55:51] 
+[5/102] Treap  (Advanced Data Structures)
+[20:55:51]   [treap] math model...
+[20:56:29]   [treap] math attempt 1 failed: Expecting ',' delimiter: line 15 column 13 (char 2509)
+[20:57:11]   [treap] math attempt 2 failed: Invalid control character at: line 3 column 474 (char 930)
+[20:58:12]   [treap] math attempt 3 failed: Invalid control character at: line 3 column 472 (char 1051)
+[20:58:14]   [treap] code model...
+[20:59:34]   [treap] code attempt 1 failed: Unterminated string starting at: line 2 column 10 (char 11)
+[20:59:46] 
+⚠️  Interrupted. Progress saved.
+[20:59:46] 
+=== Done. 135 entries in data/db.json ===

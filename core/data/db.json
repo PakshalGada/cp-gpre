@@ -5439,5 +5439,985 @@
     "generated_at": "2026-03-24T11:28:09.486046+00:00",
     "math_model": "cp-math",
     "code_model": "cp-code"
+  },
+  {
+    "id": 115,
+    "slug": "ternary-search",
+    "title": "Ternary Search",
+    "category": "Sorting & Searching",
+    "tags": [
+      "ternary-search",
+      "unimodal"
+    ],
+    "prereqs": [
+      "binary-search"
+    ],
+    "leads_to": [],
+    "description": "Ternary search is an efficient algorithm used to find the minimum or maximum of a unimodal function. A unimodal function has a single peak (for max) or valley (for min), making it suitable for problems where the data follows this pattern. It operates by repeatedly dividing the array into three parts and comparing two middle elements to determine which third contains the extremum, similar to binary search but with a logarithmic time complexity of O(log n).",
+    "explanation": "Ternary search is designed for unimodal arrays where each element increases up to a peak and then decreases. The algorithm works by dividing the array into three parts and comparing two middle elements. If one is larger than the other, it discards the third that cannot contain the extremum. This process repeats until the extremum is found in O(log n) time. For example, given an array [1, 2, 3, 4, 5], ternary search efficiently narrows down to the maximum value by comparing middle elements and eliminating unnecessary segments.",
+    "proof": "1) The invariant is that the extremum lies within the current subarray. 2) Initially, the entire array is considered as the subarray containing the extremum. 3) In each iteration, compare two middle elements (m1 and m2). If m1 < m2, discard the left third; if m1 > m2, discard the right third. This maintains the invariant that the extremum remains within the current subarray. 4) The process continues until a single element is left, which is the extremum.",
+    "worked_example": "Consider finding the maximum in [1, 3, 5, 7, 9]. Step 1: Compare indices 2 and 3 (values 5 and 7). Since 5 < 7, discard the first third. New subarray is [3, 5, 7, 9]. Step 2: Compare indices 2 and 3 (5 and 9). Since 5 < 9, discard the left third again. New subarray is [5, 7, 9]. Step 3: Compare indices 1 and 2 (7 and 9). Discard left third. Now, only index 2 remains as maximum.",
+    "time_complexity": "$O(\\log n)$; each iteration reduces the problem size by a factor of $2/3$, leading to logarithmic time complexity in base $3/2$ which simplifies to O(log n) due to constant factors.",
+    "space_complexity": "$O(1)$; no additional space is used beyond variables for comparisons and indices.",
+    "variants": [
+      "Check both middle elements to determine the correct third segment, useful when one comparison isn't sufficient to decide the next step."
+    ],
+    "pitfalls": [
+      "Careful handling of equality cases can cause incorrect segments. Off-by-one errors are common due to differing index increments in each third. Overflow issues may arise with very large numbers but are typically manageable.",
+      "Equality between m1 and m2 can lead to infinite loops or incorrect segment selection if not handled properly."
+    ],
+    "when_to_use": "When the array is unimodal (single peak/valley) and you need an efficient O(log n) solution for finding min/max. Ideal for problems like optimizing histogram bar areas, certain mathematical functions, or when data naturally forms a single trend.",
+    "key_insight": "Leveraging the unimodal property to iteratively narrow down the search space using three-way comparisons, similar to binary search but more efficient in specific scenarios.",
+    "cpp": "// --- Ternary Search Implementation ---\n\n// Function to perform ternary search on a unimodal array\nint ternarySearch(const std::vector<int>& arr, int left, int right) {\n    // Base case: if the subarray has only one element\n    if (right >= left) {\n        int mid1 = left + (right - left) / 3;\n        int mid2 = right - (right - left) / 3;\n\n        // If arr[mid1] is the maximum, return it\n        if (arr[mid1] > arr[mid2])\n            return ternarySearch(arr, left, mid1);\n\n        // If arr[mid2] is the maximum, return it\n        if (arr[mid2] > arr[mid1])\n            return ternarySearch(arr, mid2, right);\n\n        // If neither is the maximum, search in the middle third\n        return ternarySearch(arr, mid1 + 1, mid2 - 1);\n    }\n\n    // If the subarray has no elements, return -1 (not found)\n    return -1;\n}\n\n// --- Usage Example ---\n\n// Function to find the maximum element in a unimodal array using ternary search\nint findMax(const std::vector<int>& arr) {\n    return ternarySearch(arr, 0, arr.size() - 1);\n}\n\n// Main function for demonstration (not part of the solution)\nint main() {\n    std::vector<int> arr = {1, 3, 5, 7, 9};\n    int maxIndex = findMax(arr);\n    std::cout << \"Maximum element is at index: \" << maxIndex << std::endl;\n    return 0;\n}",
+    "walkthrough": "// --- Ternary Search Implementation ---\n\n// Function to perform ternary search on a unimodal array\nint ternarySearch(const std::vector<int>& arr, int left, int right) {\n    // Base case: if the subarray has only one element\n    if (right >= left) {\n        int mid1 = left + (right - left) / 3;\n        int mid2 = right - (right - left) / 3;\n\n        // If arr[mid1] is the maximum, return it\n        if (arr[mid1] > arr[mid2])\n            return ternarySearch(arr, left, mid1);\n\n        // If arr[mid2] is the maximum, return it\n        if (arr[mid2] > arr[mid1])\n            return ternarySearch(arr, mid2, right);\n\n        // If neither is the maximum, search in the middle third\n        return ternarySearch(arr, mid1 + 1, mid2 - 1);\n    }\n\n    // If the subarray has no elements, return -1 (not found)\n    return -1;\n}\n\n// --- Usage Example ---\n\n// Function to find the maximum element in a unimodal array using ternary search\nint findMax(const std::vector<int>& arr) {\n    return ternarySearch(arr, 0, arr.size() - 1);\n}\n\n// Main function for demonstration (not part of the solution)\nint main() {\n    std::vector<int> arr = {1, 3, 5, 7, 9};\n    int maxIndex = findMax(arr);\n    std::cout << \"Maximum element is at index: \" << maxIndex << std::endl;\n    return 0;\n}",
+    "dry_run": "Line 2: left = 0, right = 4, meaning the initial subarray is [1, 3, 5, 7, 9].\nLine 6: mid1 = 1, mid2 = 3, meaning the middle thirds are [1, 3] and [5, 7, 9].\nLine 10: arr[mid1] = 3, arr[mid2] = 7, meaning arr[mid1] < arr[mid2], so discard the left third.\nLine 14: left = 2, right = 4, meaning the new subarray is [5, 7, 9].\nLine 6: mid1 = 3, mid2 = 4, meaning the middle thirds are [5] and [7, 9].\nLine 10: arr[mid1] = 5, arr[mid2] = 9, meaning arr[mid1] < arr[mid2], so discard the left third.\nLine 14: left = 4, right = 4, meaning the new subarray is [9].\nLine 2: left = 4, right = 4, meaning the subarray has only one element, which is the maximum.",
+    "template_type": "function",
+    "complexity_note": "Time: O(log n) — Space: O(1)",
+    "usage_example": "// Function to find the maximum element in a unimodal array using ternary search\nint findMax(const std::vector<int>& arr) {\n    return ternarySearch(arr, 0, arr.size() - 1);\n}\n\n// Main function for demonstration (not part of the solution)\nint main() {\n    std::vector<int> arr = {1, 3, 5, 7, 9};\n    int maxIndex = findMax(arr);\n    std::cout << \"Maximum element is at index: \" << maxIndex << std::endl;\n    return 0;\n}",
+    "cpp_notes": [
+      "The ternary search algorithm divides the array into three parts and eliminates two-thirds of the array in each iteration, leading to a logarithmic time complexity.",
+      "This implementation assumes that the input array is unimodal and that the maximum element exists within the array.",
+      "Common TLE causes include using inefficient data structures or algorithms, especially for large input sizes."
+    ],
+    "generated_at": "2026-03-24T12:34:34.639850+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 116,
+    "slug": "binary-trie",
+    "title": "Binary Trie (XOR Trie)",
+    "category": "Strings",
+    "tags": [
+      "trie",
+      "xor",
+      "binary"
+    ],
+    "prereqs": [
+      "trie",
+      "xor-basis"
+    ],
+    "leads_to": [
+      "xor-basis"
+    ],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- build adjacency list ---\nstruct TrieNode {\n    TrieNode* children[2] = {nullptr, nullptr}; // 0 and 1\n};\n\nTrieNode* buildTrie(const vector<int>& nums) {\n    TrieNode* root = new TrieNode();\n    for (int num : nums) {\n        TrieNode* node = root;\n        for (int i = 31; i >= 0; --i) { // Assuming 32-bit integers\n            int bit = (num >> i) & 1;\n            if (!node->children[bit]) {\n                node->children[bit] = new TrieNode();\n            }\n            node = node->children[bit];\n        }\n    }\n    return root;\n}\n\n// --- find maximum XOR ---\nint maxXOR(TrieNode* root, int num) {\n    int max_xor = 0;\n    TrieNode* node = root;\n    for (int i = 31; i >= 0; --i) {\n        int bit = (num >> i) & 1;\n        if (node->children[!bit]) { // Try the opposite bit first\n            max_xor |= (1 << i);\n            node = node->children[!bit];\n        } else {\n            node = node->children[bit];\n        }\n    }\n    return max_xor;\n}\n\n// --- clean up ---\nvoid deleteTrie(TrieNode* node) {\n    if (node) {\n        deleteTrie(node->children[0]);\n        deleteTrie(node->children[1]);\n        delete node;\n    }\n}",
+    "walkthrough": "The code defines a TrieNode structure with two children for binary representation. The `buildTrie` function inserts numbers into the trie, and the `maxXOR` function finds the maximum XOR of a given number with any number in the trie. The `deleteTrie` function cleans up the trie to prevent memory leaks.",
+    "dry_run": "Line 10: root = new TrieNode(), meaning the root node is created.\nLine 13: node = root, meaning we start at the root node.\nLine 15: bit = 1, meaning the least significant bit of num is 1.\nLine 17: node->children[1] = new TrieNode(), meaning a new node is created for the bit 1.\nLine 20: node = node->children[1], meaning we move to the new node.\nLine 25: max_xor |= (1 << i), meaning the most significant bit of max_xor is set to 1.\nLine 27: node = node->children[0], meaning we move to the opposite bit node.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n * 32) — Space: O(n * 32)",
+    "usage_example": "// Read input\nvector<int> nums = {3, 10, 5, 25, 9, 2};\n// Build the trie\nTrieNode* root = buildTrie(nums);\n// Find maximum XOR\nint result = maxXOR(root, 10);\n// Output result\ncout << result << endl;",
+    "cpp_notes": [
+      "Subtle implementation detail: The trie is built from the most significant bit to the least significant bit.",
+      "When to swap to a different variant: This implementation assumes 32-bit integers. For larger integers, adjust the loop range accordingly.",
+      "Common TLE causes: Ensure that the trie is deleted after use to prevent memory leaks and potential TLE.",
+      "Memory layout tips: The trie uses a simple array for children, which is efficient for binary representation.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and iterator invalidation."
+    ],
+    "generated_at": "2026-03-24T12:37:36.699417+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 117,
+    "slug": "kmp",
+    "title": "KMP — Prefix Function",
+    "category": "Strings",
+    "tags": [
+      "strings",
+      "kmp",
+      "prefix-function"
+    ],
+    "prereqs": [
+      "string-hashing"
+    ],
+    "leads_to": [
+      "z-function",
+      "aho-corasick",
+      "failure-automaton"
+    ],
+    "description": "The prefix function for a string S is an array π where π[i] is the length of the longest proper prefix which is also a suffix in the substring S[0..i]. It is used in the KMP algorithm to preprocess patterns and enable efficient pattern matching by avoiding redundant character comparisons.",
+    "explanation": "The prefix function solves the problem of finding all occurrences of a pattern within a text efficiently. The naive approach compares each character one by one, leading to O(n*m) time complexity where n is the text length and m is the pattern length. This is slow for large inputs. The key insight is that when a mismatch occurs during comparison, we can reuse previously computed information about partial matches of the pattern within the text. The prefix function π[i] represents the maximum length of a proper prefix which is also a suffix in S[0..i]. By precomputing this array, the KMP algorithm can skip unnecessary character comparisons and achieve linear time complexity O(n+m). For example, consider the string S = 'ABABC'. The prefix function π for each position i is computed as follows: π[0] = 0 (no proper prefix), π[1] = 0 ('A' vs 'B'), π[2] = 1 ('A' matches at positions 0 and 2), π[3] = 0, π[4] = 2. This function allows the algorithm to efficiently find all occurrences of a pattern in linear time.",
+    "proof": "We prove that the prefix function satisfies the following invariant: for each i, π[i] is the length of the longest proper prefix which is also a suffix in S[0..i]. We use induction on i. Base case (i=0): trivially true as there are no proper prefixes. Inductive step: Assume π[k] is correctly computed for all k < i. To compute π[i], we start comparing characters from the end of the string backwards until a mismatch occurs, using previously computed π values to skip ahead efficiently. This ensures that each character is processed at most once, leading to linear time complexity.",
+    "worked_example": "Let's compute the prefix function for S = 'ABABC'.\n- Initialize π[0] = 0.\n- For i=1 (S[i]=B): compare with π[0]=0. No match, so π[1]=0.\n- For i=2 (S[i]=A): compare with π[1]=0. S[0]=A matches, so π[2]=1.\n- For i=3 (S[i]=B): compare with π[2]=1. Check if S[1]=B matches S[3], which it does, so π[3]=2.\n- For i=4 (S[i]=C): compare with π[3]=2. Check if S[2]=A matches S[4], no match. Then check using π[2]=1: S[1]=B vs S[4]=C, no match. Finally, check π[1]=0: no match. So π[4]=0.\nThus, the prefix function π is [0, 0, 1, 2, 0].",
+    "time_complexity": "$O(n + m)$",
+    "space_complexity": "$O(m)$ where m is the length of the pattern.",
+    "variants": [
+      "The failure function, which is an alternative name for the prefix function used in KMP algorithm.",
+      "Optimized versions that use different data structures or heuristics to compute the prefix function more efficiently in certain cases."
+    ],
+    "pitfalls": [
+      "Off-by-one errors when computing π[i] due to incorrect indexing.",
+      "Integer overflow issues when dealing with large strings and their lengths.",
+      "Misunderstanding how edge cases like empty patterns are handled.",
+      "Incorrectly implementing the prefix function, leading to inefficient pattern matching."
+    ],
+    "when_to_use": "When you need to perform efficient string pattern matching where preprocessing the pattern is beneficial. This is particularly useful when the pattern length m is a significant fraction of the text length n, as KMP's linear time complexity O(n + m) provides a significant speedup over naive methods.",
+    "key_insight": "The prefix function allows the KMP algorithm to reuse previously computed information about partial matches between the pattern and the text, thereby avoiding redundant character comparisons during the search phase.",
+    "cpp": "// --- prefix function ---\n\n#include <vector>\n#include <string>\n\nstd::vector<int> prefix_function(const std::string& s) {\n    int n = s.size();\n    std::vector<int> pi(n, 0);\n    for (int i = 1; i < n; ++i) {\n        int j = pi[i - 1];\n        while (j > 0 && s[i] != s[j]) {\n            j = pi[j - 1];\n        }\n        if (s[i] == s[j]) {\n            ++j;\n        }\n        pi[i] = j;\n    }\n    return pi;\n}\n\n// --- usage example ---\n\n#include <iostream>\n\nint main() {\n    std::string s = \"ABABC\";\n    auto pi = prefix_function(s);\n    for (int x : pi) {\n        std::cout << x << \" \";\n    }\n    return 0;\n}",
+    "walkthrough": "// --- build prefix function ---\n\n// The function `prefix_function` computes the prefix function for a given string `s`.\n// It initializes a vector `pi` of size `n` (length of `s`) with all elements set to 0.\n// For each position `i` in the string, it calculates the length of the longest proper prefix which is also a suffix in `s[0..i]`.\n// This is done by comparing characters from the end of the string backwards until a mismatch occurs,\n// using previously computed values in the `pi` array to skip ahead efficiently.\n\n// --- usage example ---\n\n// The `main` function demonstrates how to use the `prefix_function` function.\n// It reads a string `s`, computes its prefix function, and prints the resulting array.",
+    "dry_run": "Line 1: n = 5, pi = [0, 0, 0, 0, 0]\nLine 3: i = 1, j = 0\nLine 4: s[1] != s[0], j = pi[0 - 1] = 0\nLine 5: s[1] != s[0], j = pi[0 - 1] = 0\nLine 6: s[1] == s[0], ++j, j = 1\nLine 7: pi[1] = 1\nLine 3: i = 2, j = 1\nLine 4: s[2] != s[1], j = pi[1 - 1] = 0\nLine 5: s[2] == s[0], ++j, j = 1\nLine 7: pi[2] = 1\nLine 3: i = 3, j = 1\nLine 4: s[3] == s[1], ++j, j = 2\nLine 7: pi[3] = 2\nLine 3: i = 4, j = 2\nLine 4: s[4] != s[2], j = pi[2 - 1] = 1\nLine 5: s[4] != s[1], j = pi[1 - 1] = 0\nLine 6: s[4] != s[0], j = pi[0 - 1] = 0\nLine 7: pi[4] = 0",
+    "template_type": "function",
+    "complexity_note": "Time: O(n) — Space: O(n)",
+    "usage_example": "// --- usage example ---\n\n#include <iostream>\n\nint main() {\n    std::string s = \"ABABC\";\n    auto pi = prefix_function(s);\n    for (int x : pi) {\n        std::cout << x << \" \";\n    }\n    return 0;\n}",
+    "cpp_notes": [
+      "The implementation uses a simple loop to compute the prefix function in linear time.",
+      "The use of `while` loop inside the main loop ensures that each character is processed at most once.",
+      "Common TLE causes include using inefficient data structures or algorithms. In this case, the O(n) complexity ensures efficiency."
+    ],
+    "generated_at": "2026-03-24T12:38:49.668833+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 118,
+    "slug": "trie",
+    "title": "Trie",
+    "category": "Strings",
+    "tags": [
+      "strings",
+      "trie",
+      "prefix"
+    ],
+    "prereqs": [
+      "bst"
+    ],
+    "leads_to": [
+      "aho-corasick",
+      "binary-trie",
+      "compressed-trie"
+    ],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- Trie Node Definition ---\nstruct TrieNode {\n    bool isEndOfWord;\n    std::array<TrieNode*, 26> children;\n\n    TrieNode() : isEndOfWord(false) {\n        children.fill(nullptr);\n    }\n};\n\n// --- Trie Class ---\nclass Trie {\npublic:\n    Trie() : root(new TrieNode()) {}\n\n    // Insert a word into the trie\n    void insert(const std::string& word) {\n        TrieNode* node = root;\n        for (char c : word) {\n            if (!node->children[c - 'a']) {\n                node->children[c - 'a'] = new TrieNode();\n            }\n            node = node->children[c - 'a'];\n        }\n        node->isEndOfWord = true;\n    }\n\n    // Search for a word in the trie\n    bool search(const std::string& word) {\n        TrieNode* node = root;\n        for (char c : word) {\n            if (!node->children[c - 'a']) {\n                return false;\n            }\n            node = node->children[c - 'a'];\n        }\n        return node->isEndOfWord;\n    }\n\n    // Check if there is any word in the trie that starts with the given prefix\n    bool startsWith(const std::string& prefix) {\n        TrieNode* node = root;\n        for (char c : prefix) {\n            if (!node->children[c - 'a']) {\n                return false;\n            }\n            node = node->children[c - 'a'];\n        }\n        return true;\n    }\n\nprivate:\n    TrieNode* root;\n};\n\n// --- Complexity Analysis ---\n// Time: O(n) for insert, search, and startsWith where n is the length of the word or prefix.\n// Space: O(n * m) where n is the number of words and m is the average length of the words.\n\n// --- Usage Example ---\n// Trie trie;\n// trie.insert(\"apple\");\n// std::cout << trie.search(\"apple\") << std::endl; // Output: 1 (true)\n// std::cout << trie.search(\"app\") << std::endl;   // Output: 0 (false)\n// std::cout << trie.startsWith(\"app\") << std::endl; // Output: 1 (true)\n",
+    "walkthrough": "The TrieNode struct defines a node in the trie, containing a boolean to mark the end of a word and an array of pointers to child nodes. The Trie class manages the trie operations. The insert method iterates through each character of the word, creating new nodes as necessary and marking the end of the word. The search method checks if a word exists by following the path of characters in the trie. The startsWith method checks if any word in the trie starts with a given prefix by following the path of characters.",
+    "dry_run": "Line 10: node = root, meaning start at the root of the trie.\nLine 12: node = node->children['a' - 'a'], meaning move to the child node for 'a'.\nLine 14: node = node->children['p' - 'a'], meaning move to the child node for 'p'.\nLine 16: node = node->children['p' - 'a'], meaning move to the child node for 'p'.\nLine 18: node = node->children['l' - 'a'], meaning move to the child node for 'l'.\nLine 20: node = node->children['e' - 'a'], meaning move to the child node for 'e'.\nLine 22: node->isEndOfWord = true, meaning mark the end of the word 'apple'.",
+    "template_type": "class",
+    "complexity_note": "Time: O(n) — Space: O(n * m)",
+    "usage_example": "// Trie trie;\n// trie.insert(\"apple\");\n// std::cout << trie.search(\"apple\") << std::endl; // Output: 1 (true)\n// std::cout << trie.search(\"app\") << std::endl;   // Output: 0 (false)\n// std::cout << trie.startsWith(\"app\") << std::endl; // Output: 1 (true)",
+    "cpp_notes": [
+      "Subtle implementation detail: The use of an array of pointers for children allows efficient access and management of child nodes.",
+      "When to swap to a different variant: For very large datasets, consider using a compressed trie or a ternary search tree for better space efficiency.",
+      "Common TLE causes: Ensure that the trie is not built on the fly during input processing. Pre-build the trie before starting the main algorithm.",
+      "Memory layout tips: Use raw pointers for child nodes to avoid unnecessary copying and ensure efficient memory management.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons, especially when dealing with character indices."
+    ],
+    "generated_at": "2026-03-24T12:41:40.797227+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 119,
+    "slug": "z-function",
+    "title": "Z-Function",
+    "category": "Strings",
+    "tags": [
+      "strings",
+      "z-function"
+    ],
+    "prereqs": [
+      "string-hashing"
+    ],
+    "leads_to": [
+      "kmp",
+      "aho-corasick"
+    ],
+    "description": "The Z-Function computes an array Z where Z[i] is the length of the longest substring starting at i that matches the prefix of the string. It efficiently finds these values in O(n) time using a sliding window approach.",
+    "explanation": "The naive approach compares each position with all previous positions, leading to O(n^2) time. The Z-Algorithm optimizes this by maintaining a current matching window [l, r]. For each i beyond r, it extends the match or starts from scratch. If i is within [l, r], it uses previously computed values to jump ahead, ensuring linear time complexity.",
+    "proof": "1) The invariant is that for all k in [0, l-1], Z[k] = known values and the window [l, r] correctly represents the current match. 2) Base case: Initially, l=r=0. 3) For i > r, compare s[i] with s[j=i-l]. If equal, increment j until mismatch or end of string. Update Z[i] = j - i and extend window if necessary. 4) If within [l, r], use previously computed Z[i-l] to set Z[i] without full comparison.",
+    "worked_example": "For 'abcabxabc', compute Z[5]=3 using the algorithm by reusing previous matches instead of comparing each character from scratch.",
+    "time_complexity": "$O(n)$ because each character is processed once, with comparisons within a fixed window size.",
+    "space_complexity": "$O(1)$ additional space for variables tracking l and r.",
+    "variants": [
+      "Optimized version using prefix hashing to compute Z-array in O(n) time with reduced constant factors.",
+      "Adaptations for multiple patterns by maintaining separate windows for each pattern."
+    ],
+    "pitfalls": [
+      "Forgetting to reset the window when a mismatch occurs leads to incorrect matches.",
+      "Not handling edge cases where i is exactly at l, causing off-by-one errors in Z-value calculation."
+    ],
+    "when_to_use": "When searching for repeated patterns or prefixes in strings efficiently, especially with large input sizes.",
+    "key_insight": "The algorithm reuses previously computed match lengths to avoid redundant comparisons, achieving linear time complexity.",
+    "cpp": "// --- Z-Function Implementation ---\n\n#include <vector>\n#include <string>\nusing namespace std;\n\n// Function to compute the Z-Function for a given string\nvector<int> z_function(const string& s) {\n    int n = s.size();\n    vector<int> z(n);\n    int l = 0, r = 0; // Initialize the window [l, r]\n\n    // --- Compute Z-Function ---\n    for (int i = 1; i < n; ++i) {\n        if (i <= r) {\n            z[i] = min(r - i + 1, z[i - l]); // Use previously computed values\n        }\n        while (i + z[i] < n && s[z[i]] == s[i + z[i]]) {\n            ++z[i]; // Extend the match\n        }\n        if (i + z[i] - 1 > r) {\n            l = i; // Update the window\n            r = i + z[i] - 1;\n        }\n    }\n    return z;\n}\n\n// --- Example Usage ---\n// vector<int> result = z_function(\"abcabxabc\");\n// for (int val : result) {\n//     cout << val << \" \";\n// }\n// Output: 0 0 0 3 0 0 1 0\n",
+    "walkthrough": "The Z-Function implementation follows the algorithm described in the explanation. The function `z_function` takes a string `s` and returns a vector `z` where `z[i]` is the length of the longest substring starting at `i` that matches the prefix of `s`. The algorithm uses a sliding window `[l, r]` to efficiently compute the Z-Function in linear time. The invariant is maintained by updating the window and using previously computed values to jump ahead when possible.",
+    "dry_run": "Line 10: i = 1, z[1] = min(0, 0) = 0, meaning the initial value is set.\nLine 12: i = 1, z[1] = 0, meaning no match found initially.\nLine 14: i = 1, s[1] == s[1 + 0], z[1] = 1, meaning a match of length 1 is found.\nLine 16: i = 1, z[1] = 1, l = 1, r = 1, meaning the window is updated to [1, 1].\nLine 10: i = 2, z[2] = min(1, 0) = 0, meaning the initial value is set.\nLine 12: i = 2, z[2] = 0, meaning no match found initially.\nLine 14: i = 2, s[2] == s[2 + 0], z[2] = 1, meaning a match of length 1 is found.\nLine 16: i = 2, z[2] = 1, l = 2, r = 2, meaning the window is updated to [2, 2].\nLine 10: i = 3, z[3] = min(2, 0) = 0, meaning the initial value is set.\nLine 12: i = 3, z[3] = 0, meaning no match found initially.\nLine 14: i = 3, s[3] == s[3 + 0], z[3] = 1, meaning a match of length 1 is found.\nLine 16: i = 3, z[3] = 1, l = 3, r = 3, meaning the window is updated to [3, 3].\nLine 10: i = 4, z[4] = min(3, 0) = 0, meaning the initial value is set.\nLine 12: i = 4, z[4] = 0, meaning no match found initially.\nLine 14: i = 4, s[4] == s[4 + 0], z[4] = 1, meaning a match of length 1 is found.\nLine 16: i = 4, z[4] = 1, l = 4, r = 4, meaning the window is updated to [4, 4].\nLine 10: i = 5, z[5] = min(4, 3) = 3, meaning the initial value is set.\nLine 12: i = 5, s[5] == s[5 + 3], z[5] = 3, meaning a match of length 3 is found.\nLine 16: i = 5, z[5] = 3, l = 5, r = 7, meaning the window is updated to [5, 7].",
+    "template_type": "function",
+    "complexity_note": "Time: O(n) — Space: O(n)",
+    "usage_example": "// Read input string\nstring s;\ncin >> s;\n// Compute Z-Function\ncout << \"Z-Function: \";\nvector<int> result = z_function(s);\nfor (int val : result) {\n    cout << val << \" \";\n}\n",
+    "cpp_notes": [
+      "The implementation uses `min` and `max` functions from `<algorithm>` for clarity.",
+      "The loop starts from 1 because the Z-Function is defined such that Z[0] is always 0.",
+      "The window `[l, r]` is updated whenever a new match is found to ensure the algorithm runs in linear time."
+    ],
+    "generated_at": "2026-03-24T12:42:51.089746+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 120,
+    "slug": "euler-tour",
+    "title": "Euler Tour & Subtree Queries",
+    "category": "Trees & MST",
+    "tags": [
+      "euler-tour",
+      "dfs",
+      "subtree"
+    ],
+    "prereqs": [
+      "dfs",
+      "segment-tree"
+    ],
+    "leads_to": [
+      "hld",
+      "lca-rmq",
+      "mo-trees"
+    ],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> adj(n);\nfor (int i = 0; i < m; ++i) {\n    int u, v;\n    std::cin >> u >> v;\n    adj[u].push_back(v);\n    adj[v].push_back(u);\n}\n\n// --- euler tour ---\nstd::vector<int> euler, first(n), last(n);\nint pos = 0;\n\nvoid dfs(int node, int parent) {\n    first[node] = pos++;\n    euler.push_back(node);\n    for (int child : adj[node]) {\n        if (child != parent) {\n            dfs(child, node);\n            euler.push_back(node);\n        }\n    }\n    last[node] = pos - 1;\n}\ndfs(0, -1);\n\n// --- segment tree for subtree queries ---\nstd::vector<long long> seg(4 * n);\n\nvoid build(int node, int start, int end) {\n    if (start == end) {\n        seg[node] = 1; // or any other initial value\n    } else {\n        int mid = (start + end) / 2;\n        build(2 * node, start, mid);\n        build(2 * node + 1, mid + 1, end);\n        seg[node] = seg[2 * node] + seg[2 * node + 1];\n    }\n}\n\nvoid update(int node, int start, int end, int idx) {\n    if (start == end) {\n        seg[node] = 0; // or any other update value\n    } else {\n        int mid = (start + end) / 2;\n        if (idx <= mid) {\n            update(2 * node, start, mid, idx);\n        } else {\n            update(2 * node + 1, mid + 1, end, idx);\n        }\n        seg[node] = seg[2 * node] + seg[2 * node + 1];\n    }\n}\n\nlong long query(int node, int start, int end, int l, int r) {\n    if (r < start || end < l) {\n        return 0; // or any other neutral element\n    } else if (l <= start && end <= r) {\n        return seg[node];\n    } else {\n        int mid = (start + end) / 2;\n        long long p1 = query(2 * node, start, mid, l, r);\n        long long p2 = query(2 * node + 1, mid + 1, end, l, r);\n        return p1 + p2;\n    }\n}\n\n// --- usage example ---\nint main() {\n    int n, m;\n    std::cin >> n >> m;\n    build(0, 0, n - 1);\n    for (int i = 0; i < m; ++i) {\n        int u, v;\n        std::cin >> u >> v;\n        update(0, 0, n - 1, first[u]);\n        update(0, 0, n - 1, first[v]);\n        std::cout << query(0, 0, n - 1, first[u], last[u]) << std::endl;\n    }\n    return 0;\n}",
+    "walkthrough": "The code builds an adjacency list for the tree, performs an Euler tour to flatten the tree into a linear sequence, and uses a segment tree to answer subtree queries efficiently. The Euler tour helps in mapping subtree queries to range queries on the flattened sequence, which can be handled using a segment tree.",
+    "dry_run": "Line 10: pos = 0, meaning the starting position for the Euler tour.\nLine 24: first[0] = 0, meaning node 0 is the first node in the Euler tour.\nLine 35: euler.push_back(0), meaning node 0 is added to the Euler tour.\nLine 41: pos = 1, meaning the next position in the Euler tour.\nLine 62: seg[1] = 2, meaning there are two nodes in the subtree rooted at node 0.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n log n) — Space: O(n)",
+    "usage_example": "// Read input and build the structure\nint n, m;\nstd::cin >> n >> m;\n// Build adjacency list and perform Euler tour\n// Call update and query functions as needed\n",
+    "cpp_notes": [
+      "The segment tree is initialized with neutral elements (e.g., 0 for sum queries).",
+      "The update function marks nodes in the subtree by setting their values to 0.",
+      "The query function calculates the number of nodes in a subtree by summing up the values in the segment tree."
+    ],
+    "generated_at": "2026-03-24T12:45:41.270217+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 121,
+    "slug": "kruskal-mst",
+    "title": "Kruskal's Algorithm",
+    "category": "Trees & MST",
+    "tags": [
+      "mst",
+      "kruskal",
+      "dsu"
+    ],
+    "prereqs": [
+      "dsu",
+      "sorting"
+    ],
+    "leads_to": [
+      "boruvka",
+      "steiner-tree",
+      "kruskal-tree"
+    ],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- Kruskal's Algorithm ---\n\n// Time: O(E log E) — Space: O(V + E)\n\n#include <vector>\n#include <algorithm>\n\nstruct Edge {\n    int u, v, weight;\n    Edge(int u, int v, int weight) : u(u), v(v), weight(weight) {}\n};\n\nstruct DSU {\n    std::vector<int> parent, rank;\n    DSU(int n) : parent(n), rank(n, 1) {\n        for (int i = 0; i < n; ++i) parent[i] = i;\n    }\n    int find(int u) {\n        if (parent[u] != u) parent[u] = find(parent[u]);\n        return parent[u];\n    }\n    bool unite(int u, int v) {\n        int pu = find(u), pv = find(v);\n        if (pu == pv) return false;\n        if (rank[pu] < rank[pv]) std::swap(pu, pv);\n        parent[pv] = pu;\n        if (rank[pu] == rank[pv]) ++rank[pu];\n        return true;\n    }\n};\n\nint kruskalMST(const std::vector<Edge>& edges, int V) {\n    DSU dsu(V);\n    std::vector<Edge> mst;\n    int mstWeight = 0;\n\n    // --- sort edges by weight ---\n    std::sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {\n        return a.weight < b.weight;\n    });\n\n    // --- add edges to MST ---\n    for (const auto& edge : edges) {\n        if (dsu.unite(edge.u, edge.v)) {\n            mst.push_back(edge);\n            mstWeight += edge.weight;\n        }\n    }\n\n    return mstWeight;\n}\n\n// --- usage example ---\n// int main() {\n//     int V = 4; // number of vertices\n//     std::vector<Edge> edges = {\n//         {0, 1, 10},\n//         {0, 2, 6},\n//         {0, 3, 5},\n//         {1, 3, 15},\n//         {2, 3, 4}\n//     };\n//     int mstWeight = kruskalMST(edges, V);\n//     std::cout << \"MST Weight: \" << mstWeight << std::endl; // Output: MST Weight: 15\n//     return 0;\n// }\n",
+    "walkthrough": "The code implements Kruskal's algorithm to find the Minimum Spanning Tree (MST) of a graph. It uses a Disjoint Set Union (DSU) data structure to efficiently manage the connected components of the graph. The algorithm sorts all edges by weight and iteratively adds the smallest edge that does not form a cycle to the MST. This process continues until the MST has V-1 edges, where V is the number of vertices in the graph.",
+    "dry_run": "Line 10: dsu = DSU(4), meaning initialize DSU with 4 elements.\nLine 25: std::sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) { return a.weight < b.weight; }), meaning sort edges by weight.\nLine 31: mstWeight = 0, meaning initialize MST weight to 0.\nLine 34: dsu.unite(0, 2), meaning unite vertices 0 and 2, resulting in parent[2] = 0.\nLine 35: mst.push_back({0, 2, 6}), meaning add edge (0, 2) to MST.\nLine 36: mstWeight += 6, meaning update MST weight to 6.\nLine 34: dsu.unite(0, 1), meaning unite vertices 0 and 1, resulting in parent[1] = 0.\nLine 35: mst.push_back({0, 1, 10}), meaning add edge (0, 1) to MST.\nLine 36: mstWeight += 10, meaning update MST weight to 16.\nLine 34: dsu.unite(2, 3), meaning unite vertices 2 and 3, resulting in parent[3] = 2.\nLine 35: mst.push_back({2, 3, 4}), meaning add edge (2, 3) to MST.\nLine 36: mstWeight += 4, meaning update MST weight to 20.",
+    "template_type": "function",
+    "complexity_note": "Time: O(E log E) — Space: O(V + E)",
+    "usage_example": "// int main() {\n//     int V = 4; // number of vertices\n//     std::vector<Edge> edges = {\n//         {0, 1, 10},\n//         {0, 2, 6},\n//         {0, 3, 5},\n//         {1, 3, 15},\n//         {2, 3, 4}\n//     };\n//     int mstWeight = kruskalMST(edges, V);\n//     std::cout << \"MST Weight: \" << mstWeight << std::endl; // Output: MST Weight: 15\n//     return 0;\n// }\n",
+    "cpp_notes": [
+      "The DSU implementation uses path compression and union by rank to achieve nearly constant time complexity for find and unite operations.",
+      "Kruskal's algorithm is efficient for sparse graphs, but for dense graphs, Prim's algorithm with a Fibonacci heap can be more efficient.",
+      "Common TLE causes include using an inefficient sorting algorithm or not optimizing the DSU implementation.",
+      "Memory layout tips include avoiding unnecessary copies of large data structures and using efficient data types like std::vector.",
+      "C++ specific gotchas include ensuring correct type conversions (e.g., int to long long) and being aware of iterator invalidation during operations like sorting."
+    ],
+    "generated_at": "2026-03-24T12:48:47.520902+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 122,
+    "slug": "lca",
+    "title": "Lowest Common Ancestor (Binary Lifting)",
+    "category": "Trees & MST",
+    "tags": [
+      "lca",
+      "binary-lifting",
+      "trees"
+    ],
+    "prereqs": [
+      "dfs",
+      "binary-search"
+    ],
+    "leads_to": [
+      "lca-rmq",
+      "lca-farach",
+      "hld",
+      "kruskal-tree",
+      "path-queries"
+    ],
+    "description": "Binary Lifting is an algorithm used to find the Lowest Common Ancestor (LCA) of two nodes in a tree efficiently. It precomputes ancestors at various levels using binary lifting techniques, allowing it to jump through the tree in logarithmic time.",
+    "explanation": "The problem of finding the LCA can be solved with a naive approach by traversing up each node step by step until the common ancestor is found. However, this method has a linear time complexity and becomes inefficient for large trees. Binary Lifting improves upon this by precomputing ancestors at different levels using binary representations (powers of two). This allows jumping multiple steps at once, reducing the time complexity to logarithmic. The algorithm works by first computing ancestors at 2^0, 2^1, ..., up to log(n) levels for each node. When finding the LCA, we can jump through these precomputed levels efficiently.",
+    "proof": "The correctness of Binary Lifting is proven using mathematical induction. Let's denote that for a node u and level k, lift[u][k] represents the 2^k-th ancestor of u. The base case (k=0) holds as lift[u][0] = parent(u). Assuming it holds for all levels up to k-1, we can show that it also holds for level k by using the precomputed ancestors from lower levels. By induction, this proves that all jumps are valid and lead to the correct ancestor.",
+    "worked_example": "Consider a tree with nodes A, B, C, D, E where parent relationships are as follows: A is root, B and C are children of A, D and E are children of B. Precompute binary lifting table for each node up to log2(5) ≈ 3 levels. For example, lift[A][0] = null (no parent), lift[B][1] = A since it's the grandparent of B through C or directly as parent of A. To find LCA(B,D): both are at level 1 and 2 respectively. Bring D up to level 1 by jumping once: D → B. Now, compare levels and jump until ancestors match. Since they now share the same level (B), return B as LCA.",
+    "time_complexity": "$O(n \\log n)$ because precomputing log(n) levels for each node takes O(n log n) time. Each query is answered in O(log n) time by jumping through the precomputed levels.",
+    "space_complexity": "$O(n \\log n)$ as we store ancestors at log(n) levels for each of the n nodes, which requires storing up to approximately 20 entries per node (for large n).",
+    "variants": [
+      "Sparse Table LCA: Uses binary lifting but precomputes all possible jumps in a table. It is more space-efficient than Binary Lifting.",
+      "Heavy-Light Decomposition: A different approach for handling multiple queries on trees, often used alongside Lowest Common Ancestor algorithms."
+    ],
+    "pitfalls": [
+      "Off-by-one errors: Incorrectly setting up the binary lifting table can lead to incorrect ancestors. Care must be taken when initializing and updating the table.",
+      "Overflow issues: Using fixed-size integers without considering the maximum possible exponent (like log2(n)) can cause integer overflow in languages like C++.",
+      "Edge cases: Nodes at different depths or directly connected may require special handling during lifting steps."
+    ],
+    "when_to_use": "Binary Lifting is ideal for large trees with up to 10^5 nodes and multiple queries. It's particularly useful when the number of LCA queries exceeds log(n), making it more efficient than alternative methods like the naive approach or Euler Tour Technique.",
+    "key_insight": "By precomputing ancestors at powers of two levels, Binary Lifting allows jumping through the tree in logarithmic steps, significantly reducing the time complexity compared to a linear traversal.",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> adj;\n\n// --- binary lifting table ---\nstd::vector<std::vector<int>> lift;\nint maxLevel;\n\n// --- dfs to populate the binary lifting table ---\nvoid dfs(int u, int p) {\n    parent[u] = p;\n    for (int v : adj[u]) {\n        if (v != p) {\n            depth[v] = depth[u] + 1;\n            lift[v][0] = p;\n            for (int k = 1; k <= maxLevel; ++k) {\n                lift[v][k] = lift[lift[v][k-1]][k-1];\n            }\n            dfs(v, u);\n        }\n    }\n}\n\n// --- function to find LCA using binary lifting ---\nint lca(int u, int v) {\n    if (depth[u] > depth[v]) std::swap(u, v);\n    for (int k = maxLevel; k >= 0; --k) {\n        if ((depth[v] - depth[u]) & (1 << k)) {\n            v = lift[v][k];\n        }\n    }\n    if (u == v) return u;\n    for (int k = maxLevel; k >= 0; --k) {\n        if (lift[u][k] != lift[v][k]) {\n            u = lift[u][k];\n            v = lift[v][k];\n        }\n    }\n    return parent[u];\n}\n\n// --- complexity comment block ---\n// Time: O(n log n) for preprocessing, O(log n) per LCA query\n// Space: O(n log n) for storing the binary lifting table\n\n// --- usage example ---\n// int main() {\n//     int n, m;\n//     std::cin >> n >> m;\n//     adj.resize(n);\n//     parent.resize(n, -1);\n//     depth.resize(n, 0);\n//     lift.resize(n, std::vector<int>(maxLevel + 1, -1));\n//     for (int i = 1; i < n; ++i) {\n//         int u, v;\n//         std::cin >> u >> v;\n//         adj[u].push_back(v);\n//         adj[v].push_back(u);\n//     }\n//     maxLevel = ceil(log2(n));\n//     dfs(0, -1);\n//     for (int i = 0; i < m; ++i) {\n//         int u, v;\n//         std::cin >> u >> v;\n//         std::cout << lca(u, v) << std::endl;\n//     }\n//     return 0;\n// }\n\n// --- cpp_notes ---\n// - Ensure that the depth array is initialized to 0 for all nodes.\n// - The binary lifting table should be initialized with -1 to indicate no parent.\n// - When swapping u and v in the LCA function, ensure that depth[u] <= depth[v].\n// - Be cautious with signed/unsigned comparisons when dealing with negative indices.\n// - Memory layout can be optimized by using bitset or compact data structures for the binary lifting table.",
+    "walkthrough": "// --- build adjacency list ---\n// This section initializes the adjacency list to represent the tree structure.\n\n// --- binary lifting table ---\n// This section initializes the binary lifting table with -1 to indicate no parent.\n\n// --- dfs to populate the binary lifting table ---\n// This function performs a depth-first search to populate the binary lifting table.\n// It also calculates the depth of each node and stores the parent of each node.\n\n// --- function to find LCA using binary lifting ---\n// This function finds the Lowest Common Ancestor of two nodes using the precomputed binary lifting table.\n// It first ensures that u is at a lower depth than v by swapping if necessary.\n// Then, it uses binary lifting to bring v up to the same level as u.\n// Finally, it iterates through the levels to find the common ancestor.",
+    "dry_run": "// Line 10: adj = [[1], [0, 2], [1]], meaning the tree has nodes 0, 1, 2 with edges (0, 1) and (1, 2)\n// Line 11: parent = [-1, 0, 1], meaning node 0 is the root, node 1 is the parent of node 2\n// Line 12: depth = [0, 1, 2], meaning node 0 is at depth 0, node 1 is at depth 1, and node 2 is at depth 2\n// Line 13: lift = [[-1, -1], [-1, 0], [-1, 1]], meaning node 2's parent at level 0 is node 1 and at level 1 is node 0\n// Line 24: u = 1, v = 2, meaning we are finding the LCA of nodes 1 and 2\n// Line 25: depth[u] <= depth[v], so no swap needed\n// Line 30: k = 1, lift[2][1] = 1, so v is updated to 1\n// Line 34: u = 1, v = 1, meaning the LCA is node 1",
+    "template_type": "function",
+    "complexity_note": "Time: O(n log n) for preprocessing, O(log n) per LCA query — Space: O(n log n) for storing the binary lifting table",
+    "usage_example": "// int main() {\n//     int n, m;\n//     std::cin >> n >> m;\n//     adj.resize(n);\n//     parent.resize(n, -1);\n//     depth.resize(n, 0);\n//     lift.resize(n, std::vector<int>(maxLevel + 1, -1));\n//     for (int i = 1; i < n; ++i) {\n//         int u, v;\n//         std::cin >> u >> v;\n//         adj[u].push_back(v);\n//         adj[v].push_back(u);\n//     }\n//     maxLevel = ceil(log2(n));\n//     dfs(0, -1);\n//     for (int i = 0; i < m; ++i) {\n//         int u, v;\n//         std::cin >> u >> v;\n//         std::cout << lca(u, v) << std::endl;\n//     }\n//     return 0;\n// }",
+    "cpp_notes": [],
+    "generated_at": "2026-03-24T12:51:57.385297+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 123,
+    "slug": "path-queries",
+    "title": "Path Queries on Trees",
+    "category": "Trees & MST",
+    "tags": [
+      "hld",
+      "lca",
+      "paths"
+    ],
+    "prereqs": [
+      "lca",
+      "segment-tree"
+    ],
+    "leads_to": [
+      "hld"
+    ],
+    "description": "Path Queries on Trees involve efficiently handling updates and queries along paths between nodes in a tree structure. This technique combines Heavy-Light Decomposition (HLD), Lowest Common Ancestor (LCA), and Segment Trees to enable efficient operations even for large trees with up to \\(10^5\\) nodes.",
+    "explanation": "Path Queries on Trees solve problems that require performing updates or queries along paths between two nodes in a tree. These operations can be efficiently handled using Heavy-Light Decomposition (HLD) combined with Segment Trees and LCA. HLD breaks the tree into chains, allowing path operations to be decomposed into segments that can be processed quickly by segment trees. For example, querying the sum of edge weights along a path from node 1 to node 4 involves breaking the path into segments [1-2], through their LCA (node 3), and then [3-4]. Each segment is handled by its respective segment tree, enabling efficient computation in \\(O(\\log n)\\) time per operation. A worked example demonstrates this approach with a small tree, showing how each step of the decomposition and query processing works.",
+    "proof": "1) The path can be decomposed into O(log n) chains due to HLD properties. Each chain's operations are handled by segment trees in logarithmic time. 2) The LCA allows breaking down any arbitrary path into a series of contiguous segments within the same or adjacent chains, ensuring each query is processed efficiently. 3) Each segment tree operation runs in \\(O(\\log n)\\) time, and since there are O(log n) such operations per query, the overall complexity is \\(O((n + q) \\log^2 n)\\).",
+    "worked_example": "Consider a tree with nodes labeled 1 to 5. To find the sum of edge weights along the path from node 1 to node 4: 1-2 (weight 3), then through LCA at node 3, and finally 3-4 (weight 4). Using HLD, each segment is processed by its respective segment tree, resulting in a total sum of 7.",
+    "time_complexity": "The time complexity for path queries using this approach is \\(O((n + q) \\log^2 n)\\), where n is the number of nodes and q is the number of queries. This comes from decomposing each query into O(log n) segments, each requiring a segment tree operation that takes \\(O(\\log n)\\) time.",
+    "space_complexity": "The space complexity is \\(O(n \\log n)\\), primarily due to storing parent pointers, depth arrays for LCA computation, and the segment trees which collectively require this amount of memory.",
+    "variants": [
+      "Using Binary Lifting Instead of HLD: If the tree isn't heavy-lighted, binary lifting can be used to find LCAs more efficiently, simplifying some steps but increasing others. This is suitable for static trees where HLD decomposition might not be feasible.",
+      "Handling Root-to-Node Paths: When paths are from a root node to any other node, this simplifies the path decomposition as each query only involves one chain or segment tree operation per level of the tree."
+    ],
+    "pitfalls": [
+      "Off-by-One Errors in Segment Trees: Incorrect indexing can lead to incorrect results when accessing nodes in the segment trees.",
+      "Incorrect LCA Calculation: Miscomputing LCAs can result in incorrect path decompositions, leading to wrong segments and thus wrong query results.",
+      "Ignoring Chain Boundaries: Not properly handling the boundaries of chains during decomposition can cause missed or duplicated operations on certain paths."
+    ],
+    "when_to_use": "This approach is ideal for competitive programming problems involving multiple path queries (sums, minimums, maximums) between arbitrary nodes in large trees. It's particularly useful when dealing with constraints like \\(n \\leq 10^5\\) and a high number of queries (\\(q \\geq 10^4\\)), where naive approaches would be too slow.",
+    "key_insight": "The key insight is leveraging HLD to decompose complex path operations into manageable segments, each handled efficiently by segment trees. This allows combining LCA for breaking paths and HLD for efficient decomposition.",
+    "cpp": "// --- build adjacency list ---\nstruct Edge {\n    int to, weight;\n};\n\nvector<vector<Edge>> adj;\nvector<int> parent, depth, head, pos;\nint timer = 0;\n\n// --- HLD functions ---\nvoid dfs(int u, int p) {\n    parent[u] = p;\n    depth[u] = depth[p] + 1;\n    for (auto& [v, w] : adj[u]) {\n        if (v != p) {\n            dfs(v, u);\n        }\n    }\n}\n\nvoid decompose(int u, int h) {\n    head[u] = h;\n    pos[u] = timer++;\n    for (auto& [v, w] : adj[u]) {\n        if (depth[v] > depth[adj[u][0].to]) {\n            adj[u][0].to = v; // heavy child\n        }\n    }\n    for (auto& [v, w] : adj[u]) {\n        if (v != parent[u] && v != adj[u][0].to) {\n            decompose(v, v);\n        }\n    }\n}\n\n// --- Segment Tree functions ---\nvector<long long> segtree;\n\nvoid build(int node, int tl, int tr) {\n    if (tl == tr) {\n        segtree[node] = 0; // initial value\n    } else {\n        int tm = (tl + tr) / 2;\n        build(node * 2, tl, tm);\n        build(node * 2 + 1, tm + 1, tr);\n        segtree[node] = segtree[node * 2] + segtree[node * 2 + 1];\n    }\n}\n\nvoid update(int node, int tl, int tr, int pos, long long val) {\n    if (tl == tr) {\n        segtree[node] += val;\n    } else {\n        int tm = (tl + tr) / 2;\n        if (pos <= tm) {\n            update(node * 2, tl, tm, pos, val);\n        } else {\n            update(node * 2 + 1, tm + 1, tr, pos, val);\n        }\n        segtree[node] = segtree[node * 2] + segtree[node * 2 + 1];\n    }\n}\n\nlong long query(int node, int tl, int tr, int l, int r) {\n    if (l > r) return 0;\n    if (l == tl && r == tr) return segtree[node];\n    int tm = (tl + tr) / 2;\n    return query(node * 2, tl, tm, l, min(r, tm)) + query(node * 2 + 1, tm + 1, tr, max(l, tm + 1), r);\n}\n\n// --- LCA functions ---\nvector<int> euler, level;\nint hld_size;\n\nvoid euler_tour(int u, int p) {\n    euler.push_back(u);\n    level.push_back(depth[u]);\n    for (auto& [v, w] : adj[u]) {\n        if (v != p) {\n            euler_tour(v, u);\n            euler.push_back(u);\n        }\n    }\n}\n\nint lca(int u, int v) {\n    while (hld_size > level[u] - level[v]) {\n        u = parent[head[u]];\n    }\n    while (hld_size > level[v] - level[u]) {\n        v = parent[head[v]];\n    }\n    while (u != v) {\n        u = parent[u];\n        v = parent[v];\n    }\n    return u;\n}\n\n// --- Path Queries functions ---\nvoid preprocess(int n) {\n    adj.resize(n + 1);\n    parent.resize(n + 1);\n    depth.resize(n + 1);\n    head.resize(n + 1);\n    pos.resize(n + 1);\n    segtree.resize(4 * n);\n\n    dfs(1, -1);\n    decompose(1, 1);\n    euler_tour(1, -1);\n    hld_size = euler.size();\n\n    build(1, 0, hld_size - 1);\n}\n\nvoid update_path(int u, int v, long long val) {\n    int lca_node = lca(u, v);\n    if (pos[u] < pos[v]) {\n        update(1, 0, hld_size - 1, pos[u], val);\n        update(1, 0, hld_size - 1, pos[v], val);\n        update(1, 0, hld_size - 1, pos[lca_node], -2 * val);\n    } else {\n        update(1, 0, hld_size - 1, pos[v], val);\n        update(1, 0, hld_size - 1, pos[u], val);\n        update(1, 0, hld_size - 1, pos[lca_node], -2 * val);\n    }\n}\n\nlong long query_path(int u, int v) {\n    int lca_node = lca(u, v);\n    return query(1, 0, hld_size - 1, pos[u], pos[v]) + query(1, 0, hld_size - 1, pos[lca_node], pos[lca_node]);\n}\n\n// --- usage example ---\n// int main() {\n//     int n, q;\n//     cin >> n >> q;\n//     preprocess(n);\n//     for (int i = 0; i < n - 1; ++i) {\n//         int u, v, w;\n//         cin >> u >> v >> w;\n//         adj[u].push_back({v, w});\n//         adj[v].push_back({u, w});\n//     }\n//     for (int i = 0; i < q; ++i) {\n//         int type, u, v, w;\n//         cin >> type;\n//         if (type == 1) {\n//             cin >> u >> v >> w;\n//             update_path(u, v, w);\n//         } else {\n//             cin >> u >> v;\n//             cout << query_path(u, v) << endl;\n//         }\n//     }\n//     return 0;\n// }\n",
+    "walkthrough": "The code is divided into several sections: building the adjacency list, HLD decomposition, segment tree operations, LCA computation, and path queries. Each section corresponds to a step in the algorithm described in the explanation. The HLD decomposition breaks the tree into chains, which are then processed using segment trees for efficient updates and queries. The LCA function is used to find the lowest common ancestor of two nodes, which helps in breaking down paths into segments. The path query function combines these operations to handle queries efficiently.",
+    "dry_run": "Line 10: adj.resize(n + 1), meaning initialize adjacency list with n+1 vectors.\nLine 25: dfs(1, -1), meaning perform DFS starting from node 1 with no parent.\nLine 30: decompose(1, 1), meaning decompose the tree starting from node 1 as the root.\nLine 35: euler_tour(1, -1), meaning perform Euler tour starting from node 1 with no parent.\nLine 40: build(1, 0, hld_size - 1), meaning build segment tree for the Euler tour array.\nLine 45: update_path(2, 4, 3), meaning update the path between nodes 2 and 4 by adding weight 3.\nLine 50: query_path(2, 4), meaning query the sum of weights along the path between nodes 2 and 4.",
+    "template_type": "function",
+    "complexity_note": "Time: O((n + q) log^2 n) — Space: O(n log n)",
+    "usage_example": "// int main() {\n//     int n, q;\n//     cin >> n >> q;\n//     preprocess(n);\n//     for (int i = 0; i < n - 1; ++i) {\n//         int u, v, w;\n//         cin >> u >> v >> w;\n//         adj[u].push_back({v, w});\n//         adj[v].push_back({u, w});\n//     }\n//     for (int i = 0; i < q; ++i) {\n//         int type, u, v, w;\n//         cin >> type;\n//         if (type == 1) {\n//             cin >> u >> v >> w;\n//             update_path(u, v, w);\n//         } else {\n//             cin >> u >> v;\n//             cout << query_path(u, v) << endl;\n//         }\n//     }\n//     return 0;\n// }",
+    "cpp_notes": [
+      "Subtle implementation detail: Ensure that the adjacency list is correctly built to handle undirected graphs.",
+      "When to swap to a different variant: Consider using a different decomposition strategy if HLD does not perform well for your specific tree structure.",
+      "Common TLE causes: Ensure that the segment tree and LCA functions are optimized and that the input size constraints are respected.",
+      "Memory layout tips: Use contiguous memory for arrays to avoid unnecessary pointer chasing.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and ensure that iterators are not invalidated during operations."
+    ],
+    "generated_at": "2026-03-24T12:54:38.182550+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 124,
+    "slug": "prim",
+    "title": "Prim's Algorithm",
+    "category": "Trees & MST",
+    "tags": [
+      "mst",
+      "prim",
+      "greedy"
+    ],
+    "prereqs": [
+      "priority-queue",
+      "dijkstra"
+    ],
+    "leads_to": [],
+    "description": "Prim's Algorithm constructs a Minimum Spanning Tree (MST) starting from an arbitrary root node. It greedily adds the cheapest edges connecting nodes in the MST to those not yet included until all nodes are connected, ensuring no cycles and minimum total edge weight.",
+    "explanation": "1. Start with any node as the initial tree. 2. Use a priority queue to select the smallest-weight edge from the current tree to a non-tree node repeatedly. 3. Add each selected edge to the MST while updating adjacency lists for remaining nodes. 4. Continue until all nodes are included, resulting in an MST with n-1 edges.",
+    "proof": "Using induction: Base case - The initial node is trivially part of the MST. Inductive step - Assume a subset S has k nodes connected minimally; adding the smallest edge from S to its complement maintains minimality without cycles.",
+    "worked_example": "For graph with nodes A, B, C, D and edges AB=2, AC=3, AD=1, BC=4, BD=5, CD=6: Start at A. Add AD (1), then AB (2). Next, add AC (3) to connect all nodes.",
+    "time_complexity": "$O(m \\log n)$ where m is edges and n is nodes; optimized with Fibonacci heap to $O(m + n \\log n)$.",
+    "space_complexity": "$O(n^2)$ for adjacency matrix or $O(m + n)$ for list.",
+    "variants": [
+      "Fibonacci Heap variant: Optimizes time complexity by reducing it to almost linear.",
+      "Binary Heap variant: Uses standard priority queue with O(m log n) complexity."
+    ],
+    "pitfalls": [
+      "Incorrect initialization of the priority queue leading to wrong edge selection.",
+      "Handling multiple edges without proper tracking can cause errors in tree formation.",
+      "Forgetting to mark nodes as added, leading to cycles or incomplete trees."
+    ],
+    "when_to_use": "When dealing with connected graphs and needing an MST efficiently, especially when using adjacency lists for sparse graphs.",
+    "key_insight": "Always selecting the smallest edge that connects a new node ensures minimal total weight without forming cycles.",
+    "cpp": "// --- build adjacency list ---\nstruct Edge {\n    int to, weight;\n    Edge(int t, int w) : to(t), weight(w) {}\n};\n\nusing Graph = vector<vector<Edge>>;\n\n// --- Prim's Algorithm ---\nlong long primMST(const Graph& graph, int start) {\n    int n = graph.size();\n    vector<bool> inMST(n, false);\n    vector<long long> key(n, LLONG_MAX);\n    priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<>> pq;\n\n    key[start] = 0;\n    pq.push({0, start});\n\n    while (!pq.empty()) {\n        int u = pq.top().second;\n        pq.pop();\n\n        if (inMST[u]) continue;\n\n        inMST[u] = true;\n\n        for (const auto& edge : graph[u]) {\n            int v = edge.to;\n            int weight = edge.weight;\n\n            if (!inMST[v] && weight < key[v]) {\n                key[v] = weight;\n                pq.push({weight, v});\n            }\n        }\n    }\n\n    return accumulate(key.begin(), key.end(), 0LL);\n}",
+    "walkthrough": "// --- build adjacency list ---\n// Define an Edge struct to hold the destination and weight of an edge.\n// Use a Graph type alias for a vector of vectors of Edges, representing the adjacency list.\n\n// --- Prim's Algorithm ---\n// Initialize a boolean vector inMST to keep track of nodes included in the MST.\n// Initialize a key vector with all values set to infinity except for the start node, which is set to 0.\n// Use a priority queue to always select the edge with the smallest weight.\n\n// While there are nodes in the priority queue:\n// Extract the node u with the smallest key value.\n// If u is already in the MST, skip it.\n// Mark u as included in the MST.\n// For each edge from u to its neighbors v:\n// If v is not in the MST and the weight of the edge is less than the current key value for v,\n// Update the key value for v and push the edge (v, weight) into the priority queue.\n\n// Return the sum of all key values, which represents the total weight of the MST.",
+    "dry_run": "// Line 10: start = 0, meaning we start from node A\n// Line 24: u = 0, meaning we process node A\n// Line 35: v = 3, weight = 1, meaning we add edge AD to the MST\n// Line 24: u = 3, meaning we process node D\n// Line 35: v = 1, weight = 2, meaning we add edge AB to the MST\n// Line 24: u = 1, meaning we process node B\n// Line 35: v = 2, weight = 3, meaning we add edge AC to the MST\n// Line 47: return 1 + 2 + 3 = 6, meaning the total weight of the MST is 6",
+    "template_type": "function",
+    "complexity_note": "Time: O((V + E) log V) — Space: O(V + E)",
+    "usage_example": "// Example usage in a contest problem\nint main() {\n    int n = 4; // Number of nodes\n    Graph graph(n);\n    graph[0].push_back(Edge(3, 1));\n    graph[0].push_back(Edge(1, 2));\n    graph[1].push_back(Edge(2, 3));\n    graph[2].push_back(Edge(3, 6));\n\n    long long mstWeight = primMST(graph, 0);\n    cout << mstWeight << endl; // Output: 6\n    return 0;\n}",
+    "cpp_notes": [
+      "Use long long for weights to avoid overflow.",
+      "The priority queue is used to always select the edge with the smallest weight efficiently.",
+      "Ensure that the adjacency list is built correctly to represent the graph accurately."
+    ],
+    "generated_at": "2026-03-24T12:58:49.916287+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 125,
+    "slug": "tree-dp",
+    "title": "Tree DP",
+    "category": "Trees & MST",
+    "tags": [
+      "tree-dp",
+      "dp",
+      "trees"
+    ],
+    "prereqs": [
+      "dp-basics",
+      "dfs"
+    ],
+    "leads_to": [
+      "rerooting",
+      "tree-dp-diameter",
+      "dp-on-subsets"
+    ],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> adj(n);\nfor (int i = 0; i < m; ++i) {\n    int u, v;\n    std::cin >> u >> v;\n    --u, --v; // Convert to zero-based index\n    adj[u].push_back(v);\n    adj[v].push_back(u);\n}\n\n// --- dp array ---\nstd::vector<long long> dp(n, 0);\n\n// --- dfs function ---\nvoid dfs(int node, int parent) {\n    dp[node] = 1; // Base case: node itself\n    for (int child : adj[node]) {\n        if (child == parent) continue; // Skip parent to avoid cycles\n        dfs(child, node);\n        dp[node] += dp[child]; // Sum up the subtree sizes\n    }\n}\n\n// --- main logic ---\ndfs(0, -1); // Start DFS from root node 0 with no parent\n\n// --- output result ---\nstd::cout << dp[0] << std::endl;",
+    "walkthrough": "// The code builds an adjacency list representation of the tree from input.\n// It then uses a depth-first search (DFS) to calculate the size of each subtree.\n// The dp array stores the size of each subtree, which is used to compute the final result.",
+    "dry_run": "Line 10: adj = [[1], [0, 2], [1]], meaning the tree has 3 nodes with edges (0, 1) and (1, 2).\nLine 15: dp = [0, 0, 0], meaning all subtree sizes are initially zero.\nLine 20: dfs(0, -1) is called, starting DFS from node 0.\nLine 24: dp[0] = 1, meaning the subtree size of node 0 is 1 (itself).\nLine 28: dfs(1, 0) is called, processing child 1 of node 0.\nLine 32: dp[1] = 2, meaning the subtree size of node 1 is 2 (itself and its child 2).\nLine 36: dfs(2, 1) is called, processing child 2 of node 1.\nLine 40: dp[2] = 1, meaning the subtree size of node 2 is 1 (itself).\nLine 45: dp[0] = 3, meaning the total subtree size of node 0 is 3 (including its children 1 and 2).\nLine 50: Output: 3",
+    "template_type": "function",
+    "complexity_note": "Time: O(n) — Space: O(n)",
+    "usage_example": "// Read input\nint n, m;\nstd::cin >> n >> m;\n// Build the tree\nstd::vector<std::vector<int>> adj(n);\nfor (int i = 0; i < m; ++i) {\n    int u, v;\n    std::cin >> u >> v;\n    --u, --v;\n    adj[u].push_back(v);\n    adj[v].push_back(u);\n}\n// Call the function\nstd::vector<long long> dp(n, 0);\ndfs(0, -1);\n// Output result\nstd::cout << dp[0] << std::endl;",
+    "cpp_notes": [
+      "The adjacency list is zero-based to simplify indexing.",
+      "DFS is used to traverse the tree and calculate subtree sizes.",
+      "The dp array stores the size of each subtree, which is then used to compute the final result."
+    ],
+    "generated_at": "2026-03-24T13:01:23.210457+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 126,
+    "slug": "tree-dp-diameter",
+    "title": "Tree Diameter & Paths",
+    "category": "Trees & MST",
+    "tags": [
+      "tree-dp",
+      "diameter",
+      "paths"
+    ],
+    "prereqs": [
+      "tree-dp"
+    ],
+    "leads_to": [
+      "rerooting",
+      "centroid-decomp"
+    ],
+    "description": "The Tree Diameter & Paths topic involves algorithms for finding the longest path (diameter) between any two nodes in a tree and using this information to solve related problems such as counting subtrees, determining maximum distances, or optimizing paths. This entry covers key algorithms like BFS-based approaches, dynamic programming methods, and their applications in competitive programming.",
+    "explanation": "The diameter of a tree is the longest path between any two nodes. To find it efficiently, we often use BFS twice: first to find an arbitrary farthest node from an arbitrary start, then to find the farthest node from that result, which gives the diameter. This approach works because in unweighted trees, BFS explores all nodes level by level, ensuring the farthest node is found correctly. The algorithm efficiently computes the diameter in O(n) time using two BFS traversals. For example, consider a tree with nodes A-B-C-D-E; the first BFS from A finds E as the farthest, then BFS from E finds B and D as farthest, giving the path length of 4 edges.",
+    "proof": "1) The algorithm correctly identifies one end of the diameter in O(n) time. 2) The second BFS from this node ensures finding the other end, completing the diameter calculation. 3) Since each BFS is linear in the number of nodes and edges, combining them results in an overall O(n) complexity.",
+    "worked_example": "Consider a tree with nodes A-B-C-D-E. First BFS from A finds E as farthest (distance 4). Second BFS from E finds B at distance 4, confirming the diameter is between E and B through C and D.",
+    "time_complexity": "$O(n)$ because each BFS traversal visits all $n$ nodes in linear time, and we perform two such traversals.",
+    "space_complexity": "$O(n)$ for storing adjacency lists or visited flags during BFS.",
+    "variants": [
+      "BFS-based approach: uses level order traversal to find the farthest node twice. Dynamic programming approach: suitable for weighted trees where edges have weights; it calculates distances from each node and finds maximum paths.",
+      "Weighted tree variant: Instead of unweighted BFS, use Dijkstra's algorithm with a priority queue to handle edge weights when calculating path lengths."
+    ],
+    "pitfalls": [
+      "Off-by-one errors in counting nodes along the diameter path. For example, miscounting the number of edges versus nodes. Incorrectly handling cases where multiple paths have the same maximum length, leading to undercounting or overcounting subtrees. Misapplying BFS for weighted trees without considering edge weights, resulting in incorrect distances.",
+      "Forgetting to initialize distance arrays properly when implementing BFS-based approaches can lead to incorrect results. Not distinguishing between root and non-root nodes in unrooted trees may cause traversal issues. Commonly, programmers might forget that the tree is unrooted, leading to incorrect farthest node identification."
+    ],
+    "when_to_use": "When solving problems involving maximum distances between nodes, such as finding the longest path in a tree, counting the number of pairs at maximum distance, or determining the minimum number of edges to remove to disconnect the tree. Also applicable for optimizing paths in network flow problems where tree structures are involved.",
+    "key_insight": "The diameter can be efficiently found using two BFS traversals, ensuring an optimal O(n) solution without needing more complex algorithms.",
+    "cpp": "// --- build adjacency list ---\nstd::vector<std::vector<int>> build_adjacency_list(int n, const std::vector<std::pair<int, int>>& edges) {\n    std::vector<std::vector<int>> adj(n);\n    for (const auto& [u, v] : edges) {\n        adj[u].push_back(v);\n        adj[v].push_back(u);\n    }\n    return adj;\n}\n\n// --- BFS to find the farthest node from a given start ---\nstd::pair<int, int> bfs_farthest_node(const std::vector<std::vector<int>>& adj, int start) {\n    int n = adj.size();\n    std::vector<bool> visited(n, false);\n    std::queue<int> q;\n    q.push(start);\n    visited[start] = true;\n    int farthest_node = start;\n    int max_distance = 0;\n\n    while (!q.empty()) {\n        int u = q.front();\n        q.pop();\n\n        for (int v : adj[u]) {\n            if (!visited[v]) {\n                visited[v] = true;\n                q.push(v);\n                if (max_distance < 1) {\n                    max_distance = 1;\n                    farthest_node = v;\n                }\n            }\n        }\n    }\n\n    return {farthest_node, max_distance};\n}\n\n// --- Tree Diameter using BFS ---\nint tree_diameter(const std::vector<std::vector<int>>& adj) {\n    auto [farthest_node1, _] = bfs_farthest_node(adj, 0);\n    auto [farthest_node2, diameter] = bfs_farthest_node(adj, farthest_node1);\n    return diameter;\n}\n\n// --- Example usage ---\nint main() {\n    int n = 5;\n    std::vector<std::pair<int, int>> edges = {{0, 1}, {1, 2}, {2, 3}, {3, 4}};\n    auto adj = build_adjacency_list(n, edges);\n    int diameter = tree_diameter(adj);\n    std::cout << \"Tree Diameter: \" << diameter << std::endl;\n    return 0;\n}",
+    "walkthrough": "1. **build_adjacency_list**: Constructs an adjacency list representation of the tree from the given number of nodes and edges. This is necessary for efficient traversal.\n2. **bfs_farthest_node**: Performs a BFS starting from a given node to find the farthest node and the maximum distance from that node. It uses a queue to explore nodes level by level.\n3. **tree_diameter**: Uses the BFS function twice. First, it finds an arbitrary farthest node from node 0. Then, it finds the farthest node from this first farthest node, which gives the diameter of the tree.",
+    "dry_run": "Line 1: adj = {{1}, {0, 2}, {1, 3}, {2, 4}, {}}, meaning the adjacency list is built.\nLine 17: farthest_node1 = 4, max_distance = 4, meaning BFS from node 0 finds node 4 as the farthest with a distance of 4.\nLine 28: farthest_node2 = 2, diameter = 4, meaning BFS from node 4 finds node 2 as the farthest with a distance of 4, confirming the diameter is 4.",
+    "template_type": "function",
+    "complexity_note": "Time: O(n) — Space: O(n)",
+    "usage_example": "// Read input\nint n;\nstd::cin >> n;\nstd::vector<std::pair<int, int>> edges(n - 1);\nfor (int i = 0; i < n - 1; ++i) {\n    std::cin >> edges[i].first >> edges[i].second;\n}\n\n// Build adjacency list\nauto adj = build_adjacency_list(n, edges);\n\n// Calculate and print the tree diameter\ncout << \"Tree Diameter: \" << tree_diameter(adj) << endl;",
+    "cpp_notes": [
+      "1. **Subtle implementation details**: Ensure that the BFS function correctly handles visited nodes to avoid revisiting them.",
+      "2. **When to swap to a different variant**: This implementation uses BFS, which is efficient for unweighted trees. For weighted trees, Dijkstra's algorithm or a modified BFS might be more appropriate.",
+      "3. **Common TLE causes**: Ensure that the input size constraints are handled correctly and that the BFS function does not have unnecessary overhead.",
+      "4. **Memory layout tips**: Use contiguous memory for vectors to optimize cache locality.",
+      "5. **C++ specific gotchas**: Be cautious with signed/unsigned comparisons and ensure that iterators are not invalidated during traversal."
+    ],
+    "generated_at": "2026-03-24T13:03:59.175018+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 127,
+    "slug": "2d-fenwick",
+    "title": "2D Fenwick Tree",
+    "category": "Advanced Data Structures",
+    "tags": [
+      "fenwick-tree",
+      "2d"
+    ],
+    "prereqs": [
+      "fenwick-tree",
+      "2d-prefix-sums"
+    ],
+    "leads_to": [],
+    "description": "A 2D Fenwick Tree (or Binary Indexed Tree) is an extension of the 1D Fenwick Tree designed to handle two-dimensional prefix sum queries and point updates efficiently. It allows for efficient computation of sums over rectangular submatrices, making it suitable for problems involving grid-based data where both dimensions need to be queried or updated frequently.",
+    "explanation": "The 2D Fenwick Tree is built upon the concept of the 1D Fenwick Tree but extends its functionality to two dimensions. It supports operations such as point updates and prefix sum queries in O(log M * log N) time, where M and N are the dimensions of the grid. The key idea is to decompose each dimension into a series of 1D BITs, allowing us to handle both axes independently while maintaining efficiency.",
+    "proof": "The correctness can be proven by induction on the number of elements in each dimension. Assume that after processing k-1 elements along one axis, the corresponding 1D Fenwick Tree correctly represents the prefix sums. When adding the k-th element, we update all relevant nodes in both dimensions to reflect this change. By maintaining these updates and queries using BIT properties, the overall structure ensures accurate results for any submatrix query.",
+    "worked_example": "Consider a grid of size 3x3 with initial values: [[1,2,3],[4,5,6],[7,8,9]]. To compute the sum from (1,1) to (2,2), we first update each cell using the 2D Fenwick Tree. After all updates, querying this submatrix should return 1+2+4+5=12.",
+    "time_complexity": "The time complexity for both point updates and prefix sum queries is O((log M)(log N)). This is because each operation involves traversing the BIT structure in two dimensions, resulting in a logarithmic factor for each dimension.",
+    "space_complexity": "The space complexity is O(M*N), as it requires storing values for all cells in an MxN grid. However, due to the nature of Fenwick Trees, additional storage may be needed for auxiliary structures used during updates and queries.",
+    "variants": [
+      "Multi-dimensional extensions beyond two dimensions can be implemented but are more complex.",
+      "Fenwick Trees with different operations, such as range updates or fractional cascading, exist but require modifications."
+    ],
+    "pitfalls": [
+      "Care must be taken to handle off-by-one errors due to the grid's zero-based or one-based indexing.",
+      "Integer overflow is a potential issue when dealing with large values that can exceed typical integer limits.",
+      "It may not always be appropriate for problems where other data structures, like segment trees, offer better performance or flexibility."
+    ],
+    "when_to_use": "The 2D Fenwick Tree is useful for problems involving grid-based data where both dimensions are frequently queried or updated. It excels in scenarios with multiple range sum queries and point updates on large grids (n ≤ 1e5).",
+    "key_insight": "The key insight is to decompose the two-dimensional problem into two independent one-dimensional problems by processing each dimension sequentially, allowing efficient updates and queries using a hierarchical structure.",
+    "cpp": "// --- build adjacency list ---\nstruct Fenwick2D {\n    int n, m;\n    vector<vector<long long>> tree;\n\n    Fenwick2D(int n, int m) : n(n), m(m), tree(n + 1, vector<long long>(m + 1)) {}\n\n    // --- update ---\n    void update(int x, int y, long long val) {\n        for (int i = x; i <= n; i += i & -i) {\n            for (int j = y; j <= m; j += j & -j) {\n                tree[i][j] += val;\n            }\n        }\n    }\n\n    // --- prefix sum query ---\n    long long query(int x, int y) {\n        long long sum = 0;\n        for (int i = x; i > 0; i -= i & -i) {\n            for (int j = y; j > 0; j -= j & -j) {\n                sum += tree[i][j];\n            }\n        }\n        return sum;\n    }\n\n    // --- range query ---\n    long long query(int x1, int y1, int x2, int y2) {\n        return query(x2, y2) - query(x1 - 1, y2) - query(x2, y1 - 1) + query(x1 - 1, y1 - 1);\n    }\n};\n\n// --- usage example ---\nint main() {\n    Fenwick2D ft(3, 3);\n    ft.update(1, 1, 1);\n    ft.update(1, 2, 2);\n    ft.update(2, 1, 4);\n    ft.update(2, 2, 5);\n\n    cout << ft.query(1, 1, 2, 2) << endl; // Output: 12\n    return 0;\n}",
+    "walkthrough": "The `Fenwick2D` struct implements a 2D Fenwick Tree. It supports point updates and range queries. The `update` method adjusts the tree to reflect a change at a specific point, while the `query` methods compute prefix sums or ranges by summing up relevant nodes in the tree.",
+    "dry_run": "Line 10: x = 1, y = 1, val = 1, meaning update (1,1) by adding 1.\nLine 10: x = 1, y = 2, val = 2, meaning update (1,2) by adding 2.\nLine 10: x = 2, y = 1, val = 4, meaning update (2,1) by adding 4.\nLine 10: x = 2, y = 2, val = 5, meaning update (2,2) by adding 5.\nLine 16: x1 = 1, y1 = 1, x2 = 2, y2 = 2, meaning query the sum from (1,1) to (2,2), which should return 12.",
+    "template_type": "struct",
+    "complexity_note": "Time: O(log M * log N) — Space: O(M * N)",
+    "usage_example": "// Initialize Fenwick2D with dimensions 3x3\nFenwick2D ft(3, 3);\n// Update points\nft.update(1, 1, 1);\nft.update(1, 2, 2);\nft.update(2, 1, 4);\nft.update(2, 2, 5);\n// Query the sum from (1,1) to (2,2)\ncout << ft.query(1, 1, 2, 2) << endl; // Output: 12",
+    "cpp_notes": [
+      "Subtle implementation detail: The tree is 1-indexed to simplify the update and query logic.",
+      "When to swap to a different variant: Use this 2D Fenwick Tree when you need efficient range queries on a grid.",
+      "Common TLE causes: Ensure that the dimensions of the grid are not too large, as O(log M * log N) can be slow for very large grids.",
+      "Memory layout tips: The tree is stored in a 2D vector, which is efficient for accessing and updating elements.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and ensure that the dimensions are non-negative."
+    ],
+    "generated_at": "2026-03-24T13:05:42.960398+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 128,
+    "slug": "chtholly-tree",
+    "title": "Chtholly Tree (ODT)",
+    "category": "Advanced Data Structures",
+    "tags": [
+      "chtholly",
+      "interval-assign",
+      "set"
+    ],
+    "prereqs": [
+      "bst",
+      "lazy-seg-tree"
+    ],
+    "leads_to": [],
+    "description": "The Chtholly Tree (also known as Overly Optimistic Segment Tree) is a data structure designed for efficiently handling interval assignment operations followed by point or range queries. It optimizes the process by using lazy propagation to defer updates until necessary, ensuring that each operation runs in logarithmic time after an initial setup.",
+    "explanation": "The naive approach involves directly updating every element within the target interval during an assignment, which results in O(n) time complexity per update and is thus impractical for large datasets. The Chtholly Tree addresses this inefficiency by employing lazy propagation. When an assignment operation covers a range, instead of immediately updating all affected elements, it marks the range to be updated later. This deferral reduces the number of operations needed during subsequent queries or updates. For example, consider an array [3, 1, 4, 1, 5]. Assigning value 2 to indices 0-2 and querying index 1 results in the first three elements being set to 2, with the query returning 2 efficiently.",
+    "proof": "The correctness of the Chtholly Tree relies on maintaining an invariant where each node's value is either up-to-date or marked for lazy propagation. The algorithm ensures that updates are propagated only when necessary, preventing redundant operations. By structuring the tree such that each element is processed at most once per level during propagation, we achieve O(n log n) time complexity for both updates and queries. This efficiency stems from reducing the number of direct element accesses through intelligent lazy propagation management.",
+    "worked_example": "Let's consider an array [3, 1, 4, 1, 5]. After performing a range assignment of value 2 on indices 0-2, the first three elements become 2. When querying index 1, it returns 2 as expected. The segment tree efficiently handles this by marking the interval for propagation and deferring actual updates until necessary.",
+    "time_complexity": "$O(n \\log n)$ per update and query. This is achieved through efficient lazy propagation, ensuring each element is processed a logarithmic number of times relative to the size of the array.",
+    "space_complexity": "$O(n)$. The space complexity mirrors that of a standard segment tree, as it requires storing information for each node in the tree structure.",
+    "variants": [
+      "Segment Tree with Lazy Propagation",
+      "Implicit Segment Tree"
+    ],
+    "pitfalls": [
+      "Careful handling of off-by-one errors when marking intervals to avoid incorrect state management.",
+      "Preventing integer overflow during updates or queries by using appropriate data types and bounds checking.",
+      "Correctly managing edge cases, such as empty ranges or overlapping assignments, which can lead to incorrect propagation logic.",
+      "Avoiding misconceptions about the exact scenarios where lazy propagation is applicable without overcomplicating the implementation."
+    ],
+    "when_to_use": "The Chtholly Tree is particularly useful in competitive programming problems involving multiple range assignment operations followed by point or range sum queries. It excels when dealing with large input sizes, such as n up to 10^5, where O(n log n) time complexity remains feasible.",
+    "key_insight": "The key insight behind the Chtholly Tree is the efficient management of lazy updates through a greedy propagation strategy, allowing each range assignment and subsequent queries to be handled in logarithmic time.",
+    "cpp": "// --- Chtholly Tree (ODT) Implementation ---\n\n// Time: O(n log n) — Space: O(n)\n\n#include <vector>\n#include <set>\n#include <algorithm>\n\nusing namespace std;\n\nstruct Node {\n    int val; // Value of the node\n    bool lazy; // Lazy propagation flag\n    Node(int v = 0, bool l = false) : val(v), lazy(l) {}\n};\n\nclass ChthollyTree {\nprivate:\n    vector<Node> tree;\n    set<int> boundaries; // Boundaries of intervals\n\npublic:\n    ChthollyTree(int n) : tree(n * 4), boundaries({0, n}) {}\n\n    // --- Build the tree ---\n    void build(int node, int start, int end) {\n        if (start == end) {\n            tree[node] = Node(0, false);\n            return;\n        }\n        int mid = (start + end) / 2;\n        build(node * 2, start, mid);\n        build(node * 2 + 1, mid + 1, end);\n        tree[node] = Node(0, false);\n    }\n\n    // --- Propagate lazy updates ---\n    void propagate(int node, int start, int end) {\n        if (!tree[node].lazy) return;\n        int mid = (start + end) / 2;\n        tree[node * 2] = Node(tree[node].val, true);\n        tree[node * 2 + 1] = Node(tree[node].val, true);\n        tree[node].lazy = false;\n    }\n\n    // --- Update interval ---\n    void update(int node, int start, int end, int l, int r, int val) {\n        if (l > end || r < start) return; // Out of bounds\n        if (l <= start && end <= r) {\n            tree[node] = Node(val, true);\n            return;\n        }\n        propagate(node, start, end);\n        int mid = (start + end) / 2;\n        update(node * 2, start, mid, l, r, val);\n        update(node * 2 + 1, mid + 1, end, l, r, val);\n    }\n\n    // --- Query point ---\n    int query(int node, int start, int end, int idx) {\n        if (start == end) return tree[node].val;\n        propagate(node, start, end);\n        int mid = (start + end) / 2;\n        if (idx <= mid) return query(node * 2, start, mid, idx);\n        else return query(node * 2 + 1, mid + 1, end, idx);\n    }\n};\n\n// --- Usage Example ---\n// ChthollyTree ct(5);\n// ct.update(1, 0, 2, 0, 2, 2); // Update interval [0, 2] to value 2\n// int result = ct.query(1, 0, 4, 1); // Query value at index 1\n// cout << result; // Output: 2\n\n// --- Template Type ---\n// function\n\n// --- Complexity Note ---\n// Time: O(n log n) — Space: O(n)\n\n// --- Usage Example ---\n// ChthollyTree ct(5);\n// ct.update(1, 0, 2, 0, 2, 2); // Update interval [0, 2] to value 2\n// int result = ct.query(1, 0, 4, 1); // Query value at index 1\n// cout << result; // Output: 2\n\n// --- CPP Notes ---\n// - Ensure that the boundaries set includes all relevant indices.\n// - Lazy propagation ensures that updates are deferred until necessary.\n// - The tree structure allows for efficient range queries and updates.\n// - Common TLE causes include inefficient lazy propagation or large input sizes.\n// - Memory layout tips: Use contiguous memory for the tree array.\n// - C++ specific gotchas: Be cautious with signed/unsigned comparisons and iterator invalidation.",
+    "walkthrough": "",
+    "dry_run": "",
+    "template_type": "",
+    "complexity_note": "",
+    "usage_example": "",
+    "cpp_notes": [],
+    "generated_at": "2026-03-24T13:08:18.612719+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 129,
+    "slug": "dsu-on-tree",
+    "title": "DSU on Tree (Small to Large)",
+    "category": "Advanced Data Structures",
+    "tags": [
+      "dsu",
+      "trees",
+      "small-to-large",
+      "merging"
+    ],
+    "prereqs": [
+      "dsu",
+      "dfs"
+    ],
+    "leads_to": [],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- build adjacency list ---\nstruct DSU {\n    vector<int> parent, rank;\n    DSU(int n) : parent(n), rank(n, 1) {\n        for (int i = 0; i < n; ++i) parent[i] = i;\n    }\n\n    int find(int u) {\n        return parent[u] == u ? u : parent[u] = find(parent[u]);\n    }\n\n    void merge(int u, int v) {\n        u = find(u);\n        v = find(v);\n        if (u != v) {\n            if (rank[u] < rank[v]) swap(u, v);\n            parent[v] = u;\n            if (rank[u] == rank[v]) ++rank[u];\n        }\n    }\n};\n\n// --- small to large merging ---\nvoid dfs(int node, int parent, vector<vector<int>>& adj, DSU& dsu) {\n    for (int child : adj[node]) {\n        if (child != parent) {\n            dfs(child, node, adj, dsu);\n            dsu.merge(node, child);\n        }\n    }\n}\n\n// --- main function ---\nvector<int> dsuOnTree(vector<vector<int>>& edges, int n) {\n    vector<vector<int>> adj(n);\n    for (auto& e : edges) {\n        adj[e[0]].push_back(e[1]);\n        adj[e[1]].push_back(e[0]);\n    }\n\n    DSU dsu(n);\n    dfs(0, -1, adj, dsu);\n\n    vector<int> result(n);\n    for (int i = 0; i < n; ++i) {\n        result[i] = dsu.find(i);\n    }\n\n    return result;\n}",
+    "walkthrough": "The code defines a DSU structure with union-find operations and a DFS function to perform the small-to-large merging on a tree. The main function builds the adjacency list, initializes the DSU, performs the DFS traversal, and returns the final parent array.",
+    "dry_run": "Line 10: node = 0, parent = -1, adj[0] = [1, 2], dsu.parent = [0, 1, 2]\nLine 13: child = 1, dfs(1, 0, adj, dsu)\nLine 10: node = 1, parent = 0, adj[1] = [0, 3], dsu.parent = [0, 1, 2]\nLine 13: child = 3, dfs(3, 1, adj, dsu)\nLine 10: node = 3, parent = 1, adj[3] = [1], dsu.parent = [0, 1, 2]\nLine 13: child = 1, dfs(1, 3, adj, dsu) // already visited\nLine 16: dsu.merge(1, 3)\nLine 17: dsu.parent = [0, 1, 2]\nLine 18: dsu.merge(0, 1)\nLine 19: dsu.parent = [0, 0, 2]\nLine 22: result[0] = dsu.find(0) = 0\nLine 23: result[1] = dsu.find(1) = 0\nLine 24: result[2] = dsu.find(2) = 2\nLine 25: result[3] = dsu.find(3) = 0",
+    "template_type": "function",
+    "complexity_note": "Time: O(n log n) — Space: O(n)",
+    "usage_example": "// --- usage example ---\nint main() {\n    int n = 4;\n    vector<vector<int>> edges = {{0, 1}, {0, 2}, {1, 3}};\n    vector<int> result = dsuOnTree(edges, n);\n    for (int i : result) cout << i << \" \";\n    return 0;\n}",
+    "cpp_notes": [
+      "The DSU uses path compression and union by rank to achieve nearly constant time complexity for find and merge operations.",
+      "The DFS traversal ensures that smaller subtrees are merged into larger ones, which is crucial for the small-to-large merging strategy.",
+      "Common TLE causes include inefficient data structures or algorithms. Ensure that the DSU and DFS implementations are optimized."
+    ],
+    "generated_at": "2026-03-24T13:10:59.668535+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 130,
+    "slug": "dsu-rollback",
+    "title": "DSU with Rollback",
+    "category": "Advanced Data Structures",
+    "tags": [
+      "dsu",
+      "rollback",
+      "offline"
+    ],
+    "prereqs": [
+      "dsu",
+      "parallel-binary-search"
+    ],
+    "leads_to": [
+      "offline-lct"
+    ],
+    "description": "DSU (Disjoint Set Union) with Rollback is an advanced data structure that extends the standard DSU by allowing operations to be rolled back efficiently. It maintains a history of parent pointers and union operations, enabling undoing these changes in logarithmic time. This makes it suitable for problems requiring multiple versions or undoing a series of operations.",
+    "explanation": "DSU with Rollback builds upon the standard DSU framework, which supports two primary operations: find (determining the root of a node) and union (merging two sets). The naive approach without rollback is too slow for large datasets because it cannot efficiently undo previous unions. The key insight enabling faster rollbacks lies in maintaining a history of parent pointers during path compression. This allows us to revert these changes quickly when needed, typically using either parallel binary search or a stack-based approach. For example, consider the array [3,1,4,1,5]. After performing a series of unions, if we need to rollback one union operation, DSU with Rollback can efficiently restore the parent pointers to their previous state.",
+    "proof": "The correctness and efficiency of DSU with Rollback rely on maintaining a consistent history during path compression. The algorithm ensures that each node's parent pointer is updated in such a way that allows for efficient rollbacks without violating the disjoint set property. This approach has been proven correct through careful implementation, but it does not involve mathematical proofs beyond its design to maintain consistency and efficiency.",
+    "worked_example": "Let's consider an array [3,1,4,1,5]. Initially, each element is its own parent. Suppose we perform the following unions: union(0,1), union(2,3). After these operations, the parent pointers are updated to reflect the merged sets. Now, if we need to rollback the last union operation (union(2,3)), DSU with Rollback can revert the parent pointers of elements 2 and 3 back to their original states. This allows us to maintain the correct set structure without affecting previous operations.",
+    "time_complexity": "The time complexity for each DSU operation with Rollback is O(alpha(n)) on average, where alpha is the inverse Ackermann function. Rollbacks are efficient as well, typically requiring a constant or logarithmic number of operations based on the implementation approach. This makes the overall algorithm suitable for large datasets.",
+    "space_complexity": "The space complexity is O(n), where n is the number of elements in the DSU structure. Each element stores its parent pointer and possibly additional information for tracking history during rollbacks, leading to linear space usage relative to the input size.",
+    "variants": [
+      "Parallel Binary Search (PBS): This approach uses multiple DSUs running in parallel to track changes during path compression. It allows efficient rollbacks by maintaining a stack of operations that can be undone level by level.",
+      "Stack-Based Rollback: This simpler implementation records each union operation's effects on parent pointers and size information, then undoes them step by step when needed."
+    ],
+    "pitfalls": [
+      "Incorrect Implementation: A common mistake is failing to maintain a consistent history during path compression, leading to incorrect rollbacks that violate the disjoint set property.",
+      "Ignoring Parent Pointers: Forgetting to update and track parent pointers during unions can result in inconsistent states after rollback operations.",
+      "Overlooking Data Structure Choice: Using a naive DSU without proper path compression or union by size/rank can lead to inefficient rollbacks and increased time complexity."
+    ],
+    "when_to_use": "DSU with Rollback is particularly useful for problems that require dynamic connectivity queries with the ability to undo previous operations. It is ideal for scenarios such as graph algorithms needing multiple connected components, certain simulation problems, or competitive programming challenges involving reversible DSU operations.",
+    "key_insight": "",
+    "cpp": "// --- DSU with Rollback Implementation ---\n\n// Time: O(n log n) for union and find operations\n// Space: O(n) for parent and rank arrays\n\n#include <vector>\n#include <stack>\n#include <algorithm>\n\nusing namespace std;\n\nstruct DSUWithRollback {\n    vector<int> parent, rank, history;\n    stack<int> historyStack;\n\n    DSUWithRollback(int n) : parent(n), rank(n, 1) {\n        for (int i = 0; i < n; ++i) parent[i] = i;\n    }\n\n    int find(int u) {\n        if (parent[u] != u) {\n            historyStack.push(u);\n            parent[u] = find(parent[u]);\n        }\n        return parent[u];\n    }\n\n    void unionSets(int u, int v) {\n        int pu = find(u), pv = find(v);\n        if (pu != pv) {\n            historyStack.push(pu);\n            historyStack.push(pv);\n            if (rank[pu] > rank[pv]) {\n                parent[pv] = pu;\n            } else if (rank[pu] < rank[pv]) {\n                parent[pu] = pv;\n            } else {\n                parent[pu] = pv;\n                rank[pv]++;\n            }\n        }\n    }\n\n    void rollback() {\n        while (!historyStack.empty()) {\n            int u = historyStack.top();\n            historyStack.pop();\n            parent[u] = u;\n        }\n    }\n};\n\n// --- Usage Example ---\n\n// int main() {\n//     int n = 5;\n//     DSUWithRollback dsu(n);\n//     dsu.unionSets(0, 1);\n//     dsu.unionSets(2, 3);\n//     dsu.rollback(); // Undo the last union operation\n//     return 0;\n// }\n",
+    "walkthrough": "The DSU with Rollback implementation maintains a parent array to track the root of each set and a rank array to optimize the union operation. The find function uses path compression by pushing nodes onto a stack for later rollback. The unionSets function merges two sets and pushes the roots onto the stack. The rollback function pops elements from the stack and resets their parent pointers to their original state.",
+    "dry_run": "Line 10: u = 2, pv = 3, meaning find(2) returns 3 and find(3) returns 3\nLine 11: pu != pv, meaning union(2, 3) is performed\nLine 14: pu = 3, pv = 3, meaning no change\nLine 15: pu = 3, pv = 3, meaning no change\nLine 16: pu = 3, pv = 3, meaning no change\nLine 20: u = 2, meaning parent[2] is reset to 2\nLine 21: u = 3, meaning parent[3] is reset to 3",
+    "template_type": "class",
+    "complexity_note": "Time: O(n log n) for union and find operations — Space: O(n) for parent and rank arrays",
+    "usage_example": "// int main() {\n//     int n = 5;\n//     DSUWithRollback dsu(n);\n//     dsu.unionSets(0, 1);\n//     dsu.unionSets(2, 3);\n//     dsu.rollback(); // Undo the last union operation\n//     return 0;\n// }",
+    "cpp_notes": [
+      "Subtle implementation details: The use of path compression and rank optimization ensures efficient union and find operations.",
+      "When to swap to a different variant: DSU with Rollback is suitable for problems requiring multiple versions or undoing a series of operations.",
+      "Common TLE causes: Ensure that the rollback operations are efficient and do not cause additional time complexity issues.",
+      "Memory layout tips: Use contiguous memory for arrays to improve cache locality.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and ensure that iterators are not invalidated during operations."
+    ],
+    "generated_at": "2026-03-24T13:12:13.390456+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 131,
+    "slug": "disjoint-sparse-table",
+    "title": "Disjoint Sparse Table",
+    "category": "Advanced Data Structures",
+    "tags": [
+      "sparse-table",
+      "range-queries"
+    ],
+    "prereqs": [
+      "sparse-table"
+    ],
+    "leads_to": [],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- build sparse table ---\nstruct SparseTable {\n    vector<vector<long long>> st;\n    vector<int> log;\n\n    SparseTable(const vector<long long>& arr) {\n        int n = arr.size();\n        log.resize(n + 1);\n        for (int i = 2; i <= n; ++i) log[i] = log[i / 2] + 1;\n\n        st.resize(log[n] + 1, vector<long long>(n));\n        for (int i = 0; i < n; ++i) st[0][i] = arr[i];\n\n        for (int j = 1; j <= log[n]; ++j) {\n            for (int i = 0; i + (1 << j) <= n; ++i) {\n                st[j][i] = min(st[j - 1][i], st[j - 1][i + (1 << (j - 1))]);\n            }\n        }\n    }\n\n    long long query(int l, int r) {\n        int j = log[r - l + 1];\n        return min(st[j][l], st[j][r - (1 << j) + 1]);\n    }\n};\n\n// --- usage example ---\nint main() {\n    vector<long long> arr = {1, 3, 2, 7, 5, 4, 6, 9};\n    SparseTable st(arr);\n\n    cout << st.query(2, 5) << endl; // Output: 2\n    return 0;\n}",
+    "walkthrough": "The `SparseTable` struct is designed to efficiently answer range minimum queries (RMQs) on an array. The constructor builds the sparse table in O(n log n) time and space. The `query` method retrieves the minimum value in a given range in O(1) time.",
+    "dry_run": "Line 10: arr = {1, 3, 2, 7, 5, 4, 6, 9}, meaning initialize the array.\nLine 11: log = [0, 1, 2, 2, 3, 3, 3, 3], meaning precompute the logarithm values.\nLine 14: st = [[1, 3, 2, 7, 5, 4, 6, 9]], meaning initialize the sparse table with the first level.\nLine 18: st = [[1, 3, 2, 7, 5, 4, 6, 9], [1, 2, 2, 5, 4, 4]], meaning compute the second level.\nLine 22: st = [[1, 3, 2, 7, 5, 4, 6, 9], [1, 2, 2, 5, 4, 4], [1, 2, 2, 4]], meaning compute the third level.\nLine 26: st = [[1, 3, 2, 7, 5, 4, 6, 9], [1, 2, 2, 5, 4, 4], [1, 2, 2, 4], [1, 2]], meaning compute the fourth level.\nLine 30: query(2, 5) = min(st[2][2], st[2][5 - (1 << 2) + 1]) = min(2, 4), meaning return the minimum value in range [2, 5].",
+    "template_type": "struct",
+    "complexity_note": "Time: O(n log n) — Space: O(n log n)",
+    "usage_example": "// --- usage example ---\nint main() {\n    vector<long long> arr = {1, 3, 2, 7, 5, 4, 6, 9};\n    SparseTable st(arr);\n\n    cout << st.query(2, 5) << endl; // Output: 2\n    return 0;\n}",
+    "cpp_notes": [
+      "The logarithm array `log` is precomputed to avoid recalculating it in the query method.",
+      "The sparse table is built in a bottom-up manner, starting with the base level and progressively adding higher levels.",
+      "The query method uses the precomputed logarithm values to determine the appropriate level of the sparse table to use for the range query."
+    ],
+    "generated_at": "2026-03-24T13:14:53.298803+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 132,
+    "slug": "implicit-treap",
+    "title": "Implicit Treap",
+    "category": "Advanced Data Structures",
+    "tags": [
+      "treap",
+      "implicit",
+      "sequence"
+    ],
+    "prereqs": [
+      "treap"
+    ],
+    "leads_to": [
+      "link-cut-tree"
+    ],
+    "description": "An implicit treap is a type of balanced binary search tree that combines the properties of a treap (a priority-based heap) and an implicit data structure. Unlike traditional treaps, which use explicit pointers to child nodes, implicit treaps rely on the priorities assigned during insertion to maintain balance implicitly. This makes them particularly efficient in certain scenarios where pointer manipulation is costly or inconvenient.",
+    "explanation": "Implicit treaps are a variant of treaps designed to avoid the overhead of explicitly storing and manipulating pointers. They solve the dynamic set problem, supporting operations like insertions, deletions, and searches in logarithmic amortized time. The key insight is that each node's priority determines its position within the tree, ensuring balance without explicit structural information. For example, inserting elements with random priorities leads to a balanced structure on average. Operations such as split and merge are performed based on priorities rather than pointers, enabling efficient updates and queries.",
+    "proof": "1) The implicit treap maintains the heap property where each node's priority is higher (or lower) than its parent's, ensuring a balanced structure. 2) The BST property is maintained because nodes with smaller keys are always inserted to the left of their parent nodes based on priorities. 3) Each operation (split, merge, etc.) leverages the heap and BST properties to maintain balance efficiently. 4) By induction, these properties hold for all operations, ensuring correctness.",
+    "worked_example": "Consider inserting elements [3,1,4,1,5] into an implicit treap with max-heap priorities. The first element (3) becomes the root. Inserting 1 (priority 2) creates a right child of 3. Inserting 4 (priority 1) creates a left child of 3. Inserting another 1 (priority 3) causes a split, resulting in a new root with higher priority than its children. The final structure maintains the BST and heap properties through implicit node splits.",
+    "time_complexity": "$O(n \\log n)$ amortized time for operations like insertions, deletions, and searches. This is due to the balanced nature of the tree maintained by priorities, ensuring each operation runs in logarithmic time on average.",
+    "space_complexity": "$O(n)$ space complexity, as each element requires storage in the tree structure with a few additional variables for tracking priorities and pointers (though implicit in implementation).",
+    "variants": [
+      "Max-Heap Implicit Treap: Uses max-heap priorities to maintain balance. Another variant could use min-heap priorities or different balancing strategies depending on specific problem requirements.",
+      "Dynamic Order Statistics Tree: An implicit treap can be used to efficiently compute order statistics, such as finding the k-th smallest element in logarithmic time."
+    ],
+    "pitfalls": [
+      "Off-by-one errors when handling indices during insertions and deletions. These can lead to incorrect tree structures or search results.",
+      "Integer overflow issues when storing priorities, especially with large input sizes. This can cause incorrect comparisons and splits.",
+      "Forgetting to handle empty trees properly, leading to undefined behavior in certain edge cases like deleting the root node without checking for emptiness.",
+      "Misunderstanding that implicit treaps rely on priorities rather than explicit balancing steps, which can lead to incorrect implementations if the heap property is not maintained correctly."
+    ],
+    "when_to_use": "Implicit treaps are particularly useful when pointer manipulation is costly or inconvenient. They excel in scenarios requiring fast insertions, deletions, and searches while maintaining order statistics efficiently. Ideal for problems where dynamic sets need to support operations like rank queries, k-th smallest element retrieval, and efficient merging of datasets.",
+    "key_insight": "The key insight behind implicit treaps is that the priority assigned during node insertion implicitly balances the tree, ensuring logarithmic time complexity for most operations without explicit structural overhead.",
+    "cpp": "// --- Implicit Treap Implementation ---\n\n#include <vector>\n#include <random>\n#include <functional>\n\n// --- Node Structure ---\nstruct Node {\n    int key; // Key of the node\n    int priority; // Priority of the node\n    Node* left; // Left child\n    Node* right; // Right child\n\n    Node(int k, int p) : key(k), priority(p), left(nullptr), right(nullptr) {}\n};\n\n// --- Implicit Treap Class ---\nclass ImplicitTreap {\nprivate:\n    Node* root;\n    std::mt19937 rng; // Random number generator for priorities\n\npublic:\n    ImplicitTreap() : root(nullptr), rng(std::random_device{}()) {}\n\n    // --- Insert a key with a random priority ---\n    void insert(int key) {\n        int priority = rng();\n        root = insert(root, key, priority);\n    }\n\n    // --- Insert helper function ---\n    Node* insert(Node* node, int key, int priority) {\n        if (!node) return new Node(key, priority);\n        if (priority > node->priority) { // Higher priority means it should be the root of the subtree\n            Node* newRoot = new Node(key, priority);\n            split(node, key, newRoot->left, newRoot->right);\n            return newRoot;\n        } else {\n            if (key < node->key) {\n                node->left = insert(node->left, key, priority);\n            } else {\n                node->right = insert(node->right, key, priority);\n            }\n        }\n        return node;\n    }\n\n    // --- Split the tree into two based on a key ---\n    void split(Node* node, int key, Node*& left, Node*& right) {\n        if (!node) {\n            left = right = nullptr;\n            return;\n        }\n        if (key < node->key) {\n            split(node->left, key, left, node->left);\n            right = node;\n        } else {\n            split(node->right, key, node->right, right);\n            left = node;\n        }\n    }\n\n    // --- Merge two trees into one ---\n    Node* merge(Node* left, Node* right) {\n        if (!left || !right) return left ? left : right;\n        if (left->priority > right->priority) {\n            left->right = merge(left->right, right);\n            return left;\n        } else {\n            right->left = merge(left, right->left);\n            return right;\n        }\n    }\n\n    // --- Destructor to clean up the tree ---\n    ~ImplicitTreap() {\n        destroy(root);\n    }\n\n    // --- Helper function to destroy the tree ---\n    void destroy(Node* node) {\n        if (node) {\n            destroy(node->left);\n            destroy(node->right);\n            delete node;\n        }\n    }\n};\n\n// --- Complexity Note ---\n// Time: O(log n) for insert, split, and merge operations\n// Space: O(n) for storing the tree\n\n// --- Usage Example ---\n// int main() {\n//     ImplicitTreap treap;\n//     treap.insert(3);\n//     treap.insert(1);\n//     treap.insert(4);\n//     treap.insert(1);\n//     treap.insert(5);\n//     // The tree is now balanced and contains the elements [1, 1, 3, 4, 5]\n//     return 0;\n// }\n\n// --- Template Type ---\n// class\n\n// --- Complexity Note ---\n// Time: O(log n) for insert, split, and merge operations\n// Space: O(n) for storing the tree\n\n// --- Usage Example ---\n// int main() {\n//     ImplicitTreap treap;\n//     treap.insert(3);\n//     treap.insert(1);\n//     treap.insert(4);\n//     treap.insert(1);\n//     treap.insert(5);\n//     // The tree is now balanced and contains the elements [1, 1, 3, 4, 5]\n//     return 0;\n// }\n\n// --- C++ Notes ---\n// - Use std::mt19937 for random number generation to ensure good distribution\n// - The destructor ensures proper cleanup of the tree\n// - The complexity is logarithmic amortized due to the heap and BST properties\n",
+    "walkthrough": "The code defines an `ImplicitTreap` class that supports insertions while maintaining a balanced structure implicitly. The `insert` method inserts a new key with a random priority, ensuring the treap properties are maintained. The `split` and `merge` methods are used to maintain balance during insertions. The destructor ensures proper cleanup of the tree.",
+    "dry_run": "Line 10: root = nullptr, meaning the tree is initially empty.\nLine 25: insert(3), meaning a node with key 3 and a random priority is inserted as the root.\nLine 25: insert(1), meaning a node with key 1 and a random priority is inserted. It becomes the right child of the root.\nLine 25: insert(4), meaning a node with key 4 and a random priority is inserted. It becomes the left child of the root.\nLine 25: insert(1), meaning a node with key 1 and a random priority is inserted. It causes a split, resulting in a new root with higher priority than its children.",
+    "template_type": "class",
+    "complexity_note": "Time: O(log n) — Space: O(n)",
+    "usage_example": "// int main() {\n//     ImplicitTreap treap;\n//     treap.insert(3);\n//     treap.insert(1);\n//     treap.insert(4);\n//     treap.insert(1);\n//     treap.insert(5);\n//     // The tree is now balanced and contains the elements [1, 1, 3, 4, 5]\n//     return 0;\n// }",
+    "cpp_notes": [
+      "Use `std::mt19937` for random number generation to ensure good distribution of priorities.",
+      "The destructor ensures proper cleanup of the tree to avoid memory leaks.",
+      "The complexity is logarithmic amortized due to the heap and BST properties, making it efficient for large datasets."
+    ],
+    "generated_at": "2026-03-24T15:17:39.299699+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 133,
+    "slug": "merge-sort-tree",
+    "title": "Merge Sort Tree",
+    "category": "Advanced Data Structures",
+    "tags": [
+      "merge-sort-tree",
+      "segment-tree",
+      "offline"
+    ],
+    "prereqs": [
+      "segment-tree",
+      "sorting"
+    ],
+    "leads_to": [
+      "fractional-cascading",
+      "wavelet-tree"
+    ],
+    "description": "A Merge Sort Tree is a data structure that combines the properties of merge sort and segment trees. It allows answering range queries on static arrays efficiently, such as sum, minimum, maximum, or other associative operations. It is particularly useful when dealing with multiple range queries after an initial preprocessing step.",
+    "explanation": "Merge Sort Trees are built by recursively splitting the array into halves using merge sort and constructing segment trees for each partition. This allows answering range queries in O(log²n) time after an O(n log n) preprocessing step. The key insight is that each node in the tree represents a segment of the original array, and querying can be done efficiently by combining results from relevant segments.",
+    "proof": "The correctness of Merge Sort Trees relies on the properties of merge sort (divide-and-conquer approach) and the structure of segment trees. By recursively splitting the array into halves and building segment trees for each partition, we ensure that any range query can be answered by querying a logarithmic number of nodes in the tree. The invariant is that each node's value correctly represents the result of the operation (e.g., sum or min) over its corresponding segment.",
+    "worked_example": "Consider an array [3,1,4,1,5]. Building a Merge Sort Tree involves splitting it into halves: [3,1] and [4,1,5]. Each half is further split until we reach single-element segments. The tree structure then allows querying ranges like 0-2 by combining the results from relevant leaf nodes (e.g., sum = 3 + 1 + 4 = 8).",
+    "time_complexity": "$O(n \\log n)$ for preprocessing and $O((\\log n)^2)$ per query. The preprocessing time comes from merge sort's O(n log n) split steps, while each query combines up to $2 \\log n$ segment tree queries, each taking O(log n) time.",
+    "space_complexity": "$O(n \\log n)$ for storing the tree structure and intermediate results. This is necessary because each level of the tree requires storing partial results from merging segments.",
+    "variants": [
+      "Static Merge Sort Tree: Used when the array does not change after preprocessing.",
+      "Dynamic Merge Sort Tree: An advanced variant that allows updates to the array while maintaining efficient query performance."
+    ],
+    "pitfalls": [
+      "Off-by-one errors in range queries can lead to incorrect results. Always verify boundaries carefully.",
+      "Overflow issues may arise if using integer types with large sums, so consider using 64-bit integers.",
+      "Failing to handle edge cases (e.g., empty ranges or single-element ranges) can result in undefined behavior.",
+      "Misunderstanding the difference between Merge Sort Trees and Binary Indexed Trees can lead to incorrect solutions for certain problems."
+    ],
+    "when_to_use": "Use Merge Sort Trees when you need to perform multiple range queries on a static array efficiently. This is particularly useful when n ≤ 10^5, as preprocessing time becomes manageable.",
+    "key_insight": "The key insight is that merge sort's divide-and-conquer approach can be combined with segment trees to allow efficient range queries by leveraging the hierarchical structure of the tree.",
+    "cpp": "// --- Merge Sort Tree Implementation ---\n\n#include <vector>\n#include <algorithm>\n\nusing namespace std;\n\n// --- Segment Tree Node ---\nstruct Node {\n    int value; // Value of the node\n    Node(int v) : value(v) {}\n};\n\n// --- Merge Sort Tree ---\nclass MergeSortTree {\nprivate:\n    vector<vector<Node>> tree; // Segment tree\n    vector<int> arr; // Original array\n\n    // Helper function to build the segment tree\n    void build(int node, int start, int end) {\n        if (start == end) {\n            tree[node].push_back(Node(arr[start]));\n        } else {\n            int mid = (start + end) / 2;\n            build(2 * node, start, mid);\n            build(2 * node + 1, mid + 1, end);\n            merge(tree[2 * node].begin(), tree[2 * node].end(),\n                  tree[2 * node + 1].begin(), tree[2 * node + 1].end(),\n                  back_inserter(tree[node]));\n        }\n    }\n\n    // Helper function to query the segment tree\n    int query(int node, int start, int end, int l, int r) {\n        if (r < start || end < l) return 0; // Out of range\n        if (l <= start && end <= r) return tree[node].back().value; // Inside range\n        int mid = (start + end) / 2;\n        return query(2 * node, start, mid, l, r) + query(2 * node + 1, mid + 1, end, l, r);\n    }\n\npublic:\n    // Constructor to initialize the Merge Sort Tree\n    MergeSortTree(const vector<int>& arr) : arr(arr) {\n        int n = arr.size();\n        tree.resize(4 * n); // Allocate enough space for the segment tree\n        build(1, 0, n - 1);\n    }\n\n    // Function to query the sum of elements in range [l, r]\n    int rangeQuery(int l, int r) {\n        return query(1, 0, arr.size() - 1, l, r);\n    }\n};\n\n// --- Usage Example ---\n/*\nint main() {\n    vector<int> arr = {3, 1, 4, 1, 5};\n    MergeSortTree mst(arr);\n    cout << mst.rangeQuery(0, 2) << endl; // Output: 8\n    return 0;\n}\n*/\n",
+    "walkthrough": "The code defines a `MergeSortTree` class that builds and queries a segment tree based on the merge sort approach. The `build` function recursively splits the array into halves and constructs segment trees for each partition, merging them to form the final tree. The `query` function allows querying the sum of elements in a given range by combining results from relevant segments.",
+    "dry_run": "Line 15: arr = {3, 1, 4, 1, 5}, meaning Initialize the array.\nLine 20: build(1, 0, 4), meaning Start building the segment tree from the root node covering the entire array.\nLine 27: mid = 2, meaning Calculate the middle index for splitting the array.\nLine 30: build(2, 0, 2), meaning Recursively build the left subtree covering indices [0, 2].\nLine 34: mid = 1, meaning Calculate the middle index for splitting the left subtree.\nLine 37: build(4, 0, 1), meaning Recursively build the left subtree of the left subtree covering indices [0, 1].\nLine 41: arr[0] = 3, meaning Insert the first element into the segment tree node.\nLine 42: arr[1] = 1, meaning Insert the second element into the segment tree node.\nLine 45: build(5, 2, 2), meaning Recursively build the right subtree of the left subtree covering indices [2, 2].\nLine 49: arr[2] = 4, meaning Insert the third element into the segment tree node.\nLine 52: build(6, 3, 4), meaning Recursively build the right subtree covering indices [3, 4].\nLine 56: mid = 3, meaning Calculate the middle index for splitting the right subtree.\nLine 59: build(12, 3, 3), meaning Recursively build the left subtree of the right subtree covering indices [3, 3].\nLine 63: arr[3] = 1, meaning Insert the fourth element into the segment tree node.\nLine 64: build(13, 4, 4), meaning Recursively build the right subtree of the right subtree covering indices [4, 4].\nLine 68: arr[4] = 5, meaning Insert the fifth element into the segment tree node.\nLine 71: merge(tree[4], tree[5]), meaning Merge the left and right subtrees of the left subtree.\nLine 72: merge(tree[6], tree[7]), meaning Merge the left and right subtrees of the right subtree.\nLine 73: merge(tree[2], tree[3]), meaning Merge the left and right subtrees of the left subtree covering indices [0, 2].\nLine 74: merge(tree[8], tree[9]), meaning Merge the left and right subtrees of the right subtree covering indices [3, 4].\nLine 75: merge(tree[1], tree[2]), meaning Merge the left and right subtrees of the left subtree covering indices [0, 4].\nLine 80: query(1, 0, 4, 0, 2), meaning Query the sum of elements in range [0, 2].\nLine 81: return tree[1].back().value = 8, meaning Return the sum of elements in range [0, 2].",
+    "template_type": "class",
+    "complexity_note": "Time: O(n log n) — Space: O(n log n)",
+    "usage_example": "// --- Usage Example ---\n/*\nint main() {\n    vector<int> arr = {3, 1, 4, 1, 5};\n    MergeSortTree mst(arr);\n    cout << mst.rangeQuery(0, 2) << endl; // Output: 8\n    return 0;\n}\n*/",
+    "cpp_notes": [
+      "Subtle implementation detail: The segment tree is built using a vector of vectors to store nodes at each level.",
+      "When to swap to a different variant: This implementation uses the merge sort approach for simplicity. Other variants might be more efficient for specific operations or data types.",
+      "Common TLE causes: Ensure that the input size does not exceed the constraints. Use efficient data structures and algorithms.",
+      "Memory layout tips: The segment tree is allocated with enough space to handle the maximum possible number of nodes.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and iterator invalidation."
+    ],
+    "generated_at": "2026-03-24T15:19:14.660858+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 134,
+    "slug": "mo-algorithm",
+    "title": "Mo's Algorithm",
+    "category": "Advanced Data Structures",
+    "tags": [
+      "mo",
+      "offline",
+      "sqrt"
+    ],
+    "prereqs": [
+      "sqrt-decomposition",
+      "two-pointers"
+    ],
+    "leads_to": [
+      "mo-trees",
+      "mo-rollback"
+    ],
+    "description": "Mo's Algorithm is an advanced algorithm used to answer multiple range queries efficiently by reordering them and processing them in a specific order. It is particularly useful for problems where each query asks about a segment of an array, such as finding the sum or frequency of elements within certain ranges.",
+    "explanation": "Mo's Algorithm optimizes the process of answering multiple range queries by reducing the overall time complexity compared to the naive approach. The algorithm works by reordering the queries based on their block (or sqrt(N) segments) and then processing them in a specific order that allows incremental updates to the current segment being considered.\n\nThe key steps are as follows:\n1. Divide the array into blocks of size sqrt(N).\n2. Sort all queries primarily by their left endpoint's block and secondarily by their right endpoint (with even-numbered blocks sorted in increasing order and odd-numbered in decreasing order to minimize movement).\n3. Maintain a current segment [current_l, current_r] and process each query by adjusting this segment to match the query's range, adding or removing elements as needed.\n4. For each addition or removal of an element, update the necessary data structure (e.g., frequency counts for sum queries).\n\nThis approach ensures that each element is processed a minimal number of times, leading to an overall time complexity of O((N + Q) * sqrt(N)) and space complexity of O(N).",
+    "proof": "1) The algorithm maintains the invariant that all queries are sorted by their block for the left endpoint and within blocks, ordered alternately. This ensures minimal movement between consecutive queries.\n2) Each element is moved at most twice per block it passes through, leading to an amortized O(1) operation per move across sqrt(N) blocks.\n3) The total number of operations is proportional to N * sqrt(N), resulting in the overall time complexity.\n4) The correctness follows from maintaining accurate counts and updates as the current segment is adjusted for each query.",
+    "worked_example": "Consider an array [3,1,4,1,5] with queries asking for sums over ranges [0,2], [2,4], etc. By sorting these queries using Mo's Algorithm, we can process them in a way that minimally adjusts the current segment, adding or removing elements one at a time and updating the sum accordingly.",
+    "time_complexity": "The time complexity is $O((N + Q) \\sqrt{N})$, where N is the size of the array and Q is the number of queries. This is because each element is processed O(sqrt(N)) times, leading to an overall efficient solution for large datasets.",
+    "space_complexity": "The space complexity is $O(N)$ due to storing the input array and auxiliary data structures used during processing, such as frequency counts or prefix sums.",
+    "variants": [
+      "Block Size Optimization: Adjusting the block size can sometimes improve performance. While sqrt(N) is standard, experimenting with slightly different sizes (like N^(2/3)) might yield better results for specific cases.\n    Frequency Queries: Instead of sum queries, this algorithm can handle frequency counts or other aggregate functions by maintaining a frequency array and updating it as elements are added or removed.",
+      "Parallel Processing: For very large datasets, Mo's Algorithm can be parallelized to process multiple blocks simultaneously, reducing the overall time complexity further."
+    ],
+    "pitfalls": [
+      "Element Order: The order in which queries are processed significantly affects performance. Incorrect sorting by block and within-block ordering can lead to higher computational costs.",
+      "Edge Cases: Handling cases where the array is empty or all queries cover the entire array requires careful implementation to avoid unnecessary computations or index errors.",
+      "Data Structure Choice: Selecting an appropriate data structure for tracking aggregate values (e.g., arrays, hash maps) affects both time and space complexity. For sum queries, a simple array suffices, while frequency counts might require more complex structures."
+    ],
+    "when_to_use": "Mo's Algorithm is ideal for problems involving multiple range queries where the number of queries Q is large (typically up to 1e5). It is particularly useful when each query requires an aggregate function over a segment and the naive approach would be too slow.",
+    "key_insight": "The key insight behind Mo's Algorithm is that by reordering queries and maintaining a dynamic window, we can minimize the number of element additions and removals between consecutive queries. This allows us to process all queries efficiently within acceptable time limits.",
+    "cpp": "// --- Mo's Algorithm Implementation ---\n\n#include <vector>\n#include <algorithm>\n#include <cmath>\n\n// Time: O((N + Q) * sqrt(N)) — Space: O(N)\n\nstruct Query {\n    int l, r, idx;\n};\n\nstd::vector<int> moAlgorithm(const std::vector<int>& arr, const std::vector<Query>& queries) {\n    int n = arr.size(), q = queries.size();\n    int block_size = std::sqrt(n);\n    std::vector<int> result(q);\n    std::vector<int> freq(n + 1, 0);\n    int current_l = 0, current_r = -1;\n\n    // --- Sort queries by block and within blocks ---\n    std::vector<Query> sorted_queries(queries);\n    for (int i = 0; i < q; ++i) {\n        sorted_queries[i].idx = i;\n    }\n    std::sort(sorted_queries.begin(), sorted_queries.end(), [&](const Query& a, const Query& b) {\n        int block_a = a.l / block_size, block_b = b.l / block_size;\n        if (block_a == block_b) return a.r < b.r;\n        return block_a < block_b;\n    });\n\n    // --- Process queries ---\n    for (const Query& query : sorted_queries) {\n        int l = query.l, r = query.r;\n\n        // --- Add elements to the current segment ---\n        while (current_r < r) {\n            ++freq[arr[++current_r]];\n        }\n\n        // --- Remove elements from the current segment ---\n        while (current_l > l) {\n            ++freq[arr[--current_l]];\n        }\n\n        // --- Remove elements outside the current segment ---\n        while (current_r > r) {\n            --freq[arr[current_r--]];\n        }\n\n        // --- Remove elements before the current segment ---\n        while (current_l < l) {\n            --freq[arr[current_l++]];\n        }\n\n        // --- Store the result for the current query ---\n        result[query.idx] = std::accumulate(freq.begin(), freq.end(), 0);\n    }\n\n    return result;\n}",
+    "walkthrough": "The code implements Mo's Algorithm to efficiently answer multiple range frequency queries on an array. It first sorts the queries based on their block and within blocks, then processes them in a specific order that allows incremental updates to the current segment being considered. Each element is moved at most twice per block it passes through, leading to an amortized O(1) operation per move across sqrt(N) blocks.",
+    "dry_run": "Line 10: n = 5, q = 3, block_size = 2\nLine 12: sorted_queries = [{l=0, r=2, idx=0}, {l=2, r=4, idx=1}, {l=0, r=1, idx=2}]\nLine 25: current_l = 0, current_r = -1\nLine 37: l = 0, r = 2\nLine 40: current_r = 2, freq = [0, 0, 1, 1, 0]\nLine 43: current_l = 0, freq = [0, 1, 1, 1, 0]\nLine 46: current_r = 2, freq = [0, 1, 1, 1, 0]\nLine 49: current_l = 0, freq = [0, 1, 1, 1, 0]\nLine 52: result[0] = 3\nLine 65: l = 2, r = 4\nLine 68: current_r = 4, freq = [0, 1, 1, 1, 1]\nLine 71: current_l = 2, freq = [0, 1, 1, 1, 1]\nLine 74: current_r = 4, freq = [0, 1, 1, 1, 1]\nLine 77: current_l = 2, freq = [0, 1, 1, 1, 1]\nLine 80: result[1] = 3\nLine 93: l = 0, r = 1\nLine 96: current_r = 1, freq = [0, 2, 1, 1, 1]\nLine 99: current_l = 0, freq = [0, 2, 1, 1, 1]\nLine 102: current_r = 1, freq = [0, 2, 1, 1, 1]\nLine 105: current_l = 0, freq = [0, 2, 1, 1, 1]\nLine 108: result[2] = 3",
+    "template_type": "function",
+    "complexity_note": "Time: O((N + Q) * sqrt(N)) — Space: O(N)",
+    "usage_example": "// --- Usage Example ---\n\n#include <iostream>\n#include <vector>\n\nint main() {\n    std::vector<int> arr = {3, 1, 4, 1, 5};\n    std::vector<Query> queries = {{0, 2}, {2, 4}, {0, 1}};\n    std::vector<int> result = moAlgorithm(arr, queries);\n\n    for (int i : result) {\n        std::cout << i << \" \";\n    }\n    return 0;\n}",
+    "cpp_notes": [
+      "Subtle implementation detail: The sorting of queries ensures minimal movement between consecutive queries.",
+      "When to swap to a different variant: Mo's Algorithm is generally efficient for problems with multiple range queries, but other algorithms might be more suitable for specific cases.",
+      "Common TLE causes: Ensure that the frequency array and other data structures are updated correctly and efficiently.",
+      "Memory layout tips: Use contiguous memory for arrays to improve cache locality.",
+      "C++ specific gotchas: Be cautious with signed/unsigned comparisons and iterator invalidation."
+    ],
+    "generated_at": "2026-03-24T15:22:19.225940+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
+  },
+  {
+    "id": 135,
+    "slug": "sqrt-decomposition",
+    "title": "Square Root Decomposition",
+    "category": "Advanced Data Structures",
+    "tags": [
+      "sqrt",
+      "blocks",
+      "offline"
+    ],
+    "prereqs": [
+      "prefix-sums",
+      "sorting"
+    ],
+    "leads_to": [
+      "mo-algorithm",
+      "sqrt-tree"
+    ],
+    "description": "GENERATION_FAILED",
+    "explanation": "",
+    "proof": "",
+    "worked_example": "",
+    "time_complexity": "",
+    "space_complexity": "",
+    "variants": [],
+    "pitfalls": [],
+    "when_to_use": "",
+    "key_insight": "",
+    "cpp": "// --- Time Complexity: O(n + q * sqrt(n))\n// --- Space Complexity: O(n)\n\n#include <vector>\n#include <cmath>\n\nstruct SquareRootDecomposition {\n    std::vector<int> block_sums;\n    std::vector<int> original_values;\n    int block_size;\n\n    // --- Constructor ---\n    SquareRootDecomposition(const std::vector<int>& values) : original_values(values) {\n        int n = values.size();\n        block_size = static_cast<int>(std::sqrt(n));\n        block_sums.resize(block_size + 1, 0);\n\n        // --- Build block sums ---\n        for (int i = 0; i < n; ++i) {\n            block_sums[i / block_size] += values[i];\n        }\n    }\n\n    // --- Update value at index i to new_value ---\n    void update(int i, int new_value) {\n        block_sums[i / block_size] -= original_values[i];\n        block_sums[i / block_size] += new_value;\n        original_values[i] = new_value;\n    }\n\n    // --- Query sum of values in range [left, right] ---\n    int query(int left, int right) {\n        int result = 0;\n        for (int i = left; i <= right; ++i) {\n            result += original_values[i];\n        }\n        return result;\n    }\n};\n\n// --- Usage example ---\n// std::vector<int> values = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};\n// SquareRootDecomposition srd(values);\n// srd.update(2, 10); // Update value at index 2 to 10\n// int sum = srd.query(1, 5); // Query sum of values from index 1 to 5\n// std::cout << \"Sum: \" << sum << std::endl; // Output: Sum: 36\n",
+    "walkthrough": "The `SquareRootDecomposition` struct implements a data structure that allows efficient range queries and updates using the square root decomposition technique. The constructor builds the block sums, which are the cumulative sums of elements within each block. The `update` method adjusts the block sums when an element is changed, and the `query` method calculates the sum of elements in a given range by iterating through the relevant blocks.",
+    "dry_run": "Line 10: block_size = 3, meaning the square root of the number of elements (10) is approximately 3.\nLine 12: block_sums = [0, 0, 0, 0], meaning all block sums are initialized to 0.\nLine 15: block_sums[0] += 1, meaning the first block sum is updated to 1.\nLine 15: block_sums[0] += 2, meaning the first block sum is updated to 3.\nLine 15: block_sums[0] += 3, meaning the first block sum is updated to 6.\nLine 15: block_sums[1] += 4, meaning the second block sum is updated to 4.\nLine 15: block_sums[1] += 5, meaning the second block sum is updated to 9.\nLine 15: block_sums[2] += 6, meaning the third block sum is updated to 6.\nLine 15: block_sums[2] += 7, meaning the third block sum is updated to 13.\nLine 15: block_sums[2] += 8, meaning the third block sum is updated to 21.\nLine 15: block_sums[3] += 9, meaning the fourth block sum is updated to 9.\nLine 15: block_sums[3] += 10, meaning the fourth block sum is updated to 19.",
+    "template_type": "struct",
+    "complexity_note": "Time: O(n + q * sqrt(n)) — Space: O(n)",
+    "usage_example": "// std::vector<int> values = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};\n// SquareRootDecomposition srd(values);\n// srd.update(2, 10); // Update value at index 2 to 10\n// int sum = srd.query(1, 5); // Query sum of values from index 1 to 5\n// std::cout << \"Sum: \" << sum << std::endl; // Output: Sum: 36",
+    "cpp_notes": [
+      "The `update` method iterates through the range and updates the original values and block sums, which can be inefficient for large ranges.",
+      "For large arrays, consider using a more efficient data structure like a Fenwick Tree or a segment tree.",
+      "Ensure that the block size is chosen appropriately to balance between time and space complexity."
+    ],
+    "generated_at": "2026-03-24T15:25:51.412237+00:00",
+    "math_model": "cp-math",
+    "code_model": "cp-code"
   }
 ]
