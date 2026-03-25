@@ -18,6 +18,11 @@ def load_db():
 
 @app.route("/")
 def index():
+    return render_template("index.html")
+
+
+@app.route("/resource")
+def resource():
     return render_template("resource.html")
 
 

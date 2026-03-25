@@ -1817,3 +1817,85 @@
 [20:34:34] 
 [2/8] Suffix Array  (Strings)
 [20:34:34]   [suffix-array] math model...
+[20:35:11]   [suffix-array] code model...
+[20:35:55]   ✓  saved  |  ETA 9.8 min remaining
+[20:35:55] 
+[3/8] Suffix Automaton (SAM)  (Strings)
+[20:35:55]   [suffix-automaton] math model...
+[20:36:35]   [suffix-automaton] math attempt 1 failed: Invalid control character at: line 4 column 410 (char 872)
+[20:37:16]   [suffix-automaton] math attempt 2 failed: Invalid control character at: line 4 column 372 (char 793)
+[20:37:58]   [suffix-automaton] math attempt 3 failed: Invalid control character at: line 6 column 264 (char 1204)
+[20:38:00]   [suffix-automaton] code model...
+[20:38:24]   ✓  saved  |  ETA 9.6 min remaining
+[20:38:24] 
+[4/8] Suffix Tree  (Strings)
+[20:38:24]   [suffix-tree] math model...
+[20:38:57]   [suffix-tree] code model...
+[20:39:29]   ✓  saved  |  ETA 6.8 min remaining
+[20:39:29] 
+[5/8] LCA in O(n) — Farach-Colton-Bender  (Trees & MST)
+[20:39:29]   [lca-farach] math model...
+[20:40:10]   [lca-farach] math attempt 1 failed: Invalid control character at: line 4 column 311 (char 700)
+[20:41:01]   [lca-farach] math attempt 2 failed: Invalid control character at: line 4 column 281 (char 723)
+[20:41:51]   [lca-farach] code model...
+[20:42:37]   ✓  saved  |  ETA 6.0 min remaining
+[20:42:37] 
+[6/8] Steiner Tree  (Trees & MST)
+[20:42:37]   [steiner-tree] math model...
+[20:43:13]   [steiner-tree] math attempt 1 failed: Invalid \escape: line 6 column 30 (char 1566)
+[20:44:00]   [steiner-tree] math attempt 2 failed: Invalid control character at: line 4 column 152 (char 1299)
+[20:44:42]   [steiner-tree] code model...
+[20:45:14]   ✓  saved  |  ETA 4.2 min remaining
+[20:45:14] 
+[7/8] Top Trees & Auxiliary Trees  (Trees & MST)
+[20:45:14]   [top-tree] math model...
+[20:46:01]   [top-tree] math attempt 1 failed: Invalid control character at: line 4 column 248 (char 569)
+[20:46:35]   [top-tree] code model...
+[20:47:02]   ✓  saved  |  ETA 2.1 min remaining
+[20:47:02] 
+[8/8] Virtual Tree  (Trees & MST)
+[20:47:02]   [virtual-tree] math model...
+[20:47:57]   [virtual-tree] math attempt 1 failed: Invalid control character at: line 4 column 330 (char 1121)
+[20:48:36]   [virtual-tree] math attempt 2 failed: Invalid control character at: line 4 column 497 (char 920)
+[20:49:26]   [virtual-tree] math attempt 3 failed: Invalid control character at: line 4 column 181 (char 1416)
+[20:49:28]   [virtual-tree] code model...
+[20:50:04]   [virtual-tree] code attempt 1 failed: Expecting ',' delimiter: line 2 column 2624 (char 2625)
+[20:50:58]   [virtual-tree] code attempt 2 failed: Invalid control character at: line 2 column 4132 (char 4133)
+[20:51:46]   ✓  saved  |  ETA 0.0 min remaining
+[20:51:46] 
+=== Done. 233 entries in data/db.json ===
+[20:54:07] === cp-gpre pipeline starting ===
+[20:54:07] Topics: 1  |  already done: 0  |  pending: 1
+[20:54:07] Estimated time: ~1 minutes
+[20:54:07] 
+[1/1] Heapsort  (Basic Data Structures)
+[20:54:07]   [heapsort] math model...
+[20:55:06]   [heapsort] math attempt 1 failed: Invalid control character at: line 4 column 541 (char 2221)
+[20:55:42]   [heapsort] math attempt 2 failed: Invalid \escape: line 6 column 30 (char 1552)
+[20:56:24]   [heapsort] math attempt 3 failed: Invalid control character at: line 8 column 97 (char 1624)
+[20:56:26]   [heapsort] code model...
+[20:56:55]   ✓  saved  |  ETA 0.0 min remaining
+[20:56:55] 
+=== Done. 233 entries in data/db.json ===
+[20:56:55] === cp-gpre pipeline starting ===
+[20:56:55] Topics: 1  |  already done: 0  |  pending: 1
+[20:56:55] Estimated time: ~1 minutes
+[20:56:55] 
+[1/1] Arrays & Basic Data Structures  (Dynamic Programming)
+[20:56:55]   [arrays-basics] math model...
+[20:57:26]   [arrays-basics] math attempt 1 failed: Invalid control character at: line 6 column 117 (char 1135)
+[20:58:15]   [arrays-basics] math attempt 2 failed: Invalid control character at: line 4 column 189 (char 808)
+[20:58:57]   [arrays-basics] code model...
+[20:59:24]   ✓  saved  |  ETA 0.0 min remaining
+[20:59:24] 
+=== Done. 233 entries in data/db.json ===
+[20:59:24] === cp-gpre pipeline starting ===
+[20:59:24] Topics: 1  |  already done: 0  |  pending: 1
+[20:59:24] Estimated time: ~1 minutes
+[20:59:24] 
+[1/1] Space Complexity  (Fundamentals)
+[20:59:24]   [space-complexity] math model...
+[20:59:45] 
+⚠️  Interrupted. Progress saved.
+[20:59:45] 
+=== Done. 233 entries in data/db.json ===

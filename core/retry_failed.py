@@ -34,7 +34,7 @@ def main():
         print(f"{'─' * 50}")
         print(f"Retrying: {slug}")
         result = subprocess.run(
-            [sys.executable, "core/localModel.py", "--only", slug, "--regen"],
+            [sys.executable, "localModel.py", "--only", slug, "--regen"],
             check=False,
         )
         if result.returncode != 0:
