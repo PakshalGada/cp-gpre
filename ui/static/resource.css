@@ -13,6 +13,7 @@
     --color-active: #171717;
     --radius: 10px;
     --sidebar-width: 280px;
+    --navbar-height: 56px;
 }
 
 body {
@@ -30,7 +31,80 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* App Layout */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--navbar-height);
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border);
+    z-index: 200;
+    transition: box-shadow 0.2s ease;
+}
+
+.navbar.scrolled {
+    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.06);
+}
+
+.navbar-inner {
+    width: 100%;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+}
+
+.nav-logo {
+    font-family: "Noto Serif", serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+    text-decoration: none;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.nav-version {
+    font-family: "Inter", sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.02em;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.nav-link {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.nav-link:hover {
+    background-color: var(--color-hover);
+    color: var(--color-text);
+}
+
+.nav-link.active {
+    background-color: var(--color-active);
+    color: #ffffff;
+}
+
 .app-container {
     display: flex;
     min-height: 100vh;
@@ -42,7 +116,8 @@ body {
     border-right: 1px solid var(--color-border);
     position: fixed;
     left: 0;
-    top: 0;
+    top: var(--navbar-height);
+    height: calc(100vh - var(--navbar-height));
     bottom: 0;
     overflow-y: auto;
     z-index: 100;
@@ -65,7 +140,6 @@ body {
     padding: 16px 12px;
 }
 
-/* Collapsible Category Section */
 .category-section {
     margin-bottom: 8px;
 }
@@ -148,6 +222,7 @@ body {
 
 /* Main Content */
 .main-content {
+    margin-top: var(--navbar-height);
     flex: 1;
     margin-left: var(--sidebar-width);
 }
@@ -317,7 +392,7 @@ code {
     background-color: var(--color-hover);
     padding: 2px 6px;
     border-radius: 4px;
-}
+    `}
 
 /* Highlight.js token overrides – Catppuccin Mocha palette */
 .hljs {
@@ -455,7 +530,7 @@ code {
     margin-bottom: 8px;
 }
 
-/* LaTeX / MathJax */
+
 .MathJax {
     font-size: 1.05em !important;
 }

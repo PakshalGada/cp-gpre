@@ -26,6 +26,11 @@ def resource():
     return render_template("resource.html")
 
 
+@app.route("/practice")
+def practice():
+    return render_template("practice.html")
+
+
 @app.route("/api/topics")
 def get_topics():
     """Get all topics organized by category"""
