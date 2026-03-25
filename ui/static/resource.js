@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function loadTopics() {
   try {
-    const response = await fetch("/api/topics");
+    const response = await fetch("api/topics");
     currentTopics = await response.json();
     renderSidebar(currentTopics);
   } catch (error) {
@@ -308,14 +308,6 @@ function renderTopic(topic) {
   }
 }
 
-/**
- * For fields that may contain LaTeX ($ ... $ or \[ ... \]), we don't escape
- * the text fully — instead we only escape HTML-special chars that aren't part
- * of LaTeX delimiters, so MathJax can process them.
- *
- * Strategy: escape HTML, then unescape $ and \ so MathJax sees them.
- * This is safe because the content comes from our own API, not arbitrary user input.
- */
 function sanitizeText(text) {
   if (!text) return "";
   // Escape HTML first

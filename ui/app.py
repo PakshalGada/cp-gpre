@@ -3,12 +3,11 @@ import os
 
 from flask import Flask, jsonify, render_template
 
-app = Flask(__name__, static_folder="ui/static", template_folder="ui/template")
+app = Flask(__name__, static_folder="static", template_folder="template")
 
 
-# Load database
 def load_db():
-    db_path = os.path.join("core", "data", "db.json")
+    db_path = os.path.join("data", "db.json")
     try:
         with open(db_path, "r", encoding="utf-8") as f:
             return json.load(f)
