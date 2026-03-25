@@ -1341,3 +1341,479 @@
 ⚠️  Interrupted. Progress saved.
 [22:48:47] 
 === Done. 156 entries in data/db.json ===
+[10:58:27] === cp-gpre pipeline starting ===
+[10:58:27] Topics: 233  |  already done: 156  |  pending: 77
+[10:58:27] Estimated time: ~77 minutes
+[10:58:27] 
+[1/77] Bridge Tree  (Graph Traversal)
+[10:58:27]   [bridge-tree] math model...
+[10:59:07]   [bridge-tree] math attempt 1 failed: Invalid control character at: line 4 column 468 (char 860)
+[10:59:44]   [bridge-tree] code model...
+[11:00:29]   ✓  saved  |  ETA 154.5 min remaining
+[11:00:29] 
+[2/77] Small to Large Merging  (Miscellaneous)
+[11:00:29]   [small-to-large] math model...
+[11:01:08]   [small-to-large] math attempt 1 failed: Invalid control character at: line 4 column 132 (char 1063)
+[11:01:44]   [small-to-large] math attempt 2 failed: Invalid control character at: line 4 column 250 (char 525)
+[11:02:23]   [small-to-large] code model...
+[11:02:59]   ✓  saved  |  ETA 169.5 min remaining
+[11:02:59] 
+[3/77] Sqrt Decomposition of Time  (Miscellaneous)
+[11:02:59]   [sqrt-of-time] math model...
+[11:03:32]   [sqrt-of-time] code model...
+[11:04:04]   ✓  saved  |  ETA 138.4 min remaining
+[11:04:04] 
+[4/77] Garner's Algorithm  (Number Theory)
+[11:04:04]   [garner] math model...
+[11:04:54]   [garner] math attempt 1 failed: Invalid control character at: line 4 column 368 (char 649)
+[11:05:28]   [garner] math attempt 2 failed: Invalid control character at: line 4 column 156 (char 840)
+[11:06:19]   [garner] code model...
+[11:06:47]   ✓  saved  |  ETA 151.9 min remaining
+[11:06:47] 
+[5/77] Miller-Rabin Primality Test  (Number Theory)
+[11:06:47]   [miller-rabin] math model...
+[11:07:34]   [miller-rabin] code model...
+[11:08:06]   ✓  saved  |  ETA 138.8 min remaining
+[11:08:06] 
+[6/77] Primitive Root & Discrete Log  (Number Theory)
+[11:08:06]   [primitive-root] math model...
+[11:09:22]   [primitive-root] math attempt 1 failed: Invalid control character at: line 3 column 609 (char 1104)
+[11:10:09]   [primitive-root] code model...
+[11:10:39]   ✓  saved  |  ETA 144.2 min remaining
+[11:10:39] 
+[7/77] Sieve Methods via Inclusion-Exclusion  (Number Theory)
+[11:10:39]   [sieve-inclusion-exclusion] math model...
+[11:11:15]   [sieve-inclusion-exclusion] math attempt 1 failed: Invalid \escape: line 6 column 30 (char 2264)
+[11:12:00]   [sieve-inclusion-exclusion] math attempt 2 failed: Invalid control character at: line 4 column 179 (char 1171)
+[11:12:48]   [sieve-inclusion-exclusion] math attempt 3 failed: Invalid control character at: line 4 column 180 (char 1464)
+[11:12:50]   [sieve-inclusion-exclusion] code model...
+[11:13:16]   ✓  saved  |  ETA 148.1 min remaining
+[11:13:16] 
+[8/77] Dial's Algorithm  (Shortest Paths)
+[11:13:16]   [dial-algorithm] math model...
+[11:14:02]   [dial-algorithm] math attempt 1 failed: Invalid control character at: line 4 column 421 (char 800)
+[11:14:43]   [dial-algorithm] code model...
+[11:15:13]   ✓  saved  |  ETA 144.6 min remaining
+[11:15:13] 
+[9/77] Johnson's Algorithm  (Shortest Paths)
+[11:15:13]   [johnson] math model...
+[11:15:58]   [johnson] code model...
+[11:16:31]   ✓  saved  |  ETA 136.5 min remaining
+[11:16:31] 
+[10/77] Parallel Binary Search  (Sorting & Searching)
+[11:16:31]   [parallel-binary-search] math model...
+[11:17:20]   [parallel-binary-search] math attempt 1 failed: Invalid control character at: line 3 column 284 (char 541)
+[11:18:14]   [parallel-binary-search] math attempt 2 failed: Expecting ',' delimiter: line 16 column 179 (char 3501)
+[11:18:53]   [parallel-binary-search] math attempt 3 failed: Invalid control character at: line 4 column 356 (char 828)
+[11:18:55]   [parallel-binary-search] code model...
+[11:19:20]   ✓  saved  |  ETA 139.9 min remaining
+[11:19:20] 
+[11/77] Aho-Corasick Automaton  (Strings)
+[11:19:20]   [aho-corasick] math model...
+[11:19:48]   [aho-corasick] code model...
+[11:20:19]   ✓  saved  |  ETA 131.2 min remaining
+[11:20:19] 
+[12/77] Compressed Trie (Patricia)  (Strings)
+[11:20:19]   [compressed-trie] math model...
+[11:20:51]   [compressed-trie] math attempt 1 failed: Expecting ':' delimiter: line 14 column 276 (char 2341)
+[11:21:28]   [compressed-trie] code model...
+[11:22:05]   ✓  saved  |  ETA 128.0 min remaining
+[11:22:05] 
+[13/77] DP on Aho-Corasick  (Strings)
+[11:22:05]   [aho-corasick-dp] math model...
+[11:22:47]   [aho-corasick-dp] code model...
+[11:23:17]   ✓  saved  |  ETA 122.2 min remaining
+[11:23:17] 
+[14/77] Failure Automaton (KMP Automaton)  (Strings)
+[11:23:17]   [failure-automaton] math model...
+[11:23:56]   [failure-automaton] math attempt 1 failed: Invalid control character at: line 4 column 430 (char 802)
+[11:24:43]   [failure-automaton] math attempt 2 failed: Invalid control character at: line 3 column 364 (char 702)
+[11:25:20]   [failure-automaton] code model...
+[11:26:40]   [failure-automaton] code attempt 1 failed: Unterminated string starting at: line 2 column 10 (char 11)
+[11:27:07]   ✓  saved  |  ETA 129.0 min remaining
+[11:27:07] 
+[15/77] Manacher's Algorithm  (Strings)
+[11:27:07]   [manacher] math model...
+[11:27:43]   [manacher] math attempt 1 failed: Invalid control character at: line 4 column 333 (char 646)
+[11:28:19]   [manacher] code model...
+[11:28:50]   ✓  saved  |  ETA 125.6 min remaining
+[11:28:50] 
+[16/77] Palindrome DP & Eertree  (Strings)
+[11:28:50]   [palindrome-dp] math model...
+[11:29:27]   [palindrome-dp] math attempt 1 failed: Invalid control character at: line 3 column 377 (char 721)
+[11:30:10]   [palindrome-dp] code model...
+[11:30:37]   [palindrome-dp] code attempt 1 failed: Expecting ',' delimiter: line 2 column 1581 (char 1582)
+[11:31:11]   ✓  saved  |  ETA 124.8 min remaining
+[11:31:11] 
+[17/77] Borůvka's Algorithm  (Trees & MST)
+[11:31:11]   [boruvka] math model...
+[11:31:56]   [boruvka] math attempt 1 failed: Invalid control character at: line 4 column 101 (char 1083)
+[11:32:41]   [boruvka] math attempt 2 failed: Invalid control character at: line 4 column 396 (char 703)
+[11:33:24]   [boruvka] math attempt 3 failed: Invalid control character at: line 4 column 96 (char 961)
+[11:33:26]   [boruvka] code model...
+[11:34:45]   [boruvka] code attempt 1 failed: Unterminated string starting at: line 2 column 10 (char 11)
+[11:35:28]   ✓  saved  |  ETA 130.6 min remaining
+[11:35:28] 
+[18/77] Centroid Decomposition  (Trees & MST)
+[11:35:28]   [centroid-decomp] math model...
+[11:36:06]   [centroid-decomp] math attempt 1 failed: Invalid control character at: line 4 column 89 (char 901)
+[11:36:57]   [centroid-decomp] math attempt 2 failed: Invalid control character at: line 4 column 346 (char 1851)
+[11:37:29]   [centroid-decomp] code model...
+[11:38:02]   ✓  saved  |  ETA 129.7 min remaining
+[11:38:02] 
+[19/77] Heavy-Light Decomposition  (Trees & MST)
+[11:38:02]   [hld] math model...
+[11:38:34]   [hld] math attempt 1 failed: Invalid control character at: line 3 column 390 (char 722)
+[11:39:18]   [hld] math attempt 2 failed: Invalid \escape: line 6 column 31 (char 1847)
+[11:40:04]   [hld] math attempt 3 failed: Invalid \escape: line 6 column 55 (char 2188)
+[11:40:06]   [hld] code model...
+[11:40:58]   ✓  saved  |  ETA 129.8 min remaining
+[11:40:58] 
+[20/77] Kruskal's Tree (MST Structure)  (Trees & MST)
+[11:40:58]   [kruskal-tree] math model...
+[11:41:50]   [kruskal-tree] math attempt 1 failed: Invalid control character at: line 4 column 430 (char 1081)
+[11:42:36]   [kruskal-tree] math attempt 2 failed: Expecting ':' delimiter: line 10 column 343 (char 1926)
+[11:43:17]   [kruskal-tree] math attempt 3 failed: Invalid control character at: line 4 column 321 (char 677)
+[11:43:19]   [kruskal-tree] code model...
+[11:43:55]   ✓  saved  |  ETA 129.6 min remaining
+[11:43:55] 
+[21/77] LCA via Euler Tour + RMQ  (Trees & MST)
+[11:43:55]   [lca-rmq] math model...
+[11:45:15]   [lca-rmq] math attempt 1 failed: No JSON found in:
+
+[11:46:16]   [lca-rmq] math attempt 2 failed: Invalid control character at: line 3 column 323 (char 769)
+[11:47:14]   [lca-rmq] code model...
+[11:48:10]   ✓  saved  |  ETA 132.6 min remaining
+[11:48:10] 
+[22/77] Rerooting Technique  (Trees & MST)
+[11:48:10]   [rerooting] math model...
+[11:48:44]   [rerooting] code model...
+[11:49:14]   ✓  saved  |  ETA 126.9 min remaining
+[11:49:14] 
+[23/77] 2D Segment Tree  (Advanced Data Structures)
+[11:49:14]   [2d-segment-tree] math model...
+[11:49:59]   [2d-segment-tree] code model...
+[11:50:39]   ✓  saved  |  ETA 122.5 min remaining
+[11:50:39] 
+[24/77] Link-Cut Tree  (Advanced Data Structures)
+[11:50:39]   [link-cut-tree] math model...
+[11:51:11]   [link-cut-tree] math attempt 1 failed: Invalid control character at: line 4 column 456 (char 795)
+[11:52:00]   [link-cut-tree] math attempt 2 failed: Invalid control character at: line 3 column 438 (char 913)
+[11:52:45]   [link-cut-tree] code model...
+[11:53:10]   ✓  saved  |  ETA 120.8 min remaining
+[11:53:10] 
+[25/77] Mo's Algorithm on Trees  (Advanced Data Structures)
+[11:53:10]   [mo-trees] math model...
+[11:53:56]   [mo-trees] math attempt 1 failed: Expecting ',' delimiter: line 18 column 16 (char 4015)
+[11:54:42]   [mo-trees] math attempt 2 failed: Invalid control character at: line 3 column 257 (char 696)
+[11:55:24]   [mo-trees] math attempt 3 failed: Invalid \escape: line 10 column 30 (char 2183)
+[11:55:26]   [mo-trees] code model...
+[11:56:01]   ✓  saved  |  ETA 119.7 min remaining
+[11:56:01] 
+[26/77] Mo's Algorithm with Rollback  (Advanced Data Structures)
+[11:56:01]   [mo-rollback] math model...
+[11:56:46]   [mo-rollback] math attempt 1 failed: Invalid control character at: line 4 column 143 (char 1358)
+[11:57:27]   [mo-rollback] math attempt 2 failed: Invalid control character at: line 4 column 256 (char 1011)
+[11:58:25]   [mo-rollback] math attempt 3 failed: Invalid control character at: line 4 column 368 (char 835)
+[11:58:27]   [mo-rollback] code model...
+[11:59:04]   ✓  saved  |  ETA 118.9 min remaining
+[11:59:04] 
+[27/77] Offline Dynamic Connectivity  (Advanced Data Structures)
+[11:59:04]   [offline-lct] math model...
+[11:59:43]   [offline-lct] code model...
+[12:00:18]   [offline-lct] code attempt 1 failed: Expecting ',' delimiter: line 2 column 1703 (char 1704)
+[12:01:08]   ✓  saved  |  ETA 116.1 min remaining
+[12:01:08] 
+[28/77] Persistent DSU  (Advanced Data Structures)
+[12:01:08]   [persistent-dsu] math model...
+[12:01:50]   [persistent-dsu] math attempt 1 failed: Invalid control character at: line 4 column 296 (char 650)
+[12:02:29]   [persistent-dsu] code model...
+[12:02:58]   ✓  saved  |  ETA 112.9 min remaining
+[12:02:58] 
+[29/77] Persistent Segment Tree  (Advanced Data Structures)
+[12:02:58]   [persistent-seg-tree] math model...
+[12:03:35]   [persistent-seg-tree] math attempt 1 failed: Expecting ',' delimiter: line 18 column 16 (char 3101)
+[12:03:52]   [persistent-seg-tree] math attempt 2 failed: Remote end closed connection without response
+[16:20:20] === cp-gpre pipeline starting ===
+[16:20:20] Topics: 233  |  already done: 184  |  pending: 49
+[16:20:20] Estimated time: ~49 minutes
+[16:20:20] 
+[1/49] Persistent Segment Tree  (Advanced Data Structures)
+[16:20:20]   [persistent-seg-tree] math model...
+[16:21:07]   [persistent-seg-tree] code model...
+[16:21:49]   ✓  saved  |  ETA 71.6 min remaining
+[16:21:49] 
+[2/49] Segment Tree Beats  (Advanced Data Structures)
+[16:21:49]   [seg-tree-beats] math model...
+[16:22:44]   [seg-tree-beats] math attempt 1 failed: Invalid control character at: line 4 column 382 (char 951)
+[16:23:26]   [seg-tree-beats] code model...
+[16:23:58]   ✓  saved  |  ETA 85.5 min remaining
+[16:23:58] 
+[3/49] Splay Tree  (Advanced Data Structures)
+[16:23:58]   [splay-tree] math model...
+[16:24:39]   [splay-tree] math attempt 1 failed: Invalid control character at: line 4 column 294 (char 853)
+[16:25:18]   [splay-tree] math attempt 2 failed: Invalid control character at: line 4 column 378 (char 893)
+[16:25:58]   [splay-tree] math attempt 3 failed: Invalid \escape: line 6 column 30 (char 2322)
+[16:26:00]   [splay-tree] code model...
+[16:26:50]   ✓  saved  |  ETA 99.7 min remaining
+[16:26:50] 
+[4/49] Sqrt Tree  (Advanced Data Structures)
+[16:26:50]   [sqrt-tree] math model...
+[16:27:30]   [sqrt-tree] math attempt 1 failed: Invalid control character at: line 6 column 88 (char 1213)
+[16:28:10]   [sqrt-tree] math attempt 2 failed: Invalid control character at: line 4 column 123 (char 1148)
+[16:28:47]   [sqrt-tree] code model...
+[16:29:22]   ✓  saved  |  ETA 101.6 min remaining
+[16:29:22] 
+[5/49] Van Emde Boas Tree  (Advanced Data Structures)
+[16:29:22]   [van-emde-boas] math model...
+[16:30:04]   [van-emde-boas] code model...
+[16:30:49]   [van-emde-boas] code attempt 1 failed: Expecting property name enclosed in double quotes: line 2 column 3637 (char 3638)
+[16:31:47]   [van-emde-boas] code attempt 2 failed: Expecting ',' delimiter: line 2 column 3974 (char 3975)
+[16:32:33]   ✓  saved  |  ETA 107.6 min remaining
+[16:32:33] 
+[6/49] Wavelet Tree  (Advanced Data Structures)
+[16:32:33]   [wavelet-tree] math model...
+[16:33:25]   [wavelet-tree] code model...
+[16:34:27]   [wavelet-tree] code attempt 1 failed: Invalid control character at: line 2 column 3311 (char 3312)
+[16:35:06]   [wavelet-tree] code attempt 2 failed: Invalid control character at: line 2 column 2825 (char 2826)
+[16:36:01]   ✓  saved  |  ETA 112.4 min remaining
+[16:36:01] 
+[7/49] D-ary Heap & Fibonacci Heap  (Basic Data Structures)
+[16:36:01]   [d-ary-heap] math model...
+[16:36:39]   [d-ary-heap] math attempt 1 failed: Invalid control character at: line 4 column 557 (char 1236)
+[16:37:14]   [d-ary-heap] code model...
+[16:38:03]   ✓  saved  |  ETA 106.3 min remaining
+[16:38:03] 
+[8/49] Skip List  (Basic Data Structures)
+[16:38:03]   [skip-list] math model...
+[16:38:38]   [skip-list] code model...
+[16:39:22]   ✓  saved  |  ETA 97.5 min remaining
+[16:39:22] 
+[9/49] Aliens Trick (WQS Binary Search)  (Dynamic Programming)
+[16:39:22]   [aliens-trick] math model...
+[16:40:03]   [aliens-trick] math attempt 1 failed: Expecting ',' delimiter: line 5 column 3 (char 2073)
+[16:40:52]   [aliens-trick] math attempt 2 failed: Invalid control character at: line 3 column 347 (char 763)
+[16:41:33]   [aliens-trick] code model...
+[16:41:59]   ✓  saved  |  ETA 96.2 min remaining
+[16:41:59] 
+[10/49] Assignment Problem (Hungarian)  (Flows & Matching)
+[16:41:59]   [assignment-problem] math model...
+[16:42:35]   [assignment-problem] math attempt 1 failed: Invalid control character at: line 3 column 199 (char 533)
+[16:43:14]   [assignment-problem] math attempt 2 failed: Invalid control character at: line 3 column 442 (char 921)
+[16:43:53]   [assignment-problem] code model...
+[16:44:42]   ✓  saved  |  ETA 95.1 min remaining
+[16:44:42] 
+[11/49] General Matching (Blossom)  (Flows & Matching)
+[16:44:42]   [general-matching] math model...
+[16:45:13]   [general-matching] code model...
+[16:45:45]   ✓  saved  |  ETA 87.8 min remaining
+[16:45:45] 
+[12/49] Matroid Intersection  (Flows & Matching)
+[16:45:45]   [matroid-intersection] math model...
+[16:46:24]   [matroid-intersection] code model...
+[16:46:56]   ✓  saved  |  ETA 82.0 min remaining
+[16:46:56] 
+[13/49] Min-Cost Max-Flow  (Flows & Matching)
+[16:46:56]   [mcmf] math model...
+[16:47:45]   [mcmf] math attempt 1 failed: Invalid control character at: line 3 column 374 (char 797)
+[16:48:24]   [mcmf] math attempt 2 failed: Invalid control character at: line 4 column 300 (char 654)
+[16:49:02]   [mcmf] math attempt 3 failed: Invalid control character at: line 4 column 361 (char 716)
+[16:49:04]   [mcmf] code model...
+[16:49:42]   ✓  saved  |  ETA 81.4 min remaining
+[16:49:42] 
+[14/49] Project Selection (Closure Problem)  (Flows & Matching)
+[16:49:42]   [project-selection] math model...
+[16:50:52]   [project-selection] code model...
+[16:51:36]   ✓  saved  |  ETA 78.2 min remaining
+[16:51:36] 
+[15/49] Push-Relabel Algorithm  (Flows & Matching)
+[16:51:36]   [push-relabel] math model...
+[16:52:16]   [push-relabel] code model...
+[16:53:37]   [push-relabel] code attempt 1 failed: Unterminated string starting at: line 6 column 14 (char 2806)
+[16:54:59]   [push-relabel] code attempt 2 failed: Unterminated string starting at: line 2 column 10 (char 11)
+[16:55:36]   ✓  saved  |  ETA 79.9 min remaining
+[16:55:36] 
+[16/49] Alpha-Beta Pruning  (Game Theory)
+[16:55:36]   [alpha-beta] math model...
+[16:56:15]   [alpha-beta] code model...
+[16:57:07]   ✓  saved  |  ETA 75.9 min remaining
+[16:57:07] 
+[17/49] Green Hackenbush  (Game Theory)
+[16:57:07]   [green-hackenbush] math model...
+[16:57:38]   [green-hackenbush] code model...
+[16:58:04]   ✓  saved  |  ETA 71.0 min remaining
+[16:58:04] 
+[18/49] Misère Games  (Game Theory)
+[16:58:04]   [misere-games] math model...
+[16:58:33]   [misere-games] code model...
+[16:58:59]   [misere-games] code attempt 1 failed: Expecting ',' delimiter: line 2 column 1078 (char 1079)
+[16:59:25]   ✓  saved  |  ETA 67.3 min remaining
+[16:59:25] 
+[19/49] Half-Plane Intersection  (Geometry)
+[16:59:25]   [half-plane] math model...
+[17:00:00]   [half-plane] math attempt 1 failed: Invalid control character at: line 4 column 147 (char 1011)
+[17:00:44]   [half-plane] math attempt 2 failed: Invalid control character at: line 4 column 329 (char 642)
+[17:01:26]   [half-plane] math attempt 3 failed: Invalid control character at: line 4 column 365 (char 708)
+[17:01:28]   [half-plane] code model...
+[17:01:58]   ✓  saved  |  ETA 65.7 min remaining
+[17:01:58] 
+[20/49] Minkowski Sum  (Geometry)
+[17:01:58]   [minkowski-sum] math model...
+[17:02:30]   [minkowski-sum] code model...
+[17:03:05]   ✓  saved  |  ETA 62.0 min remaining
+[17:03:05] 
+[21/49] Voronoi Diagram & Delaunay Triangulation  (Geometry)
+[17:03:05]   [voronoi] math model...
+[17:03:42]   [voronoi] code model...
+[17:04:11]   ✓  saved  |  ETA 58.5 min remaining
+[17:04:11] 
+[22/49] Matroids & Greedy  (Greedy)
+[17:04:11]   [matroid] math model...
+[17:04:43]   [matroid] math attempt 1 failed: Invalid control character at: line 4 column 359 (char 808)
+[17:05:23]   [matroid] math attempt 2 failed: Invalid control character at: line 3 column 393 (char 973)
+[17:06:01]   [matroid] math attempt 3 failed: Invalid control character at: line 4 column 108 (char 1230)
+[17:06:03]   [matroid] code model...
+[17:06:27]   [matroid] code attempt 1 failed: Invalid control character at: line 2 column 1734 (char 1735)
+[17:07:11]   ✓  saved  |  ETA 57.5 min remaining
+[17:07:11] 
+[23/49] Berlekamp-Massey Algorithm  (Number Theory)
+[17:07:11]   [berlekamp-massey] math model...
+[17:07:50]   [berlekamp-massey] math attempt 1 failed: Invalid control character at: line 4 column 269 (char 592)
+[17:08:39]   [berlekamp-massey] code model...
+[17:09:19]   ✓  saved  |  ETA 55.4 min remaining
+[17:09:19] 
+[24/49] Dirichlet Series & Lucy_Hedgehog Sieve  (Number Theory)
+[17:09:19]   [dirichlet-series] math model...
+[17:10:14]   [dirichlet-series] math attempt 1 failed: Invalid control character at: line 4 column 326 (char 882)
+[17:10:54]   [dirichlet-series] code model...
+[17:11:29]   ✓  saved  |  ETA 53.3 min remaining
+[17:11:29] 
+[25/49] Fast Fourier Transform (FFT)  (Number Theory)
+[17:11:29]   [fft] math model...
+[17:12:03]   [fft] math attempt 1 failed: Invalid control character at: line 4 column 158 (char 1027)
+[17:12:38]   [fft] code model...
+[17:13:04]   [fft] code attempt 1 failed: Unterminated string starting at: line 2 column 10 (char 11)
+[17:13:39]   [fft] code attempt 2 failed: Unterminated string starting at: line 2 column 10 (char 11)
+[17:14:11]   ✓  saved  |  ETA 51.7 min remaining
+[17:14:11] 
+[26/49] Fast Walsh-Hadamard Transform  (Number Theory)
+[17:14:11]   [fwht] math model...
+[17:14:52]   [fwht] math attempt 1 failed: Invalid \escape: line 6 column 30 (char 2185)
+[17:15:32]   [fwht] math attempt 2 failed: Invalid control character at: line 4 column 272 (char 597)
+[17:16:23]   [fwht] code model...
+[17:16:51]   ✓  saved  |  ETA 50.0 min remaining
+[17:16:51] 
+[27/49] Min-25 Sieve  (Number Theory)
+[17:16:51]   [min-25-sieve] math model...
+[17:17:30]   [min-25-sieve] code model...
+[17:17:50]   ✓  saved  |  ETA 46.9 min remaining
+[17:17:50] 
+[28/49] Multiplicative Functions & Dirichlet Convolution  (Number Theory)
+[17:17:50]   [multiplicative-functions] math model...
+[17:18:21]   [multiplicative-functions] code model...
+[17:18:52]   ✓  saved  |  ETA 43.9 min remaining
+[17:18:52] 
+[29/49] Multipoint Evaluation & Interpolation  (Number Theory)
+[17:18:52]   [multipoint-eval] math model...
+[17:19:30]   [multipoint-eval] math attempt 1 failed: Invalid control character at: line 3 column 437 (char 855)
+[17:20:22]   [multipoint-eval] code model...
+[17:20:57]   [multipoint-eval] code attempt 1 failed: Invalid control character at: line 2 column 2786 (char 2787)
+[17:21:39]   ✓  saved  |  ETA 42.3 min remaining
+[17:21:39] 
+[30/49] Möbius Function & Inversion  (Number Theory)
+[17:21:39]   [mobius] math model...
+[17:22:24]   [mobius] code model...
+[17:23:26]   ✓  saved  |  ETA 40.0 min remaining
+[17:23:26] 
+[31/49] Number Theoretic Transform (NTT)  (Number Theory)
+[17:23:26]   [ntt] math model...
+[17:24:02]   [ntt] code model...
+[17:24:25]   ✓  saved  |  ETA 37.2 min remaining
+[17:24:25] 
+[32/49] Pohlig-Hellman Algorithm  (Number Theory)
+[17:24:25]   [pohlig-hellman] math model...
+[17:25:21]   [pohlig-hellman] math attempt 1 failed: Invalid control character at: line 4 column 478 (char 916)
+[17:26:02]   [pohlig-hellman] math attempt 2 failed: Invalid control character at: line 3 column 187 (char 553)
+[17:26:41]   [pohlig-hellman] math attempt 3 failed: Invalid control character at: line 4 column 130 (char 1159)
+[17:26:43]   [pohlig-hellman] code model...
+[17:27:21]   ✓  saved  |  ETA 35.6 min remaining
+[17:27:21] 
+[33/49] Pollard's Rho Factorization  (Number Theory)
+[17:27:21]   [pollard-rho] math model...
+[17:28:08]   [pollard-rho] math attempt 1 failed: Invalid control character at: line 4 column 274 (char 608)
+[17:28:41]   [pollard-rho] code model...
+[17:29:03]   [pollard-rho] code attempt 1 failed: Expecting ',' delimiter: line 2 column 662 (char 663)
+[17:29:34]   [pollard-rho] code attempt 2 failed: Expecting ',' delimiter: line 2 column 885 (char 886)
+[17:30:08]   [pollard-rho] code attempt 3 failed: Expecting ',' delimiter: line 2 column 887 (char 888)
+[17:30:10]   ✓  saved  |  ETA 33.9 min remaining
+[17:30:10] 
+[34/49] Polynomial Operations (Inverse, Log, Exp)  (Number Theory)
+[17:30:10]   [poly-operations] math model...
+[17:31:02]   [poly-operations] math attempt 1 failed: Invalid control character at: line 6 column 300 (char 1603)
+[17:31:42]   [poly-operations] code model...
+[17:32:25]   ✓  saved  |  ETA 31.8 min remaining
+[17:32:25] 
+[35/49] Totient Sum in O(n^2/3)  (Number Theory)
+[17:32:25]   [totient-sum] math model...
+[17:33:09]   [totient-sum] math attempt 1 failed: Invalid control character at: line 4 column 369 (char 630)
+[17:34:10]   [totient-sum] code model...
+[17:34:36]   ✓  saved  |  ETA 29.7 min remaining
+[17:34:36] 
+[36/49] CDQ Divide & Conquer  (Search & Optimization)
+[17:34:36]   [cdq-divide-conquer] math model...
+[17:35:09]   [cdq-divide-conquer] math attempt 1 failed: Expecting ',' delimiter: line 14 column 99 (char 2575)
+[17:35:52]   [cdq-divide-conquer] math attempt 2 failed: Invalid \escape: line 6 column 30 (char 2393)
+[17:36:39]   [cdq-divide-conquer] math attempt 3 failed: Invalid control character at: line 4 column 364 (char 864)
+[17:36:41]   [cdq-divide-conquer] code model...
+[17:37:15]   ✓  saved  |  ETA 27.8 min remaining
+[17:37:15] 
+[37/49] Simulated Annealing  (Search & Optimization)
+[17:37:15]   [simulated-annealing] math model...
+[17:38:07]   [simulated-annealing] math attempt 1 failed: Invalid control character at: line 4 column 59 (char 571)
+[17:38:42]   [simulated-annealing] code model...
+[17:39:41]   ✓  saved  |  ETA 25.7 min remaining
+[17:39:41] 
+[38/49] K-Shortest Paths  (Shortest Paths)
+[17:39:41]   [k-shortest-paths] math model...
+[17:40:20]   [k-shortest-paths] math attempt 1 failed: Invalid control character at: line 4 column 147 (char 1302)
+[17:41:13]   [k-shortest-paths] code model...
+[17:41:56]   ✓  saved  |  ETA 23.6 min remaining
+[17:41:56] 
+[39/49] Fractional Cascading  (Sorting & Searching)
+[17:41:56]   [fractional-cascading] math model...
+[17:42:37]   [fractional-cascading] code model...
+[17:43:06]   [fractional-cascading] code attempt 1 failed: Invalid control character at: line 2 column 2269 (char 2270)
+[17:43:40]   ✓  saved  |  ETA 21.4 min remaining
+[17:43:40] 
+[40/49] LCP Applications (RMQ + Suffix Array)  (Strings)
+[17:43:40]   [lcp-applications] math model...
+[17:44:26]   [lcp-applications] math attempt 1 failed: Invalid control character at: line 4 column 454 (char 2034)
+[17:45:16]   [lcp-applications] math attempt 2 failed: Invalid control character at: line 4 column 263 (char 612)
+[17:46:05]   [lcp-applications] math attempt 3 failed: Invalid control character at: line 3 column 417 (char 881)
+[17:46:07]   [lcp-applications] code model...
+[17:46:42]   ✓  saved  |  ETA 19.4 min remaining
+[17:46:42] 
+[41/49] LCP Array & Kasai  (Strings)
+[17:46:42]   [lcp-array] math model...
+[17:47:21]   [lcp-array] math attempt 1 failed: Invalid control character at: line 4 column 275 (char 717)
+[17:48:02]   [lcp-array] code model...
+[17:48:29]   ✓  saved  |  ETA 17.2 min remaining
+[17:48:29] 
+[42/49] SAM Applications (Substrings, LCS)  (Strings)
+[17:48:29]   [sam-applications] math model...
+[17:48:57] 
+⚠️  Interrupted. Progress saved.
+[17:48:57] 
+=== Done. 225 entries in data/db.json ===
+[20:32:40] === cp-gpre pipeline starting ===
+[20:32:40] Topics: 233  |  already done: 225  |  pending: 8
+[20:32:40] Estimated time: ~8 minutes
+[20:32:40] 
+[1/8] SAM Applications (Substrings, LCS)  (Strings)
+[20:32:40]   [sam-applications] math model...
+[20:33:20]   [sam-applications] math attempt 1 failed: Invalid control character at: line 4 column 182 (char 529)
+[20:34:01]   [sam-applications] code model...
+[20:34:34]   ✓  saved  |  ETA 13.3 min remaining
+[20:34:34] 
+[2/8] Suffix Array  (Strings)
+[20:34:34]   [suffix-array] math model...

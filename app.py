@@ -29,9 +29,6 @@ def get_topics():
     # Organize by category
     categories = {}
     for topic in data:
-        if topic.get("description") == "GENERATION_FAILED":
-            continue  # Skip failed generations
-
         category = topic.get("category", "Uncategorized")
         if category not in categories:
             categories[category] = []
