@@ -95,7 +95,7 @@ def main():
 
     all_problems.extend(fetch_cses_problems())
 
-    with open("../data/problems.json", "w", encoding="utf-8") as f:
+    with open("../../data/problems.json", "w", encoding="utf-8") as f:
         json.dump(all_problems, f, indent=2, ensure_ascii=False)
 
     print(f"\nDone! Total {len(all_problems)} problems saved to problems.json")

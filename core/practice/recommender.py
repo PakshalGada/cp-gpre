@@ -11,7 +11,7 @@ import requests
 CF_API = "https://codeforces.com/api"
 RETRY_WAIT = 5
 MAX_RETRIES = 3
-PROBLEMS_CACHE = "../data/problems.json"
+PROBLEMS_CACHE = "../../data/problems.json"
 
 
 def cf_get(endpoint: str, params: dict = None, retries: int = MAX_RETRIES) -> dict:

@@ -3,7 +3,7 @@ import json
 import sys
 from pathlib import Path
 
-DB_FILE = "data/db.json"
+DB_FILE = "../../data/db.json"
 
 
 def load() -> dict:

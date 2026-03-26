@@ -3,7 +3,7 @@ import os
 
 from flask import Flask, jsonify, render_template
 
-app = Flask(__name__, static_folder="static", template_folder="template")
+app = Flask(__name__, static_folder="ui/static", template_folder="ui/template")
 
 
 def load_db():
