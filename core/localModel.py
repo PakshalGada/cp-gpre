@@ -13,8 +13,8 @@ from pathlib import Path
 OLLAMA_BASE = "http://localhost:11434"
 MATH_MODEL = "cp-math"
 CODE_MODEL = "cp-code"
-TOPICS_FILE = "../ui/data/topics.json"
-OUTPUT_FILE = "../ui/data/db.json"
+TOPICS_FILE = "../data/topics.json"
+OUTPUT_FILE = "../data/db.json"
 LOG_FILE = "data/pipeline.log"
 RETRY_LIMIT = 3
 RETRY_DELAY = 5  # seconds between retries
