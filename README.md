@@ -21,9 +21,9 @@ building one stop solution for competitive programming . uses local llm to make 
 
 ## to-do list
 
--[ ] problem recommendation system
--[ ] webpage for problem recommendation system
--[ ] make users statistics
--[ ] for each topic show other articles from web 
--[ ] make db.json better
--[ ] make a rag system
+- [ ] problem recommendation system
+- [ ] webpage for problem recommendation system
+- [ ] make users statistics
+- [ ] for each topic show other articles from web 
+- [ ] make db.json better
+- [ ] make a rag system
