@@ -1,8 +1,6 @@
 # cp-gpre
 ### competitive programming - guide and problem recommendation engine
-
-## feautures
-building one stop solution for competitive programming . uses local llm to make resources .
+building one stop solution for competitive programming .
 
 ## usage
 
