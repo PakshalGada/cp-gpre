@@ -198,6 +198,13 @@
             closeBtn.addEventListener("click", closeDrawer);
             overlay.addEventListener("click", closeDrawer);
 
+            // Close drawer when clicking on navigation links
+            const mobileNavLinks =
+                document.querySelectorAll(".mobile-nav-link");
+            mobileNavLinks.forEach((link) => {
+                link.addEventListener("click", closeDrawer);
+            });
+
             // Theme toggle
             const themeBtn = document.getElementById("theme-toggle");
             const saved = localStorage.getItem("theme");

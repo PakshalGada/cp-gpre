@@ -1,11 +1,5 @@
-/* ═══════════════════════════════════════
-   resource.css — Resource page styles
-   Shared tokens/navbar/buttons → style.css
-   ═══════════════════════════════════════ */
-
 @import url("style.css");
 
-/* resource.html uses Inter as body font (original design) */
 body {
     font-family:
         "Inter",
@@ -15,15 +9,11 @@ body {
         sans-serif;
 }
 
-/* ─── App Shell ─── */
 .app-container {
     display: flex;
     min-height: 100vh;
 }
 
-/* ═══════════════════════════════════════
-   SIDEBAR
-   ═══════════════════════════════════════ */
 .sidebar {
     width: var(--sidebar-width);
     background-color: var(--sidebar-bg);
@@ -46,7 +36,6 @@ body {
     padding: 16px 12px;
 }
 
-/* Category accordion */
 .category-section {
     margin-bottom: 8px;
 }
@@ -128,9 +117,6 @@ body {
     font-weight: 500;
 }
 
-/* ═══════════════════════════════════════
-   MAIN CONTENT
-   ═══════════════════════════════════════ */
 .main-content {
     margin-top: var(--navbar-height);
     flex: 1;
@@ -444,10 +430,6 @@ code {
     display: inline !important;
 }
 
-/* ═══════════════════════════════════════
-   RESPONSIVE — Resource page
-   ═══════════════════════════════════════ */
-
 /* Tablet */
 @media (max-width: 768px) {
     .sidebar {
@@ -455,6 +437,8 @@ code {
         z-index: 200;
         /* Override width so it doesn't affect layout when hidden */
         box-shadow: var(--shadow-lg);
+        width: 280px;
+        max-width: 85vw;
     }
 
     .sidebar.open {

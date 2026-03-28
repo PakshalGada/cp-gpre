@@ -369,9 +369,8 @@ body {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 250;
-    backdrop-filter: blur(2px);
     opacity: 0;
     transition: opacity var(--transition-base);
 }
@@ -458,6 +457,15 @@ body {
 
     .sidebar-overlay {
         display: block;
+    }
+
+    /* Show compact nav on mobile navbar */
+    .navbar-inner {
+        gap: 8px;
+    }
+
+    .nav-right {
+        gap: 4px;
     }
 }
 
