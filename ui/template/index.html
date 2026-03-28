@@ -7,20 +7,41 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif:ital,wght@0,600;0,700;1,600;1,700&display=swap"
-            rel="stylesheet"
-        />
-        <link
             rel="stylesheet"
             href="{{ url_for('static', filename='index.css') }}"
         />
     </head>
     <body>
+        <!-- ── Navbar ── -->
         <nav class="navbar" id="navbar">
             <div class="navbar-inner">
-                <a href="/" class="nav-logo"
-                    >CP GPRE <span class="nav-version">v0.1</span></a
-                >
+                <div class="nav-left">
+                    <!-- Mobile: hamburger -->
+                    <button
+                        class="hamburger-btn"
+                        id="hamburger-btn"
+                        aria-label="Open menu"
+                    >
+                        <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                        >
+                            <line x1="2" y1="4" x2="14" y2="4" />
+                            <line x1="2" y1="8" x2="14" y2="8" />
+                            <line x1="2" y1="12" x2="14" y2="12" />
+                        </svg>
+                    </button>
+                    <a href="/" class="nav-logo">
+                        CP GPRE <span class="nav-version">v0.1</span>
+                    </a>
+                </div>
+
+                <!-- Desktop nav links -->
                 <div class="nav-links">
                     <a href="/" class="nav-link active" data-page="home"
                         >Home</a
@@ -28,21 +49,78 @@
                     <a href="/resource" class="nav-link" data-page="resource"
                         >Resources</a
                     >
-                    <a href="/practice" class="nav-link" data-page="resource"
+                    <a href="/practice" class="nav-link" data-page="practice"
                         >Practice</a
                     >
+                </div>
+
+                <div class="nav-right">
+                    <button
+                        class="theme-toggle"
+                        id="theme-toggle"
+                        aria-label="Toggle theme"
+                    >
+                        <svg class="icon icon-sun" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="5" />
+                            <line x1="12" y1="1" x2="12" y2="3" />
+                            <line x1="12" y1="21" x2="12" y2="23" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line x1="1" y1="12" x2="3" y2="12" />
+                            <line x1="21" y1="12" x2="23" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        </svg>
+                        <svg class="icon icon-moon" viewBox="0 0 24 24">
+                            <path
+                                d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+                            />
+                        </svg>
+                    </button>
                 </div>
             </div>
         </nav>
 
-        <!-- Hero -->
+        <!-- ── Mobile Drawer ── -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        <div class="mobile-drawer" id="mobile-drawer">
+            <div class="mobile-drawer-header">
+                <a href="/" class="nav-logo">
+                    CP GPRE <span class="nav-version">v0.1</span>
+                </a>
+                <button
+                    class="hamburger-btn"
+                    id="drawer-close-btn"
+                    aria-label="Close menu"
+                >
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    >
+                        <line x1="3" y1="3" x2="13" y2="13" />
+                        <line x1="13" y1="3" x2="3" y2="13" />
+                    </svg>
+                </button>
+            </div>
+            <nav class="mobile-nav">
+                <a href="/" class="mobile-nav-link active">Home</a>
+                <a href="/resource" class="mobile-nav-link">Resources</a>
+                <a href="/practice" class="mobile-nav-link">Practice</a>
+            </nav>
+        </div>
+
+        <!-- ── Hero ── -->
         <main class="main">
             <section class="hero">
                 <h1 class="hero-title">
                     Master the art of<br />
                     <em>problem solving</em>
                 </h1>
-
                 <div class="hero-actions">
                     <a href="/resource" class="btn btn-primary">
                         <span>Browse Resources</span>
@@ -60,7 +138,7 @@
                             <polyline points="9 4 13 8 9 12" />
                         </svg>
                     </a>
-                    <a href="/practice" class="btn btn-primary">
+                    <a href="/practice" class="btn btn-secondary">
                         <span>Practice</span>
                         <svg
                             width="16"
@@ -84,12 +162,56 @@
                     <a
                         href="https://github.com/PakshalGada/cp-gpre"
                         target="_blank"
-                        >Contribute on GitHub</a
                     >
+                        Contribute on GitHub
+                    </a>
                 </p>
             </footer>
         </main>
 
         <script src="{{ url_for('static', filename='index.js') }}"></script>
+        <script>
+            // Navbar scroll shadow
+            const navbar = document.getElementById("navbar");
+            window.addEventListener("scroll", () => {
+                navbar.classList.toggle("scrolled", window.scrollY > 4);
+            });
+
+            // Mobile drawer
+            const hamburger = document.getElementById("hamburger-btn");
+            const drawer = document.getElementById("mobile-drawer");
+            const overlay = document.getElementById("sidebar-overlay");
+            const closeBtn = document.getElementById("drawer-close-btn");
+
+            function openDrawer() {
+                drawer.classList.add("open");
+                overlay.classList.add("active");
+                document.body.style.overflow = "hidden";
+            }
+            function closeDrawer() {
+                drawer.classList.remove("open");
+                overlay.classList.remove("active");
+                document.body.style.overflow = "";
+            }
+
+            hamburger.addEventListener("click", openDrawer);
+            closeBtn.addEventListener("click", closeDrawer);
+            overlay.addEventListener("click", closeDrawer);
+
+            // Theme toggle
+            const themeBtn = document.getElementById("theme-toggle");
+            const saved = localStorage.getItem("theme");
+            if (saved)
+                document.documentElement.setAttribute("data-theme", saved);
+
+            themeBtn.addEventListener("click", () => {
+                const isDark =
+                    document.documentElement.getAttribute("data-theme") ===
+                    "dark";
+                const next = isDark ? "light" : "dark";
+                document.documentElement.setAttribute("data-theme", next);
+                localStorage.setItem("theme", next);
+            });
+        </script>
     </body>
 </html>

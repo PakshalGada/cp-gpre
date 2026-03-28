@@ -1,0 +1,474 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Noto+Serif:ital,wght@0,600;0,700;1,600;1,700&display=swap");
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Colors — Light Mode */
+    --color-bg: #ffffff;
+    --color-surface: #ffffff;
+    --color-text: #111110;
+    --color-text-secondary: #6f6d66;
+    --color-text-tertiary: #a8a49a;
+    --color-border: #e8e6e1;
+    --color-border-strong: #d4d0c8;
+    --color-hover: #f0ede8;
+    --color-active: #111110;
+    --color-active-text: #ffffff;
+    --color-accent: #c2410c;
+
+    /* Surfaces */
+    --navbar-bg: rgba(250, 250, 249, 0.88);
+    --sidebar-bg: #ffffff;
+
+    /* Dimensions */
+    --radius: 10px;
+    --radius-sm: 6px;
+    --radius-lg: 14px;
+    --sidebar-width: 260px;
+    --sidebar-collapsed-width: 52px;
+    --navbar-height: 54px;
+
+    /* Transitions */
+    --transition-fast: 0.12s ease;
+    --transition-base: 0.2s ease;
+    --transition-slow: 0.3s ease;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* ─── Dark Mode ─── */
+[data-theme="dark"] {
+    --color-bg: #141413;
+    --color-surface: #1c1b1a;
+    --color-text: #e8e6e1;
+    --color-text-secondary: #9e9b93;
+    --color-text-tertiary: #6b6860;
+    --color-border: #2c2b28;
+    --color-border-strong: #3d3b37;
+    --color-hover: #222120;
+    --color-active: #e8e6e1;
+    --color-active-text: #141413;
+    --color-accent: #f97316;
+
+    --navbar-bg: rgba(20, 20, 19, 0.9);
+    --sidebar-bg: #181816;
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* ─── Base ─── */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family:
+        "DM Sans",
+        "Inter",
+        -apple-system,
+        BlinkMacSystemFont,
+        system-ui,
+        sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition:
+        background-color var(--transition-base),
+        color var(--transition-base);
+}
+
+/* ─── Icon System ─── */
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+.icon-sm {
+    width: 14px;
+    height: 14px;
+}
+.icon-md {
+    width: 18px;
+    height: 18px;
+}
+.icon-lg {
+    width: 20px;
+    height: 20px;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--navbar-height);
+    background-color: var(--navbar-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--color-border);
+    z-index: 300;
+    transition:
+        box-shadow var(--transition-base),
+        background-color var(--transition-base);
+}
+
+.navbar.scrolled {
+    box-shadow: var(--shadow-sm);
+}
+
+.navbar-inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    gap: 16px;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-logo {
+    font-family: "DM Serif Display", "Noto Serif", serif;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    text-decoration: none;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.nav-version {
+    font-family: "DM Mono", "SF Mono", monospace;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.04em;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 1px 5px;
+}
+
+.nav-center {
+    display: flex;
+    align-items: center;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.nav-link {
+    padding: 5px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    letter-spacing: 0.01em;
+}
+
+.nav-link:hover {
+    background-color: var(--color-hover);
+    color: var(--color-text);
+}
+
+.nav-link.active {
+    background-color: var(--color-active);
+    color: var(--color-active-text);
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ─── Theme Toggle ─── */
+.theme-toggle {
+    position: relative;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+    background-color: var(--color-hover);
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
+}
+
+.theme-toggle .icon-sun,
+.theme-toggle .icon-moon {
+    position: absolute;
+    transition:
+        opacity var(--transition-base),
+        transform var(--transition-base);
+}
+
+[data-theme="dark"] .theme-toggle .icon-sun {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+[data-theme="dark"] .theme-toggle .icon-moon {
+    opacity: 0;
+    transform: rotate(30deg) scale(0.8);
+}
+.theme-toggle .icon-sun {
+    opacity: 0;
+    transform: rotate(-30deg) scale(0.8);
+}
+.theme-toggle .icon-moon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+/* ─── Hamburger Button (mobile) ─── */
+.hamburger-btn {
+    width: 34px;
+    height: 34px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.hamburger-btn:hover {
+    background-color: var(--color-hover);
+    color: var(--color-text);
+}
+
+/* ─── Sidebar Toggle (desktop collapse) ─── */
+.sidebar-toggle-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.sidebar-toggle-btn:hover {
+    background-color: var(--color-hover);
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
+}
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    font-size: 13.5px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    border: none;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background-color: var(--color-active);
+    color: var(--color-active-text);
+    border: 1px solid var(--color-active);
+}
+
+.btn-primary:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-hover);
+    border-color: var(--color-border-strong);
+    transform: translateY(-1px);
+}
+
+.footer {
+    margin-top: auto;
+    padding: 20px 24px;
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--color-text-tertiary);
+}
+
+.footer a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color var(--transition-fast);
+}
+
+.footer a:hover {
+    color: var(--color-text);
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 250;
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+}
+
+/* Mobile drawer — slides in from the left on small screens */
+.mobile-drawer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    background-color: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    z-index: 400;
+    transform: translateX(-100%);
+    transition: transform var(--transition-slow);
+    flex-direction: column;
+    box-shadow: var(--shadow-lg);
+}
+
+.mobile-drawer.open {
+    transform: translateX(0);
+}
+
+.mobile-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    height: var(--navbar-height);
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.mobile-nav {
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.mobile-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.mobile-nav-link:hover {
+    background-color: var(--color-hover);
+    color: var(--color-text);
+}
+
+.mobile-nav-link.active {
+    background-color: var(--color-active);
+    color: var(--color-active-text);
+}
+
+@media (max-width: 768px) {
+    .hamburger-btn {
+        display: flex;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .mobile-drawer {
+        display: flex;
+    }
+
+    .sidebar-overlay {
+        display: block;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    .navbar-inner {
+        padding: 0 16px;
+    }
+
+    .btn {
+        padding: 9px 16px;
+        font-size: 13px;
+    }
+}

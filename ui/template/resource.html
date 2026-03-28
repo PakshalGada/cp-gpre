@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>CP-GPRE</title>
+        <title>CP-GPRE — Resources</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -15,6 +15,7 @@
             href="{{ url_for('static', filename='resource.css') }}"
         />
 
+        <!-- Syntax highlighting -->
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/catppuccin-mocha.min.css"
@@ -22,6 +23,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
 
+        <!-- MathJax -->
         <script>
             window.MathJax = {
                 tex: {
@@ -56,11 +58,36 @@
     </head>
     <body>
         <div class="app-container">
+            <!-- ── Navbar ── -->
             <nav class="navbar" id="navbar">
                 <div class="navbar-inner">
-                    <a href="/" class="nav-logo"
-                        >CP GPRE <span class="nav-version">v0.1</span></a
-                    >
+                    <div class="nav-left">
+                        <!-- Mobile: hamburger opens sidebar drawer -->
+                        <button
+                            class="hamburger-btn"
+                            id="hamburger-btn"
+                            aria-label="Open sidebar"
+                        >
+                            <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                            >
+                                <line x1="2" y1="4" x2="14" y2="4" />
+                                <line x1="2" y1="8" x2="14" y2="8" />
+                                <line x1="2" y1="12" x2="14" y2="12" />
+                            </svg>
+                        </button>
+                        <a href="/" class="nav-logo">
+                            CP GPRE <span class="nav-version">v0.1</span>
+                        </a>
+                    </div>
+
+                    <!-- Desktop nav links -->
                     <div class="nav-links">
                         <a href="/" class="nav-link" data-page="home">Home</a>
                         <a
@@ -69,22 +96,74 @@
                             data-page="resource"
                             >Resources</a
                         >
+                        <a
+                            href="/practice"
+                            class="nav-link"
+                            data-page="practice"
+                            >Practice</a
+                        >
+                    </div>
+
+                    <div class="nav-right">
+                        <button
+                            class="theme-toggle"
+                            id="theme-toggle"
+                            aria-label="Toggle theme"
+                        >
+                            <svg class="icon icon-sun" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="5" />
+                                <line x1="12" y1="1" x2="12" y2="3" />
+                                <line x1="12" y1="21" x2="12" y2="23" />
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                                <line
+                                    x1="18.36"
+                                    y1="18.36"
+                                    x2="19.78"
+                                    y2="19.78"
+                                />
+                                <line x1="1" y1="12" x2="3" y2="12" />
+                                <line x1="21" y1="12" x2="23" y2="12" />
+                                <line
+                                    x1="4.22"
+                                    y1="19.78"
+                                    x2="5.64"
+                                    y2="18.36"
+                                />
+                                <line
+                                    x1="18.36"
+                                    y1="5.64"
+                                    x2="19.78"
+                                    y2="4.22"
+                                />
+                            </svg>
+                            <svg class="icon icon-moon" viewBox="0 0 24 24">
+                                <path
+                                    d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+                                />
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </nav>
-            <aside class="sidebar">
+
+            <!-- ── Sidebar overlay (mobile) ── -->
+            <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+            <!-- ── Sidebar (desktop fixed; mobile drawer) ── -->
+            <aside class="sidebar" id="sidebar">
                 <nav class="sidebar-nav" id="sidebar-nav"></nav>
             </aside>
 
+            <!-- ── Main content ── -->
             <main class="main-content">
                 <div class="content-wrapper" id="content-wrapper">
                     <div class="welcome" id="welcome-screen">
                         <h1 class="welcome-title">
-                            Competitive Programming Guide v0.1
+                            Competitive Programming Guide
                         </h1>
                         <p class="welcome-text">
-                            these resource are generated by local model . feel
-                            free to contribute and make it better.
+                            Resources generated by a local model — feel free to
+                            contribute and make it better.
                         </p>
                     </div>
 
@@ -98,5 +177,58 @@
         </div>
 
         <script src="{{ url_for('static', filename='resource.js') }}"></script>
+        <script>
+            // Navbar scroll shadow
+            const navbar = document.getElementById("navbar");
+            window.addEventListener("scroll", () => {
+                navbar.classList.toggle("scrolled", window.scrollY > 4);
+            });
+
+            // Mobile sidebar toggle
+            const hamburger = document.getElementById("hamburger-btn");
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebar-overlay");
+
+            function openSidebar() {
+                sidebar.classList.add("open");
+                overlay.classList.add("active");
+                document.body.style.overflow = "hidden";
+            }
+            function closeSidebar() {
+                sidebar.classList.remove("open");
+                overlay.classList.remove("active");
+                document.body.style.overflow = "";
+            }
+
+            hamburger.addEventListener("click", openSidebar);
+            overlay.addEventListener("click", closeSidebar);
+
+            // Close sidebar when a topic link is tapped on mobile
+            document
+                .getElementById("sidebar-nav")
+                .addEventListener("click", (e) => {
+                    if (
+                        e.target.classList.contains("topic-link") &&
+                        window.innerWidth <= 768
+                    ) {
+                        closeSidebar();
+                    }
+                });
+
+            // Theme toggle
+            const themeBtn = document.getElementById("theme-toggle");
+            const saved = localStorage.getItem("theme");
+            if (saved)
+                document.documentElement.setAttribute("data-theme", saved);
+
+            themeBtn.addEventListener("click", () => {
+                const isDark =
+                    document.documentElement.getAttribute("data-theme") ===
+                    "dark";
+                const next = isDark ? "light" : "dark";
+                document.documentElement.setAttribute("data-theme", next);
+                localStorage.setItem("theme", next);
+            });
+        </script>
     </body>
 </html>
