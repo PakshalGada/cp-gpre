@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Practice - CP-GPRE</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='practice.css') }}"
+        />
+    </head>
+    <body>
+        <nav class="navbar" id="navbar">
+            <div class="navbar-inner">
+                <div class="nav-left">
+                    <button
+                        class="hamburger-btn"
+                        id="hamburger-btn"
+                        aria-label="Open menu"
+                    >
+                        <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                        >
+                            <line x1="2" y1="4" x2="14" y2="4" />
+                            <line x1="2" y1="8" x2="14" y2="8" />
+                            <line x1="2" y1="12" x2="14" y2="12" />
+                        </svg>
+                    </button>
+                    <a href="/" class="nav-logo">
+                        CP GPRE <span class="nav-version">v0.1</span>
+                    </a>
+                </div>
+
+                <div class="nav-links">
+                    <a href="/" class="nav-link" data-page="home">Home</a>
+                    <a href="/resource" class="nav-link" data-page="resource"
+                        >Resources</a
+                    >
+                    <a
+                        href="/practice"
+                        class="nav-link active"
+                        data-page="practice"
+                        >Practice</a
+                    >
+                </div>
+
+                <div class="nav-right">
+                    <button
+                        class="theme-toggle"
+                        id="theme-toggle"
+                        aria-label="Toggle theme"
+                    >
+                        <svg class="icon icon-sun" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="5" />
+                            <line x1="12" y1="1" x2="12" y2="3" />
+                            <line x1="12" y1="21" x2="12" y2="23" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line x1="1" y1="12" x2="3" y2="12" />
+                            <line x1="21" y1="12" x2="23" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        </svg>
+                        <svg class="icon icon-moon" viewBox="0 0 24 24">
+                            <path
+                                d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+                            />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        <div class="mobile-drawer" id="mobile-drawer">
+            <div class="mobile-drawer-header">
+                <a href="/" class="nav-logo">
+                    CP GPRE <span class="nav-version">v0.1</span>
+                </a>
+                <button
+                    class="hamburger-btn"
+                    id="drawer-close-btn"
+                    aria-label="Close menu"
+                >
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    >
+                        <line x1="3" y1="3" x2="13" y2="13" />
+                        <line x1="13" y1="3" x2="3" y2="13" />
+                    </svg>
+                </button>
+            </div>
+            <nav class="mobile-nav">
+                <a href="/" class="mobile-nav-link">Home</a>
+                <a href="/resource" class="mobile-nav-link">Resources</a>
+                <a href="/practice" class="mobile-nav-link active">Practice</a>
+            </nav>
+        </div>
+
+        <main class="main">
+            <div class="practice-container">
+                <section class="practice-header">
+                    <h1 class="practice-title">Problem Recommender</h1>
+                    <p class="practice-subtitle">
+                        Get personalized problem recommendations based on your
+                        Codeforces profile
+                    </p>
+                </section>
+
+                <section class="config-section">
+                    <div class="config-card">
+                        <div class="config-row">
+                            <div class="form-group">
+                                <label for="cf-handle">Codeforces Handle</label>
+                                <input
+                                    type="text"
+                                    id="cf-handle"
+                                    placeholder="tourist"
+                                    class="form-input"
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label for="problem-count">Count</label>
+                                <input
+                                    type="number"
+                                    id="problem-count"
+                                    value="8"
+                                    min="1"
+                                    max="20"
+                                    class="form-input"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="config-row">
+                            <div class="form-group full-width">
+                                <label>Recommendation Mode</label>
+                                <div class="mode-buttons">
+                                    <button
+                                        class="mode-btn active"
+                                        data-mode="balanced"
+                                    >
+                                        Balanced
+                                    </button>
+                                    <button
+                                        class="mode-btn"
+                                        data-mode="stretch"
+                                    >
+                                        Stretch
+                                    </button>
+                                    <button
+                                        class="mode-btn"
+                                        data-mode="weak-topics"
+                                    >
+                                        Weak Topics
+                                    </button>
+                                    <button
+                                        class="mode-btn"
+                                        data-mode="explore"
+                                    >
+                                        Explore
+                                    </button>
+                                    <button class="mode-btn" data-mode="grind">
+                                        Grind
+                                    </button>
+                                </div>
+                                <p
+                                    class="mode-description"
+                                    id="mode-description"
+                                >
+                                    Weak topics + slight rating push (default)
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="config-row">
+                            <div class="form-group">
+                                <label for="platform-filter">Platform</label>
+                                <select
+                                    id="platform-filter"
+                                    class="form-select"
+                                >
+                                    <option value="">Both</option>
+                                    <option value="codeforces">
+                                        Codeforces
+                                    </option>
+                                    <option value="cses">CSES</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tags-filter"
+                                    >Tags (comma-separated)</label
+                                >
+                                <input
+                                    type="text"
+                                    id="tags-filter"
+                                    placeholder="dp, graphs"
+                                    class="form-input"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="config-row">
+                            <div class="form-group">
+                                <label for="min-rating">Min Rating</label>
+                                <input
+                                    type="number"
+                                    id="min-rating"
+                                    placeholder="Auto"
+                                    class="form-input"
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label for="max-rating">Max Rating</label>
+                                <input
+                                    type="number"
+                                    id="max-rating"
+                                    placeholder="Auto"
+                                    class="form-input"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button
+                                class="btn btn-primary"
+                                id="get-recommendations"
+                            >
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                >
+                                    <path d="M8 2v12M2 8h12" />
+                                </svg>
+                                <span>Get Recommendations</span>
+                            </button>
+                            <button
+                                class="btn btn-secondary"
+                                id="view-progress"
+                            >
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                >
+                                    <path d="M2 3h12M2 8h12M2 13h12" />
+                                </svg>
+                                <span>View Progress</span>
+                            </button>
+                            <button
+                                class="btn btn-secondary"
+                                id="simulate-contest"
+                            >
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                >
+                                    <circle cx="8" cy="8" r="6" />
+                                </svg>
+                                <span>Contest Simulator</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <div id="loading-state" class="loading-state hidden">
+                    <div class="spinner"></div>
+                    <p>Loading...</p>
+                </div>
+
+                <div id="error-state" class="error-state hidden">
+                    <p class="error-message"></p>
+                </div>
+
+                <section id="user-stats" class="user-stats hidden">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Rating</div>
+                            <div class="stat-value" id="user-rating">-</div>
+                            <div class="stat-sublabel" id="user-rank">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Solved</div>
+                            <div class="stat-value" id="user-solved">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Submission Streak</div>
+                            <div class="stat-value" id="submission-streak">
+                                -
+                            </div>
+                            <div class="stat-sublabel">days</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Solve Streak</div>
+                            <div class="stat-value" id="solve-streak">-</div>
+                            <div class="stat-sublabel">days</div>
+                        </div>
+                    </div>
+                    <div class="weak-topics" id="weak-topics-container"></div>
+                </section>
+
+                <section
+                    id="recommendations-section"
+                    class="recommendations-section hidden"
+                >
+                    <div class="section-header">
+                        <h2 class="section-title">Recommended Problems</h2>
+                        <div
+                            class="section-meta"
+                            id="recommendations-meta"
+                        ></div>
+                    </div>
+                    <div
+                        id="recommendations-list"
+                        class="recommendations-list"
+                    ></div>
+                </section>
+
+                <section id="progress-section" class="progress-section hidden">
+                    <div class="section-header">
+                        <h2 class="section-title">Progress & Streaks</h2>
+                    </div>
+                    <div id="progress-content"></div>
+                </section>
+
+                <section id="contest-section" class="contest-section hidden">
+                    <div class="section-header">
+                        <h2 class="section-title">Contest Simulator</h2>
+                        <div class="contest-controls">
+                            <select id="division-select" class="form-select">
+                                <option value="1">Div. 1</option>
+                                <option value="2" selected>Div. 2</option>
+                                <option value="3">Div. 3</option>
+                                <option value="4">Div. 4</option>
+                            </select>
+                            <button
+                                class="btn btn-secondary"
+                                id="fetch-contests"
+                            >
+                                Fetch Contests
+                            </button>
+                        </div>
+                    </div>
+                    <div id="contest-content"></div>
+                </section>
+            </div>
+
+            <footer class="footer">
+                <p>
+                    <a
+                        href="https://github.com/PakshalGada/cp-gpre"
+                        target="_blank"
+                    >
+                        Contribute on GitHub
+                    </a>
+                </p>
+            </footer>
+        </main>
+
+        <script src="{{ url_for('static', filename='practice.js') }}"></script>
+    </body>
+</html>
