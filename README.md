@@ -19,8 +19,7 @@ building one stop solution for competitive programming .
 
 ## to-do list
 
-- [ ] problem recommendation system
-- [ ] webpage for problem recommendation system
+
 - [ ] make users statistics
 - [ ] for each topic show other articles from web 
 - [ ] make db.json better
