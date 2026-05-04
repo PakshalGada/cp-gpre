@@ -36,6 +36,107 @@ body {
     padding: 16px 12px;
 }
 
+/* ─── Sidebar Search ─── */
+.sidebar-search {
+    padding: 12px 12px 0;
+    position: sticky;
+    top: 0;
+    background-color: var(--sidebar-bg);
+    z-index: 1;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    width: 13px;
+    height: 13px;
+    color: var(--color-text-tertiary);
+    pointer-events: none;
+    flex-shrink: 0;
+}
+
+.sidebar-search-input {
+    width: 100%;
+    padding: 8px 30px 8px 30px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-size: 13px;
+    font-family: inherit;
+    transition: all var(--transition-fast);
+    outline: none;
+}
+
+.sidebar-search-input::placeholder {
+    color: var(--color-text-tertiary);
+}
+
+.sidebar-search-input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(194, 65, 12, 0.1);
+}
+
+[data-theme="dark"] .sidebar-search-input:focus {
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+
+.search-clear-btn {
+    position: absolute;
+    right: 8px;
+    width: 18px;
+    height: 18px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-border);
+    border: none;
+    border-radius: 50%;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: 0;
+    transition: all var(--transition-fast);
+}
+
+.search-clear-btn:hover {
+    background: var(--color-border-strong);
+    color: var(--color-text);
+}
+
+.search-clear-btn.visible {
+    display: flex;
+}
+
+.search-no-results {
+    padding: 24px 12px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--color-text-tertiary);
+    display: none;
+}
+
+.search-no-results.visible {
+    display: block;
+}
+
+.topic-link mark {
+    background-color: transparent;
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+[data-theme="dark"] .topic-link mark {
+    color: #fb923c;
+}
+
 .category-section {
     margin-bottom: 8px;
 }
@@ -434,11 +535,12 @@ code {
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
-        z-index: 300;
-        /* Override width so it doesn't affect layout when hidden */
+        z-index: 400; /* above navbar (300) so it properly layers */
         box-shadow: var(--shadow-lg);
         width: 280px;
         max-width: 85vw;
+        top: 0;
+        height: 100vh;
     }
 
     .sidebar.open {

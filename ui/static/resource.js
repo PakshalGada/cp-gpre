@@ -86,7 +86,82 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("theme", next);
     });
   }
+
+  // ── Sidebar Search ──
+  const searchInput = document.getElementById("sidebar-search");
+  const clearBtn = document.getElementById("search-clear-btn");
+  const noResults = document.getElementById("search-no-results");
+
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      const query = e.target.value.trim();
+      clearBtn.classList.toggle("visible", query.length > 0);
+      filterTopics(query);
+    });
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      clearBtn.classList.remove("visible");
+      filterTopics("");
+      searchInput.focus();
+    });
+  }
 });
+
+// ── Search / filter ──
+function filterTopics(query) {
+  const nav = document.getElementById("sidebar-nav");
+  const noResults = document.getElementById("search-no-results");
+  const q = query.toLowerCase();
+
+  const categorySections = nav.querySelectorAll(".category-section");
+  let totalVisible = 0;
+
+  categorySections.forEach((section) => {
+    const items = section.querySelectorAll(".topic-item");
+    let sectionVisible = 0;
+
+    items.forEach((item) => {
+      const link = item.querySelector(".topic-link");
+      const title = link.dataset.title || link.textContent;
+
+      if (!q || title.toLowerCase().includes(q)) {
+        item.style.display = "";
+        sectionVisible++;
+
+        // Highlight matched text
+        if (q) {
+          const idx = title.toLowerCase().indexOf(q);
+          link.innerHTML =
+            escapeHtml(title.slice(0, idx)) +
+            "<mark>" +
+            escapeHtml(title.slice(idx, idx + q.length)) +
+            "</mark>" +
+            escapeHtml(title.slice(idx + q.length));
+        } else {
+          link.textContent = title;
+        }
+      } else {
+        item.style.display = "none";
+      }
+    });
+
+    section.style.display = sectionVisible > 0 ? "" : "none";
+
+    // Auto-expand sections that have matches
+    if (q && sectionVisible > 0) {
+      section.classList.remove("collapsed");
+    }
+
+    totalVisible += sectionVisible;
+  });
+
+  if (noResults) {
+    noResults.classList.toggle("visible", q.length > 0 && totalVisible === 0);
+  }
+}
 
 async function loadTopics() {
   try {
@@ -166,6 +241,7 @@ function renderSidebar(categories) {
         topicLink.className = "topic-link";
         topicLink.textContent = topic.title;
         topicLink.dataset.slug = topic.slug;
+        topicLink.dataset.title = topic.title; // for search filtering
         topicLink.addEventListener("click", (e) => {
           e.preventDefault();
           loadTopic(topic.slug);
