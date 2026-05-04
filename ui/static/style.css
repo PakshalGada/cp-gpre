@@ -373,10 +373,12 @@ body {
     z-index: 250;
     opacity: 0;
     transition: opacity var(--transition-base);
+    pointer-events: none;
 }
 
 .sidebar-overlay.active {
     opacity: 1;
+    pointer-events: auto;
 }
 
 /* Mobile drawer — slides in from the left on small screens */
