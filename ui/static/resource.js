@@ -1,7 +1,125 @@
 let currentTopics = {};
 let currentSlug = null;
 
-// Track which categories are collapsed (persisted in sessionStorage)
+// ── Search Index ──────────────────────────────────────────────────────────────
+let searchIndex = []; // [{slug, title, category, tags, fields:{…}}]
+let searchIndexReady = false;
+let searchIndexBuilding = false;
+
+const FIELD_LABELS = {
+  description: "description",
+  explanation: "explanation",
+  key_insight: "key insight",
+  worked_example: "example",
+  when_to_use: "when to use",
+  variants: "variants",
+  pitfalls: "pitfalls",
+  prereqs: "prerequisites",
+  leads_to: "advanced topics",
+  cpp_notes: "notes",
+  walkthrough: "walkthrough",
+  proof: "proof",
+};
+
+function buildIndexEntry(topic) {
+  return {
+    slug: topic.slug || "",
+    title: (topic.title || "").toLowerCase(),
+    titleRaw: topic.title || "",
+    category: (topic.category || "").toLowerCase(),
+    tags: (topic.tags || []).map((t) => t.toLowerCase()),
+    fields: {
+      description: topic.description || "",
+      explanation: topic.explanation || "",
+      key_insight: topic.key_insight || "",
+      worked_example: topic.worked_example || "",
+      when_to_use: topic.when_to_use || "",
+      variants: (topic.variants || []).join(" "),
+      pitfalls: (topic.pitfalls || []).join(" "),
+      prereqs: (topic.prereqs || []).join(" "),
+      leads_to: (topic.leads_to || []).join(" "),
+      cpp_notes: (topic.cpp_notes || []).join(" "),
+      walkthrough: topic.walkthrough || "",
+      proof: topic.proof || "",
+    },
+  };
+}
+
+function setSearchStatus(state) {
+  // state: 'building' | 'ready' | ''
+  const el = document.getElementById("search-status");
+  if (!el) return;
+  el.dataset.state = state;
+  if (state === "building") {
+    el.textContent = "Building index…";
+    el.title = "Indexing all topic content for deep search";
+  } else if (state === "ready") {
+    el.textContent = "Full search ready";
+    el.title = "Searching across titles, tags, and all topic content";
+    // fade out after 2.5 s
+    setTimeout(() => {
+      el.style.opacity = "0";
+      setTimeout(() => {
+        el.dataset.state = "";
+        el.style.opacity = "";
+      }, 400);
+    }, 2500);
+  }
+}
+
+async function buildSearchIndex(categories) {
+  if (searchIndexBuilding) return;
+  searchIndexBuilding = true;
+  setSearchStatus("building");
+
+  const allTopics = [];
+  Object.values(categories).forEach((topics) => allTopics.push(...topics));
+
+  const BATCH = 6;
+  for (let i = 0; i < allTopics.length; i += BATCH) {
+    const batch = allTopics.slice(i, i + BATCH);
+    await Promise.all(
+      batch.map(async ({ slug }) => {
+        try {
+          const res = await fetch(`/api/topic/${slug}`);
+          const topic = await res.json();
+          if (!topic.error) searchIndex.push(buildIndexEntry(topic));
+        } catch {
+          /* silently skip */
+        }
+      }),
+    );
+  }
+
+  searchIndexReady = true;
+  setSearchStatus("ready");
+
+  // Re-run any active query with the new full index
+  const searchInput = document.getElementById("sidebar-search");
+  const q = searchInput?.value?.trim();
+  if (q) filterTopics(q);
+}
+
+// ── Full-text match using the index ─────────────────────────────────────────
+function getIndexMatch(slug, q) {
+  const entry = searchIndex.find((e) => e.slug === slug);
+  if (!entry) {
+    // Index not yet populated for this slug — fall back to title
+    return null;
+  }
+
+  const matchIn = [];
+  if (entry.title.includes(q)) matchIn.push("title");
+  if (entry.category.includes(q)) matchIn.push("category");
+  if (entry.tags.some((t) => t.includes(q))) matchIn.push("tags");
+  Object.entries(entry.fields).forEach(([field, text]) => {
+    if (text.toLowerCase().includes(q)) matchIn.push(field);
+  });
+
+  return matchIn.length ? matchIn : null;
+}
+
+// ── Collapsed state ──────────────────────────────────────────────────────────
 function getCollapsedState() {
   try {
     return JSON.parse(sessionStorage.getItem("collapsedCategories") || "{}");
@@ -13,170 +131,200 @@ function setCollapsedState(state) {
   sessionStorage.setItem("collapsedCategories", JSON.stringify(state));
 }
 
+// ── DOMContentLoaded ─────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
   loadTopics();
 
   window.addEventListener("popstate", (e) => {
-    if (e.state && e.state.slug) {
-      loadTopic(e.state.slug, false);
-    } else {
-      showWelcome();
-    }
+    if (e.state?.slug) loadTopic(e.state.slug, false);
+    else showWelcome();
   });
 
   const urlParams = new URLSearchParams(window.location.search);
   const slugParam = urlParams.get("topic");
-  if (slugParam) {
-    loadTopic(slugParam, false);
-  }
+  if (slugParam) loadTopic(slugParam, false);
+
+  // Navbar scroll shadow
   const navbar = document.getElementById("navbar");
   window.addEventListener("scroll", () => {
-    if (navbar) {
-      navbar.classList.toggle("scrolled", window.scrollY > 4);
-    }
+    navbar?.classList.toggle("scrolled", window.scrollY > 4);
   });
 
+  // ── Mobile sidebar ──
   const hamburger = document.getElementById("hamburger-btn");
   const sidebar = document.getElementById("sidebar");
   const overlay = document.getElementById("sidebar-overlay");
 
-  function openSidebar() {
+  const openSidebar = () => {
     sidebar.classList.add("open");
     overlay.classList.add("active");
     document.body.style.overflow = "hidden";
-  }
-
-  function closeSidebar() {
+  };
+  const closeSidebar = () => {
     sidebar.classList.remove("open");
     overlay.classList.remove("active");
     document.body.style.overflow = "";
-  }
+  };
 
-  if (hamburger) hamburger.addEventListener("click", openSidebar);
-  if (overlay) overlay.addEventListener("click", closeSidebar);
+  hamburger?.addEventListener("click", openSidebar);
+  overlay?.addEventListener("click", closeSidebar);
 
-  const sidebarNav = document.getElementById("sidebar-nav");
-  if (sidebarNav) {
-    sidebarNav.addEventListener("click", (e) => {
-      if (
-        e.target.classList.contains("topic-link") &&
-        window.innerWidth <= 768
-      ) {
-        closeSidebar();
-      }
-    });
-  }
+  document.getElementById("sidebar-nav")?.addEventListener("click", (e) => {
+    if (e.target.closest(".topic-link") && window.innerWidth <= 768)
+      closeSidebar();
+  });
 
-  // Theme toggle
-  const themeBtn = document.getElementById("theme-toggle");
-
-  // Apply saved theme
+  // ── Theme ──
   const saved = localStorage.getItem("theme");
-  if (saved) {
-    document.documentElement.setAttribute("data-theme", saved);
-  }
+  if (saved) document.documentElement.setAttribute("data-theme", saved);
 
-  if (themeBtn) {
-    themeBtn.addEventListener("click", () => {
-      const isDark =
-        document.documentElement.getAttribute("data-theme") === "dark";
-      const next = isDark ? "light" : "dark";
+  document.getElementById("theme-toggle")?.addEventListener("click", () => {
+    const isDark =
+      document.documentElement.getAttribute("data-theme") === "dark";
+    const next = isDark ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("theme", next);
+  });
 
-      document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem("theme", next);
-    });
-  }
-
-  // ── Sidebar Search ──
+  // ── Sidebar search ──
   const searchInput = document.getElementById("sidebar-search");
   const clearBtn = document.getElementById("search-clear-btn");
-  const noResults = document.getElementById("search-no-results");
 
-  if (searchInput) {
-    searchInput.addEventListener("input", (e) => {
-      const query = e.target.value.trim();
-      clearBtn.classList.toggle("visible", query.length > 0);
-      filterTopics(query);
-    });
-  }
+  searchInput?.addEventListener("input", (e) => {
+    const q = e.target.value.trim();
+    clearBtn?.classList.toggle("visible", q.length > 0);
+    filterTopics(q);
+  });
 
-  if (clearBtn) {
-    clearBtn.addEventListener("click", () => {
-      searchInput.value = "";
-      clearBtn.classList.remove("visible");
-      filterTopics("");
-      searchInput.focus();
-    });
-  }
+  clearBtn?.addEventListener("click", () => {
+    searchInput.value = "";
+    clearBtn.classList.remove("visible");
+    filterTopics("");
+    searchInput.focus();
+  });
 });
 
-// ── Search / filter ──
+// ── Filter / search ──────────────────────────────────────────────────────────
 function filterTopics(query) {
   const nav = document.getElementById("sidebar-nav");
   const noResults = document.getElementById("search-no-results");
-  const q = query.toLowerCase();
+  const q = query.toLowerCase().trim();
 
-  const categorySections = nav.querySelectorAll(".category-section");
+  // ── Empty query: full reset, then done ──
+  if (!q) {
+    nav.querySelectorAll(".category-section").forEach((section) => {
+      section.style.display = "";
+    });
+    nav.querySelectorAll(".topic-item").forEach((item) => {
+      item.style.display = "";
+      const link = item.querySelector(".topic-link");
+      if (!link) return;
+      const title = link.dataset.title || "";
+      setLinkTitle(link, title, "", "");
+      setLinkHint(link, []);
+    });
+    noResults?.classList.remove("visible");
+    return;
+  }
+
+  // ── Non-empty query: filter ──
   let totalVisible = 0;
 
-  categorySections.forEach((section) => {
+  nav.querySelectorAll(".category-section").forEach((section) => {
     const items = section.querySelectorAll(".topic-item");
     let sectionVisible = 0;
 
     items.forEach((item) => {
       const link = item.querySelector(".topic-link");
-      const title = link.dataset.title || link.textContent;
+      if (!link) return;
+      const slug = link.dataset.slug;
+      const title = link.dataset.title || "";
 
-      if (!q || title.toLowerCase().includes(q)) {
+      let matchIn = null;
+      if (searchIndexReady) {
+        matchIn = getIndexMatch(slug, q);
+      } else {
+        // Index still building — title-only fallback
+        if (title.toLowerCase().includes(q)) matchIn = ["title"];
+      }
+
+      if (matchIn) {
         item.style.display = "";
         sectionVisible++;
-
-        // Highlight matched text
-        if (q) {
-          const idx = title.toLowerCase().indexOf(q);
-          link.innerHTML =
-            escapeHtml(title.slice(0, idx)) +
-            "<mark>" +
-            escapeHtml(title.slice(idx, idx + q.length)) +
-            "</mark>" +
-            escapeHtml(title.slice(idx + q.length));
-        } else {
-          link.textContent = title;
-        }
+        setLinkTitle(link, title, matchIn.includes("title") ? q : "", "title");
+        setLinkHint(
+          link,
+          matchIn.filter((f) => f !== "title"),
+        );
       } else {
         item.style.display = "none";
+        setLinkTitle(link, title, "", "");
+        setLinkHint(link, []);
       }
     });
 
     section.style.display = sectionVisible > 0 ? "" : "none";
-
-    // Auto-expand sections that have matches
-    if (q && sectionVisible > 0) {
-      section.classList.remove("collapsed");
-    }
-
+    if (sectionVisible > 0) section.classList.remove("collapsed");
     totalVisible += sectionVisible;
   });
 
-  if (noResults) {
-    noResults.classList.toggle("visible", q.length > 0 && totalVisible === 0);
+  noResults?.classList.toggle("visible", totalVisible === 0);
+}
+
+function setLinkTitle(link, title, q, matchType) {
+  const titleEl = link.querySelector(".topic-link-title");
+  if (!titleEl) {
+    link.textContent = title;
+    return;
+  }
+
+  if (q && matchType === "title") {
+    const idx = title.toLowerCase().indexOf(q);
+    if (idx === -1) {
+      titleEl.textContent = title;
+      return;
+    }
+    titleEl.innerHTML =
+      escapeHtml(title.slice(0, idx)) +
+      "<mark>" +
+      escapeHtml(title.slice(idx, idx + q.length)) +
+      "</mark>" +
+      escapeHtml(title.slice(idx + q.length));
+  } else {
+    titleEl.textContent = title;
   }
 }
 
+function setLinkHint(link, fields) {
+  const hintEl = link.querySelector(".topic-link-hint");
+  if (!hintEl) return;
+  if (!fields.length) {
+    hintEl.textContent = "";
+    hintEl.style.display = "none";
+    return;
+  }
+  const labels = fields.slice(0, 3).map((f) => FIELD_LABELS[f] || f);
+  hintEl.textContent = "in " + labels.join(", ");
+  hintEl.style.display = "";
+}
+
+// ── Load topics list ─────────────────────────────────────────────────────────
 async function loadTopics() {
   try {
     const response = await fetch("api/topics");
     currentTopics = await response.json();
     renderSidebar(currentTopics);
+    // Kick off background full-text indexing
+    buildSearchIndex(currentTopics);
   } catch (error) {
     console.error("Error loading topics:", error);
   }
 }
 
+// ── Render sidebar ───────────────────────────────────────────────────────────
 function renderSidebar(categories) {
   const nav = document.getElementById("sidebar-nav");
   nav.innerHTML = "";
-
   const collapsed = getCollapsedState();
 
   Object.keys(categories)
@@ -188,7 +336,7 @@ function renderSidebar(categories) {
       categorySection.className =
         "category-section" + (isCollapsed ? " collapsed" : "");
 
-      // Clickable header row
+      // Header
       const categoryHeader = document.createElement("div");
       categoryHeader.className = "category-header";
 
@@ -196,7 +344,6 @@ function renderSidebar(categories) {
       categoryTitle.className = "category-title";
       categoryTitle.textContent = category;
 
-      // Chevron SVG
       const chevron = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "svg",
@@ -208,28 +355,24 @@ function renderSidebar(categories) {
       chevron.setAttribute("stroke-width", "2");
       chevron.setAttribute("stroke-linecap", "round");
       chevron.setAttribute("stroke-linejoin", "round");
-      const path = document.createElementNS(
+      const polyline = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "polyline",
       );
-      path.setAttribute("points", "4 6 8 10 12 6");
-      chevron.appendChild(path);
+      polyline.setAttribute("points", "4 6 8 10 12 6");
+      chevron.appendChild(polyline);
 
       categoryHeader.appendChild(categoryTitle);
       categoryHeader.appendChild(chevron);
-
-      // Toggle on click
       categoryHeader.addEventListener("click", () => {
         const isNowCollapsed = categorySection.classList.toggle("collapsed");
         const state = getCollapsedState();
-        if (isNowCollapsed) {
-          state[category] = true;
-        } else {
-          delete state[category];
-        }
+        if (isNowCollapsed) state[category] = true;
+        else delete state[category];
         setCollapsedState(state);
       });
 
+      // Topic list
       const topicList = document.createElement("ul");
       topicList.className = "topic-list";
 
@@ -239,9 +382,21 @@ function renderSidebar(categories) {
 
         const topicLink = document.createElement("a");
         topicLink.className = "topic-link";
-        topicLink.textContent = topic.title;
         topicLink.dataset.slug = topic.slug;
-        topicLink.dataset.title = topic.title; // for search filtering
+        topicLink.dataset.title = topic.title;
+
+        // Inner structure: title span + hint span
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "topic-link-title";
+        titleSpan.textContent = topic.title;
+
+        const hintSpan = document.createElement("span");
+        hintSpan.className = "topic-link-hint";
+        hintSpan.style.display = "none";
+
+        topicLink.appendChild(titleSpan);
+        topicLink.appendChild(hintSpan);
+
         topicLink.addEventListener("click", (e) => {
           e.preventDefault();
           loadTopic(topic.slug);
@@ -257,7 +412,7 @@ function renderSidebar(categories) {
     });
 }
 
-// Load and display a specific topic
+// ── Load and display a topic ─────────────────────────────────────────────────
 async function loadTopic(slug, updateHistory = true) {
   try {
     const response = await fetch(`/api/topic/${slug}`);
@@ -296,7 +451,7 @@ function renderTopic(topic) {
   html += `<h1 class="section-title">${escapeHtml(topic.title)}</h1>`;
   html += `<div class="section-category">${escapeHtml(topic.category)}</div>`;
 
-  if (topic.tags && topic.tags.length > 0) {
+  if (topic.tags?.length) {
     html += '<div class="section-tags">';
     topic.tags.forEach((tag) => {
       html += `<span class="tag">${escapeHtml(tag)}</span>`;
@@ -310,12 +465,10 @@ function renderTopic(topic) {
 
   if (topic.time_complexity || topic.space_complexity) {
     html += '<div style="margin: 24px 0;">';
-    if (topic.time_complexity) {
+    if (topic.time_complexity)
       html += `<span class="complexity-badge">Time: ${escapeHtml(topic.time_complexity)}</span>`;
-    }
-    if (topic.space_complexity) {
+    if (topic.space_complexity)
       html += `<span class="complexity-badge">Space: ${escapeHtml(topic.space_complexity)}</span>`;
-    }
     html += "</div>";
   }
 
@@ -323,7 +476,6 @@ function renderTopic(topic) {
 
   if (topic.explanation) {
     html += '<h2 class="section-heading">Explanation</h2>';
-    // Allow LaTeX in explanation — render as safe HTML (not escaped)
     html += `<div class="section-text latex-content">${sanitizeText(topic.explanation)}</div>`;
   }
 
@@ -344,27 +496,26 @@ function renderTopic(topic) {
     html += `<div class="section-text">${escapeHtml(topic.when_to_use)}</div>`;
   }
 
-  if (topic.variants && topic.variants.length > 0) {
-    html += '<h2 class="section-heading">Variants</h2>';
-    html += '<ul class="section-list">';
-    topic.variants.forEach((variant) => {
-      html += `<li>${escapeHtml(variant)}</li>`;
+  if (topic.variants?.length) {
+    html +=
+      '<h2 class="section-heading">Variants</h2><ul class="section-list">';
+    topic.variants.forEach((v) => {
+      html += `<li>${escapeHtml(v)}</li>`;
     });
     html += "</ul>";
   }
 
-  if (topic.pitfalls && topic.pitfalls.length > 0) {
-    html += '<h2 class="section-heading">Common Pitfalls</h2>';
-    html += '<ul class="section-list">';
-    topic.pitfalls.forEach((pitfall) => {
-      html += `<li>${escapeHtml(pitfall)}</li>`;
+  if (topic.pitfalls?.length) {
+    html +=
+      '<h2 class="section-heading">Common Pitfalls</h2><ul class="section-list">';
+    topic.pitfalls.forEach((p) => {
+      html += `<li>${escapeHtml(p)}</li>`;
     });
     html += "</ul>";
   }
 
   if (topic.proof) {
     html += '<h2 class="section-heading">Proof</h2>';
-    // Proofs are most likely to contain LaTeX — keep raw
     html += `<div class="section-text latex-content">${sanitizeText(topic.proof)}</div>`;
   }
 
@@ -385,71 +536,66 @@ function renderTopic(topic) {
 
   if (topic.dry_run) {
     html += '<h2 class="section-heading">Dry Run</h2>';
-    html += '<div class="code-section">';
-    html += '<div class="code-block no-header">';
+    html += '<div class="code-section"><div class="code-block no-header">';
     html += `<pre><code>${escapeHtml(topic.dry_run)}</code></pre>`;
     html += "</div></div>";
   }
 
   if (topic.usage_example) {
     html += '<h2 class="section-heading">Usage Example</h2>';
-    html += '<div class="code-section">';
-    html += '<div class="code-block no-header">';
+    html += '<div class="code-section"><div class="code-block no-header">';
     html += `<pre><code class="language-cpp">${escapeHtml(topic.usage_example)}</code></pre>`;
     html += "</div></div>";
   }
 
-  if (topic.cpp_notes && topic.cpp_notes.length > 0) {
-    html += '<h2 class="section-heading">Implementation Notes</h2>';
-    html += '<ul class="section-list">';
-    topic.cpp_notes.forEach((note) => {
-      html += `<li>${escapeHtml(note)}</li>`;
+  if (topic.cpp_notes?.length) {
+    html +=
+      '<h2 class="section-heading">Implementation Notes</h2><ul class="section-list">';
+    topic.cpp_notes.forEach((n) => {
+      html += `<li>${escapeHtml(n)}</li>`;
     });
     html += "</ul>";
   }
 
-  if (topic.prereqs && topic.prereqs.length > 0) {
-    html += '<h2 class="section-heading">Prerequisites</h2>';
-    html += '<div class="section-tags">';
-    topic.prereqs.forEach((prereq) => {
-      html += `<span class="tag">${escapeHtml(prereq)}</span>`;
+  if (topic.prereqs?.length) {
+    html +=
+      '<h2 class="section-heading">Prerequisites</h2><div class="section-tags">';
+    topic.prereqs.forEach((p) => {
+      html += `<span class="tag">${escapeHtml(p)}</span>`;
     });
     html += "</div>";
   }
 
-  if (topic.leads_to && topic.leads_to.length > 0) {
-    html += '<h2 class="section-heading">Advanced Topics</h2>';
-    html += '<div class="section-tags">';
-    topic.leads_to.forEach((lead) => {
-      html += `<span class="tag">${escapeHtml(lead)}</span>`;
+  if (topic.leads_to?.length) {
+    html +=
+      '<h2 class="section-heading">Advanced Topics</h2><div class="section-tags">';
+    topic.leads_to.forEach((l) => {
+      html += `<span class="tag">${escapeHtml(l)}</span>`;
     });
     html += "</div>";
   }
 
   topicContent.innerHTML = html;
 
-  // Apply syntax highlighting to all code blocks
-  topicContent.querySelectorAll("pre code").forEach((block) => {
-    hljs.highlightElement(block);
-  });
+  topicContent
+    .querySelectorAll("pre code")
+    .forEach((block) => hljs.highlightElement(block));
 
-  // Typeset any LaTeX in the newly rendered content
-  if (window.MathJax && window.MathJax.typesetPromise) {
+  if (window.MathJax?.typesetPromise) {
     window.MathJax.typesetPromise([topicContent]).catch((err) =>
       console.error("MathJax error:", err),
     );
   }
 }
 
+// ── Helpers ──────────────────────────────────────────────────────────────────
 function sanitizeText(text) {
   if (!text) return "";
-  // Escape HTML first
   const div = document.createElement("div");
   div.textContent = text;
   let escaped = div.innerHTML;
-  // Restore LaTeX-relevant characters that got escaped
   escaped = escaped
-    .replace(/&amp;/g, "&") // & used in \begin{align} etc.
+    .replace(/&amp;/g, "&")
     .replace(/\\\(/g, "\\(")
     .replace(/\\\)/g, "\\)")
     .replace(/\\\[/g, "\\[")
@@ -458,13 +604,11 @@ function sanitizeText(text) {
 }
 
 function updateActiveLink(slug) {
-  const links = document.querySelectorAll(".topic-link");
-  links.forEach((link) => {
+  document.querySelectorAll(".topic-link").forEach((link) => {
     if (link.dataset.slug === slug) {
       link.classList.add("active");
-      // Auto-expand the parent category if it's collapsed
       const section = link.closest(".category-section");
-      if (section && section.classList.contains("collapsed")) {
+      if (section?.classList.contains("collapsed")) {
         section.classList.remove("collapsed");
         const state = getCollapsedState();
         const title = section.querySelector(".category-title");
@@ -478,14 +622,11 @@ function updateActiveLink(slug) {
 }
 
 function showWelcome() {
-  const welcomeScreen = document.getElementById("welcome-screen");
-  const topicContent = document.getElementById("topic-content");
-
-  welcomeScreen.style.display = "block";
-  topicContent.style.display = "none";
-
-  const links = document.querySelectorAll(".topic-link");
-  links.forEach((link) => link.classList.remove("active"));
+  document.getElementById("welcome-screen").style.display = "block";
+  document.getElementById("topic-content").style.display = "none";
+  document
+    .querySelectorAll(".topic-link")
+    .forEach((l) => l.classList.remove("active"));
 }
 
 function escapeHtml(text) {

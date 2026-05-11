@@ -43,7 +43,7 @@ body {
     top: 0;
     background-color: var(--sidebar-bg);
     z-index: 1;
-    padding-bottom: 12px;
+    padding-bottom: 8px;
     border-bottom: 1px solid var(--color-border);
 }
 
@@ -115,6 +115,54 @@ body {
     display: flex;
 }
 
+/* ─── Search index status pill ─── */
+.search-status {
+    display: none;
+    align-items: center;
+    gap: 5px;
+    margin-top: 7px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.02em;
+    transition: opacity 0.4s ease;
+}
+
+.search-status[data-state="building"],
+.search-status[data-state="ready"] {
+    display: flex;
+}
+
+.search-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--color-text-tertiary);
+}
+
+.search-status[data-state="building"] .search-status-dot {
+    background: #f59e0b;
+    animation: pulse-dot 1.2s ease-in-out infinite;
+}
+
+.search-status[data-state="ready"] .search-status-dot {
+    background: #22c55e;
+}
+
+@keyframes pulse-dot {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.75);
+    }
+}
+
+/* ─── No results ─── */
 .search-no-results {
     padding: 24px 12px;
     text-align: center;
@@ -127,6 +175,7 @@ body {
     display: block;
 }
 
+/* ─── Highlight matched text ─── */
 .topic-link mark {
     background-color: transparent;
     color: var(--color-accent);
@@ -137,6 +186,7 @@ body {
     color: #fb923c;
 }
 
+/* ─── Category sections ─── */
 .category-section {
     margin-bottom: 8px;
 }
@@ -179,7 +229,7 @@ body {
 .topic-list {
     list-style: none;
     overflow: hidden;
-    max-height: 1000px;
+    max-height: 2000px;
     transition:
         max-height 0.25s ease,
         opacity var(--transition-base);
@@ -195,14 +245,15 @@ body {
     margin-bottom: 2px;
 }
 
+/* ─── Topic link — two-line when hint is shown ─── */
 .topic-link {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
     padding: 7px 12px 7px 20px;
     color: var(--color-text);
     text-decoration: none;
     border-radius: var(--radius-sm);
-    font-size: 13.5px;
-    font-weight: 400;
     transition: all var(--transition-fast);
     cursor: pointer;
 }
@@ -215,14 +266,38 @@ body {
 .topic-link.active {
     background-color: var(--color-active);
     color: var(--color-active-text);
+}
+
+.topic-link.active .topic-link-hint {
+    color: var(--color-active-text);
+    opacity: 0.65;
+}
+
+.topic-link-title {
+    font-size: 13.5px;
+    font-weight: 400;
+    line-height: 1.35;
+}
+
+.topic-link.active .topic-link-title {
     font-weight: 500;
 }
 
+/* ─── Match hint (e.g. "in tags, explanation") ─── */
+.topic-link-hint {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+}
+
+/* ─── Main content ─── */
 .main-content {
     margin-top: var(--navbar-height);
     flex: 1;
     margin-left: var(--sidebar-width);
-    min-width: 0; /* prevent flex overflow */
+    min-width: 0;
 }
 
 .content-wrapper {
@@ -531,11 +606,11 @@ code {
     display: inline !important;
 }
 
-/* Tablet */
+/* ─── Tablet ─── */
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
-        z-index: 400; /* above navbar (300) so it properly layers */
+        z-index: 400;
         box-shadow: var(--shadow-lg);
         width: 280px;
         max-width: 85vw;
@@ -546,7 +621,6 @@ code {
     .sidebar.open {
         transform: translateX(0);
     }
-
     .main-content {
         margin-left: 0;
     }
@@ -560,16 +634,14 @@ code {
     }
 }
 
-/* Phone */
+/* ─── Phone ─── */
 @media (max-width: 480px) {
     .content-wrapper {
         padding: 28px 16px;
     }
-
     .welcome {
         padding: 60px 0;
     }
-
     .section-heading {
         margin-top: 36px;
     }
@@ -582,7 +654,6 @@ code {
     .code-block pre {
         font-size: 12px;
     }
-
     .divider {
         margin: 32px 0;
     }
