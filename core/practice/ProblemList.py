@@ -1,8 +1,13 @@
+"""Fetch Codeforces problems and scrape CSES into separate data files."""
+
+import argparse
 import json
-import re
 import time
 
 import requests
+
+from core.practice.paths import CSES_CACHE, PROBLEMS_CACHE
+from core.practice.scrape_cses import save_cses_problems, scrape_cses_problems
 
 
 def fetch_codeforces_problems():
@@ -42,64 +47,38 @@ def fetch_codeforces_problems():
     return problems
 
 
-def fetch_cses_problems():
-    print("Fetching CSES problems with solved counts...")
-    url = "https://cses.fi/problemset/"
-    response = requests.get(url, timeout=20)
-    html = response.text
+def save_codeforces_problems(problems, path=PROBLEMS_CACHE):
+    import os
 
-    problems = []
-
-    pattern = r'<a href="(/problemset/task/(\d+))">([^<]+)</a>.*?<span[^>]*>(\d+)\s*/\s*(\d+)</span>'
-    matches = re.findall(pattern, html, re.DOTALL)
-
-    section_pattern = r"<h2>([^<]+)</h2>"
-    sections = re.findall(section_pattern, html)
-
-    section_idx = 0
-    current_section = "Uncategorized"
-
-    for i, match in enumerate(matches):
-        relative_url, pid_str, name, solved_str, attempts_str = match
-        pid = int(pid_str)
-        solved_count = int(solved_str)
-        full_url = "https://cses.fi" + relative_url
-
-        if section_idx < len(sections):
-            current_section = sections[section_idx]
-            if i % 20 == 0 and section_idx < len(sections) - 1:
-                section_idx += 1
-
-        problems.append(
-            {
-                "platform": "cses",
-                "id": pid,
-                "name": name.strip(),
-                "category": current_section,
-                "url": full_url,
-                "rating": None,
-                "tags": [current_section.lower().replace(" ", "_").replace("&", "and")],
-                "solvedCount": solved_count,
-            }
-        )
-
-    print(f"Fetched {len(problems)} CSES problems with solvedCount")
-    return problems
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(problems, f, indent=2, ensure_ascii=False)
+    print(f"Saved Codeforces problems to {path}")
 
 
 def main():
-    all_problems = []
+    parser = argparse.ArgumentParser(
+        description="Refresh Codeforces and/or CSES problem caches"
+    )
+    parser.add_argument(
+        "--platform",
+        choices=["codeforces", "cses", "all"],
+        default="all",
+        help="Which platform to refresh (default: all)",
+    )
+    args = parser.parse_args()
 
-    all_problems.extend(fetch_codeforces_problems())
-    time.sleep(2)
+    if args.platform in ("codeforces", "all"):
+        cf = fetch_codeforces_problems()
+        save_codeforces_problems(cf)
 
-    all_problems.extend(fetch_cses_problems())
+    if args.platform in ("cses", "all"):
+        if args.platform == "all":
+            time.sleep(2)
+        cses = scrape_cses_problems()
+        save_cses_problems(cses)
 
-    with open("../../data/problems.json", "w", encoding="utf-8") as f:
-        json.dump(all_problems, f, indent=2, ensure_ascii=False)
-
-    print(f"\nDone! Total {len(all_problems)} problems saved to problems.json")
-    print("solvedCount is now correctly filled for both platforms.")
+    print("\nDone.")
 
 
 if __name__ == "__main__":

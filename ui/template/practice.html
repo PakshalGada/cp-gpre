@@ -147,6 +147,36 @@
                         </div>
 
                         <div class="config-row">
+                            <div class="form-group">
+                                <label for="cses-user">CSES username</label>
+                                <input
+                                    type="text"
+                                    id="cses-user"
+                                    placeholder="your CSES nick"
+                                    class="form-input"
+                                    autocomplete="username"
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label for="cses-password"
+                                    >CSES password (sync only)</label
+                                >
+                                <input
+                                    type="password"
+                                    id="cses-password"
+                                    placeholder="Used once to refresh progress"
+                                    class="form-input"
+                                    autocomplete="current-password"
+                                />
+                            </div>
+                        </div>
+                        <p class="mode-description">
+                            CSES recommendations skip problems you have already
+                            solved (AC). Password is sent only when syncing and
+                            is not stored.
+                        </p>
+
+                        <div class="config-row">
                             <div class="form-group full-width">
                                 <label>Recommendation Mode</label>
                                 <div class="mode-buttons">
@@ -325,6 +355,7 @@
                         </div>
                     </div>
                     <div class="weak-topics" id="weak-topics-container"></div>
+                    <p id="cses-stats" class="cses-stats hidden"></p>
                 </section>
 
                 <section

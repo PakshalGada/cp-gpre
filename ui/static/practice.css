@@ -242,6 +242,16 @@ body {
     border-top: 1px solid var(--color-border);
 }
 
+.cses-stats {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+}
+
+.cses-stats.hidden {
+    display: none;
+}
+
 .weak-topics-label {
     font-size: 13px;
     font-weight: 600;

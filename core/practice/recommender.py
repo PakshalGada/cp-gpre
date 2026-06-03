@@ -10,12 +10,33 @@ from typing import Optional
 
 import requests
 
+from core.practice.cses_profile import CsesLoginError, CsesProfile
+from core.practice.paths import CSES_CACHE, PROBLEMS_CACHE, PROGRESS_CACHE
+
 CF_API = "https://codeforces.com/api"
 RETRY_WAIT = 5
 MAX_RETRIES = 3
-PROBLEMS_CACHE = "../../data/problems.json"
-CSES_CACHE = "../../data/cses_problems.json"
-PROGRESS_CACHE = "../../data/progress_{}.json"
+
+CSES_CATEGORY_RATING = {
+    "Introductory Problems": 800,
+    "Sorting and Searching": 1000,
+    "Dynamic Programming": 1200,
+    "Graph Algorithms": 1300,
+    "Range Queries": 1500,
+    "Tree Algorithms": 1500,
+    "Mathematics": 1400,
+    "String Algorithms": 1500,
+    "Geometry": 1600,
+    "Advanced Techniques": 1800,
+    "Sliding Window Problems": 1400,
+    "Interactive Problems": 1600,
+    "Bitwise Operations": 1400,
+    "Construction Problems": 1700,
+    "Advanced Graph Problems": 1900,
+    "Counting Problems": 1700,
+    "Additional Problems": 2000,
+    "Special": 2000,
+}
 
 
 __all__ = [
@@ -103,380 +124,25 @@ class ProblemLoader:
             with open(path, encoding="utf-8") as f:
                 return json.load(f)
 
-        problems = [
-            {
-                "platform": "cses",
-                "id": 1068,
-                "name": "Weird Algorithm",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1068",
-            },
-            {
-                "platform": "cses",
-                "id": 1083,
-                "name": "Missing Number",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1083",
-            },
-            {
-                "platform": "cses",
-                "id": 1069,
-                "name": "Repetitions",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1069",
-            },
-            {
-                "platform": "cses",
-                "id": 1094,
-                "name": "Increasing Array",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1094",
-            },
-            {
-                "platform": "cses",
-                "id": 1070,
-                "name": "Permutations",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1070",
-            },
-            {
-                "platform": "cses",
-                "id": 1071,
-                "name": "Number Spiral",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1071",
-            },
-            {
-                "platform": "cses",
-                "id": 1072,
-                "name": "Two Knights",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1072",
-            },
-            {
-                "platform": "cses",
-                "id": 1092,
-                "name": "Two Sets",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1092",
-            },
-            {
-                "platform": "cses",
-                "id": 1617,
-                "name": "Bit Strings",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1617",
-            },
-            {
-                "platform": "cses",
-                "id": 1618,
-                "name": "Trailing Zeros",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1618",
-            },
-            {
-                "platform": "cses",
-                "id": 1754,
-                "name": "Coin Piles",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1754",
-            },
-            {
-                "platform": "cses",
-                "id": 1755,
-                "name": "Palindrome Reorder",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1755",
-            },
-            {
-                "platform": "cses",
-                "id": 2165,
-                "name": "Tower of Hanoi",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/2165",
-            },
-            {
-                "platform": "cses",
-                "id": 1622,
-                "name": "Creating Strings",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1622",
-            },
-            {
-                "platform": "cses",
-                "id": 1623,
-                "name": "Apple Division",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1623",
-            },
-            {
-                "platform": "cses",
-                "id": 1624,
-                "name": "Chessboard and Queens",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1624",
-            },
-            {
-                "platform": "cses",
-                "id": 2431,
-                "name": "Digit Queries",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/2431",
-            },
-            {
-                "platform": "cses",
-                "id": 1625,
-                "name": "Grid Paths",
-                "category": "Introductory Problems",
-                "url": "https://cses.fi/problemset/task/1625",
-            },
-            {
-                "platform": "cses",
-                "id": 1640,
-                "name": "Sum of Two Values",
-                "category": "Sorting and Searching",
-                "url": "https://cses.fi/problemset/task/1640",
-            },
-            {
-                "platform": "cses",
-                "id": 1084,
-                "name": "Apartments",
-                "category": "Sorting and Searching",
-                "url": "https://cses.fi/problemset/task/1084",
-            },
-            {
-                "platform": "cses",
-                "id": 1090,
-                "name": "Ferris Wheel",
-                "category": "Sorting and Searching",
-                "url": "https://cses.fi/problemset/task/1090",
-            },
-            {
-                "platform": "cses",
-                "id": 1091,
-                "name": "Concert Tickets",
-                "category": "Sorting and Searching",
-                "url": "https://cses.fi/problemset/task/1091",
-            },
-            {
-                "platform": "cses",
-                "id": 1619,
-                "name": "Restaurant Customers",
-                "category": "Sorting and Searching",
-                "url": "https://cses.fi/problemset/task/1619",
-            },
-            {
-                "platform": "cses",
-                "id": 1629,
-                "name": "Movie Festival",
-                "category": "Sorting and Searching",
-                "url": "https://cses.fi/problemset/task/1629",
-            },
-            {
-                "platform": "cses",
-                "id": 1074,
-                "name": "Stick Lengths",
-                "category": "Sorting and Searching",
-                "url": "https://cses.fi/problemset/task/1074",
-            },
-            {
-                "platform": "cses",
-                "id": 1620,
-                "name": "Factory Machines",
-                "category": "Sorting and Searching",
-                "url": "https://cses.fi/problemset/task/1620",
-            },
-            {
-                "platform": "cses",
-                "id": 1158,
-                "name": "Book Shop",
-                "category": "Dynamic Programming",
-                "url": "https://cses.fi/problemset/task/1158",
-            },
-            {
-                "platform": "cses",
-                "id": 1746,
-                "name": "Array Description",
-                "category": "Dynamic Programming",
-                "url": "https://cses.fi/problemset/task/1746",
-            },
-            {
-                "platform": "cses",
-                "id": 1638,
-                "name": "Grid Paths",
-                "category": "Dynamic Programming",
-                "url": "https://cses.fi/problemset/task/1638",
-            },
-            {
-                "platform": "cses",
-                "id": 1633,
-                "name": "Dice Combinations",
-                "category": "Dynamic Programming",
-                "url": "https://cses.fi/problemset/task/1633",
-            },
-            {
-                "platform": "cses",
-                "id": 1634,
-                "name": "Minimizing Coins",
-                "category": "Dynamic Programming",
-                "url": "https://cses.fi/problemset/task/1634",
-            },
-            {
-                "platform": "cses",
-                "id": 1635,
-                "name": "Coin Combinations I",
-                "category": "Dynamic Programming",
-                "url": "https://cses.fi/problemset/task/1635",
-            },
-            {
-                "platform": "cses",
-                "id": 1636,
-                "name": "Coin Combinations II",
-                "category": "Dynamic Programming",
-                "url": "https://cses.fi/problemset/task/1636",
-            },
-            {
-                "platform": "cses",
-                "id": 1637,
-                "name": "Removing Digits",
-                "category": "Dynamic Programming",
-                "url": "https://cses.fi/problemset/task/1637",
-            },
-            {
-                "platform": "cses",
-                "id": 1745,
-                "name": "Money Sums",
-                "category": "Dynamic Programming",
-                "url": "https://cses.fi/problemset/task/1745",
-            },
-            {
-                "platform": "cses",
-                "id": 1744,
-                "name": "Rectangle Cutting",
-                "category": "Dynamic Programming",
-                "url": "https://cses.fi/problemset/task/1744",
-            },
-            {
-                "platform": "cses",
-                "id": 1193,
-                "name": "Labyrinth",
-                "category": "Graph Algorithms",
-                "url": "https://cses.fi/problemset/task/1193",
-            },
-            {
-                "platform": "cses",
-                "id": 1666,
-                "name": "Building Roads",
-                "category": "Graph Algorithms",
-                "url": "https://cses.fi/problemset/task/1666",
-            },
-            {
-                "platform": "cses",
-                "id": 1667,
-                "name": "Message Route",
-                "category": "Graph Algorithms",
-                "url": "https://cses.fi/problemset/task/1667",
-            },
-            {
-                "platform": "cses",
-                "id": 1668,
-                "name": "Building Teams",
-                "category": "Graph Algorithms",
-                "url": "https://cses.fi/problemset/task/1668",
-            },
-            {
-                "platform": "cses",
-                "id": 1669,
-                "name": "Round Trip",
-                "category": "Graph Algorithms",
-                "url": "https://cses.fi/problemset/task/1669",
-            },
-            {
-                "platform": "cses",
-                "id": 1192,
-                "name": "Counting Rooms",
-                "category": "Graph Algorithms",
-                "url": "https://cses.fi/problemset/task/1192",
-            },
-            {
-                "platform": "cses",
-                "id": 1194,
-                "name": "Monsters",
-                "category": "Graph Algorithms",
-                "url": "https://cses.fi/problemset/task/1194",
-            },
-            {
-                "platform": "cses",
-                "id": 1671,
-                "name": "Shortest Routes I",
-                "category": "Graph Algorithms",
-                "url": "https://cses.fi/problemset/task/1671",
-            },
-            {
-                "platform": "cses",
-                "id": 1672,
-                "name": "Shortest Routes II",
-                "category": "Graph Algorithms",
-                "url": "https://cses.fi/problemset/task/1672",
-            },
-            {
-                "platform": "cses",
-                "id": 1673,
-                "name": "High Score",
-                "category": "Graph Algorithms",
-                "url": "https://cses.fi/problemset/task/1673",
-            },
-            {
-                "platform": "cses",
-                "id": 1093,
-                "name": "Two Sets II",
-                "category": "Mathematics",
-                "url": "https://cses.fi/problemset/task/1093",
-            },
-            {
-                "platform": "cses",
-                "id": 2177,
-                "name": "Josephus Problem I",
-                "category": "Mathematics",
-                "url": "https://cses.fi/problemset/task/2177",
-            },
-            {
-                "platform": "cses",
-                "id": 2165,
-                "name": "Exponentiation",
-                "category": "Mathematics",
-                "url": "https://cses.fi/problemset/task/1095",
-            },
-            {
-                "platform": "cses",
-                "id": 1712,
-                "name": "Exponentiation II",
-                "category": "Mathematics",
-                "url": "https://cses.fi/problemset/task/1712",
-            },
-            {
-                "platform": "cses",
-                "id": 1079,
-                "name": "Binomial Coefficients",
-                "category": "Mathematics",
-                "url": "https://cses.fi/problemset/task/1079",
-            },
-            {
-                "platform": "cses",
-                "id": 1082,
-                "name": "Sum of Divisors",
-                "category": "Mathematics",
-                "url": "https://cses.fi/problemset/task/1082",
-            },
-        ]
+        print(f"  CSES cache not found at '{path}'. Scraping live …")
+        try:
+            from core.practice.scrape_cses import (
+                save_cses_problems,
+                scrape_cses_problems,
+            )
 
-        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(problems, f)
-
-        return problems
+            problems = scrape_cses_problems()
+            save_cses_problems(problems, path)
+            return problems
+        except Exception as exc:
+            print(f"  CSES scrape failed: {exc}")
+            return []
 
     @classmethod
+    def load_all(cls) -> list:
+        return cls.load_codeforces() + cls.load_cses()
+
+    @staticmethod
     def load_all(cls) -> list:
         cf_problems = cls.load_codeforces()
         cses_problems = cls.load_cses()
@@ -502,7 +168,8 @@ class UserProfile:
         print(f"  Fetching profile for '{self.handle}' …")
         result = APIClient.cf_get("user.info", {"handles": self.handle})
         u = result[0]
-        self.rating = u.get("rating", 0) or 800
+        self.rating = u.get("rating") or 0
+        self.is_unrated = u.get("rating") is None
         self.max_rating = u.get("maxRating", 0)
         self.rank = u.get("rank", "unrated")
 
@@ -755,6 +422,13 @@ class TopicAnalyzer:
         return self.analysis
 
 
+def target_rating(profile: UserProfile) -> int:
+    """Baseline difficulty for recommendations (unrated → 800)."""
+    if profile.rating > 0:
+        return profile.rating
+    return 800
+
+
 class ProblemScorer:
     IGNORED_TAGS = {"*special", "interactive", "2-sat"}
 
@@ -763,19 +437,21 @@ class ProblemScorer:
         profile: UserProfile,
         topic_analyzer: TopicAnalyzer,
         mode: str,
-        all_problems: list,
+        cf_problems: list,
+        cses_solved: Optional[set] = None,
     ):
         self.profile = profile
         self.topic_analyzer = topic_analyzer
         self.mode = mode
+        self.target = target_rating(profile)
+        self.cses_solved = cses_solved or set()
         self.weak_tag_set = topic_analyzer.get_weak_tags()
-        self.explore_tag_set = self._get_explore_tags(all_problems)
+        self.explore_tag_set = self._get_explore_tags(cf_problems)
 
-    def _get_explore_tags(self, all_problems: list) -> set:
+    def _get_explore_tags(self, cf_problems: list) -> set:
         all_problem_tags = set()
-        for p in all_problems:
-            if p.get("platform") == "codeforces":
-                all_problem_tags.update(p.get("tags", []))
+        for p in cf_problems:
+            all_problem_tags.update(p.get("tags", []))
 
         solved_tags = set(self.topic_analyzer.analysis["solved_per_tag"].keys())
         return (all_problem_tags - solved_tags) - self.IGNORED_TAGS
@@ -804,7 +480,7 @@ class ProblemScorer:
         else:
             ideal_delta, tolerance = 100, 250
 
-        delta = p_rating - self.profile.rating
+        delta = p_rating - self.target
         rating_score = max(0.0, 1 - abs(delta - ideal_delta) / tolerance)
 
         topic_score = 0.0
@@ -834,68 +510,69 @@ class ProblemScorer:
 
         return max(0.0, score - attempt_penalty)
 
-    def _score_cses(self, problem: dict) -> float:
-        if problem.get("id") in getattr(self, "_cses_solved", set()):
+    def _score_cses(self, problem: dict) -> Optional[float]:
+        if problem.get("id") in self.cses_solved:
             return None
-        return 0.5
+
+        category = problem.get("category", "")
+        cat_rating = CSES_CATEGORY_RATING.get(category, self.target)
+
+        if self.mode == "stretch":
+            ideal_delta, tolerance = 200, 350
+        elif self.mode == "grind":
+            ideal_delta, tolerance = -150, 300
+        else:
+            ideal_delta, tolerance = 50, 300
+
+        delta = cat_rating - self.target
+        rating_score = max(0.0, 1 - abs(delta - ideal_delta) / tolerance)
+
+        solved_count = problem.get("solvedCount", 0)
+        pop_score = math.log1p(solved_count) / math.log1p(200000)
+
+        return 0.65 * rating_score + 0.35 * pop_score
 
 
 class Recommender:
-    def __init__(self, profile: UserProfile):
+    def __init__(
+        self, profile: UserProfile, cses_profile: Optional[CsesProfile] = None
+    ):
         self.profile = profile
+        self.cses_profile = cses_profile
+        self.cses_solved = (
+            cses_profile.solved_ids if cses_profile is not None else set()
+        )
         self.topic_analyzer = TopicAnalyzer(profile.submissions, profile.solved_set)
-        self.all_problems = ProblemLoader.load_all()
+        self.cf_problems = ProblemLoader.load_codeforces()
+        self.cses_problems = ProblemLoader.load_cses()
 
-    def recommend(
-        self,
-        count: int = 8,
-        mode: str = "balanced",
-        tag_filter: list = None,
-        min_rating: int = None,
-        max_rating: int = None,
-        platform_filter: str = None,
-    ) -> list:
-        scorer = ProblemScorer(
-            self.profile, self.topic_analyzer, mode, self.all_problems
-        )
-
+    def _rating_window(
+        self, min_rating: Optional[int], max_rating: Optional[int]
+    ) -> tuple[int, int]:
+        target = target_rating(self.profile)
         effective_min = (
-            min_rating if min_rating else max(800, self.profile.rating - 100)
+            min_rating if min_rating is not None else max(300, target - 200)
         )
-        effective_max = max_rating if max_rating else self.profile.rating + 400
+        effective_max = max_rating if max_rating is not None else target + 400
+        return effective_min, effective_max
 
-        scored = []
-        for p in self.all_problems:
-            if platform_filter and p.get("platform") != platform_filter:
-                continue
+    def _cses_difficulty_window(self) -> tuple[int, int]:
+        target = target_rating(self.profile)
+        return max(400, target - 250), target + 450
 
-            if p.get("platform") == "codeforces":
-                p_rating = p.get("rating") or 0
-                if not (effective_min <= p_rating <= effective_max):
-                    continue
-                if tag_filter and not any(t in p.get("tags", []) for t in tag_filter):
-                    continue
-
-            sc = scorer.score(p)
-            if sc is not None:
-                scored.append((sc, p))
-
-        scored.sort(key=lambda x: -x[0])
-
+    def _dedupe_codeforces(
+        self, scored: list, count: int
+    ) -> list[tuple[float, dict]]:
         tag_budget = Counter()
         deduplicated = []
         for sc, p in scored:
-            if p.get("platform") == "cses":
+            tags = [
+                t for t in p.get("tags", []) if t not in ProblemScorer.IGNORED_TAGS
+            ]
+            primary = tags[0] if tags else "misc"
+            if tag_budget[primary] < 2 or len(deduplicated) < max(1, count // 2):
                 deduplicated.append((sc, p))
-            else:
-                tags = [
-                    t for t in p.get("tags", []) if t not in ProblemScorer.IGNORED_TAGS
-                ]
-                primary = tags[0] if tags else "misc"
-                if tag_budget[primary] < 2 or len(deduplicated) < count // 2:
-                    deduplicated.append((sc, p))
-                    tag_budget[primary] += 1
-
+                tag_budget[primary] += 1
             if len(deduplicated) >= count:
                 break
 
@@ -909,6 +586,142 @@ class Recommender:
                     break
 
         return deduplicated[:count]
+
+    def _dedupe_cses(self, scored: list, count: int) -> list[tuple[float, dict]]:
+        category_budget = Counter()
+        deduplicated = []
+        for sc, p in scored:
+            category = p.get("category", "misc")
+            if category_budget[category] < 2:
+                deduplicated.append((sc, p))
+                category_budget[category] += 1
+            if len(deduplicated) >= count:
+                break
+
+        if len(deduplicated) < count:
+            seen_urls = {p["url"] for _, p in deduplicated}
+            for sc, p in scored:
+                if p["url"] not in seen_urls:
+                    deduplicated.append((sc, p))
+                    seen_urls.add(p["url"])
+                if len(deduplicated) >= count:
+                    break
+
+        return deduplicated[:count]
+
+    def _recommend_codeforces(
+        self,
+        count: int,
+        mode: str,
+        tag_filter: Optional[list],
+        min_rating: Optional[int],
+        max_rating: Optional[int],
+    ) -> list[tuple[float, dict]]:
+        scorer = ProblemScorer(
+            self.profile,
+            self.topic_analyzer,
+            mode,
+            self.cf_problems,
+            self.cses_solved,
+        )
+        effective_min, effective_max = self._rating_window(min_rating, max_rating)
+
+        scored = []
+        for p in self.cf_problems:
+            p_rating = p.get("rating")
+            if p_rating is None:
+                continue
+            if not (effective_min <= p_rating <= effective_max):
+                continue
+            if tag_filter and not any(t in p.get("tags", []) for t in tag_filter):
+                continue
+            sc = scorer.score(p)
+            if sc is not None:
+                scored.append((sc, p))
+
+        scored.sort(key=lambda x: -x[0])
+        return self._dedupe_codeforces(scored, count)
+
+    def _recommend_cses(self, count: int, mode: str) -> list[tuple[float, dict]]:
+        if not self.cses_problems:
+            return []
+
+        scorer = ProblemScorer(
+            self.profile,
+            self.topic_analyzer,
+            mode,
+            self.cf_problems,
+            self.cses_solved,
+        )
+        min_diff, max_diff = self._cses_difficulty_window()
+
+        scored = []
+        for p in self.cses_problems:
+            if p.get("id") in self.cses_solved:
+                continue
+            category = p.get("category", "")
+            cat_rating = CSES_CATEGORY_RATING.get(category, target_rating(self.profile))
+            if not (min_diff <= cat_rating <= max_diff):
+                continue
+            sc = scorer.score(p)
+            if sc is not None:
+                scored.append((sc, p))
+
+        scored.sort(key=lambda x: -x[0])
+        return self._dedupe_cses(scored, count)
+
+    def _merge_platform_results(
+        self,
+        cf_recs: list[tuple[float, dict]],
+        cses_recs: list[tuple[float, dict]],
+        count: int,
+    ) -> list[tuple[float, dict]]:
+        merged = []
+        cf_i = cses_i = 0
+        while len(merged) < count and (cf_i < len(cf_recs) or cses_i < len(cses_recs)):
+            if cf_i < len(cf_recs):
+                merged.append(cf_recs[cf_i])
+                cf_i += 1
+            if len(merged) >= count:
+                break
+            if cses_i < len(cses_recs):
+                merged.append(cses_recs[cses_i])
+                cses_i += 1
+        return merged[:count]
+
+    def recommend(
+        self,
+        count: int = 8,
+        mode: str = "balanced",
+        tag_filter: list = None,
+        min_rating: int = None,
+        max_rating: int = None,
+        platform_filter: str = None,
+    ) -> list:
+        if platform_filter == "codeforces":
+            return self._recommend_codeforces(
+                count, mode, tag_filter, min_rating, max_rating
+            )
+
+        if platform_filter == "cses":
+            return self._recommend_cses(count, mode)
+
+        include_cses = self.cses_profile is not None
+        if count <= 1:
+            cf_n, cses_n = count, 0
+        elif include_cses:
+            cses_n = max(1, count // 4)
+            cf_n = count - cses_n
+        else:
+            cf_n, cses_n = count, 0
+
+        cf_recs = self._recommend_codeforces(
+            cf_n, mode, tag_filter, min_rating, max_rating
+        )
+        cses_recs = self._recommend_cses(cses_n, mode) if include_cses else []
+        if not include_cses:
+            return cf_recs[:count]
+        return self._merge_platform_results(cf_recs, cses_recs, count)
 
 
 def print_recommendations(
@@ -1089,10 +902,20 @@ def interactive_mode():
         )
         platform_filter = platform if platform in ["codeforces", "cses"] else None
 
+        cses_user = input("  CSES username (optional): ").strip() or None
+        cses_password = None
+        if cses_user:
+            import getpass
+
+            cses_password = getpass.getpass("  CSES password (optional, for sync): ")
+
         profile = UserProfile(handle)
         profile.fetch()
 
-        recommender = Recommender(profile)
+        cses_profile, _ = _load_cses_profile(
+            cses_user, cses_password or None, platform_filter
+        )
+        recommender = Recommender(profile, cses_profile=cses_profile)
         recommendations = recommender.recommend(
             count=count,
             mode=mode,
@@ -1164,6 +987,16 @@ Examples:
         help="Filter by platform",
     )
     rec_parser.add_argument(
+        "--cses-user",
+        default=None,
+        help="CSES username (required for CSES recommendations)",
+    )
+    rec_parser.add_argument(
+        "--cses-password",
+        default=None,
+        help="CSES password (syncs solved tasks; cached for 6 hours)",
+    )
+    rec_parser.add_argument(
         "--show-topics", "-t", action="store_true", help="Show detailed topic breakdown"
     )
     rec_parser.add_argument("--json", action="store_true", help="Output as JSON")
@@ -1196,6 +1029,27 @@ Examples:
     return parser.parse_args()
 
 
+def _load_cses_profile(
+    cses_user: Optional[str],
+    cses_password: Optional[str],
+    platform_filter: Optional[str],
+) -> tuple[Optional[CsesProfile], Optional[str]]:
+    needs_cses = platform_filter in (None, "cses")
+    if not needs_cses:
+        return None, None
+
+    if not cses_user:
+        if platform_filter == "cses":
+            raise CsesLoginError(
+                "CSES username is required for CSES recommendations."
+            )
+        return None, "Connect a CSES account to include unsolved CSES tasks."
+
+    profile = CsesProfile(cses_user, cses_password)
+    profile.fetch(force_refresh=bool(cses_password))
+    return profile, None
+
+
 def get_recommendations_json(
     handle: str,
     count: int = 8,
@@ -1204,11 +1058,17 @@ def get_recommendations_json(
     min_rating: int = None,
     max_rating: int = None,
     platform_filter: str = None,
+    cses_user: str = None,
+    cses_password: str = None,
 ) -> dict:
     profile = UserProfile(handle)
     profile.fetch()
 
-    recommender = Recommender(profile)
+    cses_profile, cses_notice = _load_cses_profile(
+        cses_user, cses_password, platform_filter
+    )
+
+    recommender = Recommender(profile, cses_profile=cses_profile)
     recommendations = recommender.recommend(
         count=count,
         mode=mode,
@@ -1221,10 +1081,11 @@ def get_recommendations_json(
     tracker = ProgressTracker(handle)
     streaks = tracker.get_current_streak(profile.submissions)
 
-    return {
+    result = {
         "user": {
             "handle": profile.handle,
-            "rating": profile.rating,
+            "rating": target_rating(profile),
+            "is_unrated": profile.is_unrated,
             "max_rating": profile.max_rating,
             "rank": profile.rank,
             "solved_count": len(profile.solved_set),
@@ -1243,6 +1104,18 @@ def get_recommendations_json(
         "weak_topics": list(recommender.topic_analyzer.get_weak_tags(6)),
     }
 
+    if cses_profile:
+        result["cses"] = {
+            "username": cses_profile.username,
+            "solved_count": len(cses_profile.solved_ids),
+            "from_cache": cses_profile.from_cache,
+            "updated_at": cses_profile.updated_at,
+        }
+    if cses_notice:
+        result["cses_notice"] = cses_notice
+
+    return result
+
 
 def get_progress_json(handle: str) -> dict:
     profile = UserProfile(handle)
@@ -1255,7 +1128,8 @@ def get_progress_json(handle: str) -> dict:
     return {
         "user": {
             "handle": profile.handle,
-            "rating": profile.rating,
+            "rating": target_rating(profile),
+            "is_unrated": profile.is_unrated,
             "max_rating": profile.max_rating,
             "rank": profile.rank,
             "solved_count": len(profile.solved_set),
@@ -1276,7 +1150,8 @@ def get_contest_json(handle: str, division: int = 2, contest_count: int = 5) -> 
     return {
         "user": {
             "handle": profile.handle,
-            "rating": profile.rating,
+            "rating": target_rating(profile),
+            "is_unrated": profile.is_unrated,
         },
         "division": division,
         "contests": contests,
@@ -1316,13 +1191,25 @@ def main():
                 args.min_rating,
                 args.max_rating,
                 args.platform,
+                args.cses_user,
+                args.cses_password,
             )
             print(json.dumps(result, indent=2))
         else:
+            try:
+                cses_profile, _ = _load_cses_profile(
+                    args.cses_user,
+                    args.cses_password,
+                    args.platform,
+                )
+            except CsesLoginError as exc:
+                print(f"  CSES error: {exc}")
+                sys.exit(1)
+
             profile = UserProfile(handle)
             profile.fetch()
 
-            recommender = Recommender(profile)
+            recommender = Recommender(profile, cses_profile=cses_profile)
             recommendations = recommender.recommend(
                 count=args.count,
                 mode=args.mode,

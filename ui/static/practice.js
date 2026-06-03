@@ -49,15 +49,27 @@ const modeDescriptions = {
 
 let currentMode = "balanced";
 let currentHandle = localStorage.getItem("cf-handle") || "";
+let currentCsesUser = localStorage.getItem("cses-user") || "";
 
 const handleInput = document.getElementById("cf-handle");
+const csesUserInput = document.getElementById("cses-user");
+const csesPasswordInput = document.getElementById("cses-password");
+
 if (currentHandle) {
   handleInput.value = currentHandle;
+}
+if (currentCsesUser) {
+  csesUserInput.value = currentCsesUser;
 }
 
 handleInput.addEventListener("input", (e) => {
   currentHandle = e.target.value.trim();
   localStorage.setItem("cf-handle", currentHandle);
+});
+
+csesUserInput.addEventListener("input", (e) => {
+  currentCsesUser = e.target.value.trim();
+  localStorage.setItem("cses-user", currentCsesUser);
 });
 
 const modeButtons = document.querySelectorAll(".mode-btn");
@@ -117,37 +129,66 @@ async function getRecommendations() {
   const minRating = document.getElementById("min-rating").value;
   const maxRating = document.getElementById("max-rating").value;
 
-  const params = new URLSearchParams({
-    handle,
-    count,
-    mode: currentMode,
-  });
+  const csesUser = csesUserInput.value.trim();
+  const csesPassword = csesPasswordInput.value;
+  const platformNeedsCses =
+    platform === "cses" || platform === "" || !platform;
 
-  if (platform) params.append("platform", platform);
-  if (tags) params.append("tags", tags);
-  if (minRating) params.append("min_rating", minRating);
-  if (maxRating) params.append("max_rating", maxRating);
+  if (platform === "cses" && !csesUser) {
+    showError("Enter your CSES username to get unsolved CSES recommendations.");
+    return;
+  }
 
   showLoading();
   hideError();
 
   try {
-    const response = await fetch(`/api/recommendations?${params}`);
+    let response;
+    const basePayload = {
+      handle,
+      count,
+      mode: currentMode,
+      platform: platform || undefined,
+      tags: tags || undefined,
+      min_rating: minRating || undefined,
+      max_rating: maxRating || undefined,
+      cses_user: csesUser || undefined,
+    };
+
+    if (csesPassword && csesUser && platformNeedsCses) {
+      response = await fetch("/api/recommendations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...basePayload, cses_password: csesPassword }),
+      });
+      csesPasswordInput.value = "";
+    } else {
+      const params = new URLSearchParams();
+      Object.entries(basePayload).forEach(([key, value]) => {
+        if (value !== undefined && value !== "") params.append(key, value);
+      });
+      response = await fetch(`/api/recommendations?${params}`);
+    }
+
     const data = await response.json();
 
     if (!data.success) {
       throw new Error(data.error || "Failed to fetch recommendations");
     }
 
-    displayUserStats(data.data.user, data.data.weak_topics);
-    displayRecommendations(data.data.recommendations, data.data.mode);
+    displayUserStats(data.data.user, data.data.weak_topics, data.data.cses);
+    displayRecommendations(
+      data.data.recommendations,
+      data.data.mode,
+      data.data.cses_notice,
+    );
     hideLoading();
   } catch (error) {
     showError(error.message);
   }
 }
 
-function displayUserStats(user, weakTopics) {
+function displayUserStats(user, weakTopics, cses) {
   document.getElementById("user-rating").textContent = user.rating || "-";
   document.getElementById("user-rank").textContent = user.rank || "-";
   document.getElementById("user-solved").textContent = user.solved_count || "-";
@@ -155,6 +196,18 @@ function displayUserStats(user, weakTopics) {
     user.submission_streak || "0";
   document.getElementById("solve-streak").textContent =
     user.solve_streak || "0";
+
+  const csesStatsEl = document.getElementById("cses-stats");
+  if (csesStatsEl) {
+    if (cses) {
+      const cacheLabel = cses.from_cache ? "cached" : "synced";
+      csesStatsEl.textContent = `CSES @${cses.username}: ${cses.solved_count} solved (${cacheLabel})`;
+      csesStatsEl.classList.remove("hidden");
+    } else {
+      csesStatsEl.classList.add("hidden");
+      csesStatsEl.textContent = "";
+    }
+  }
 
   const weakTopicsContainer = document.getElementById("weak-topics-container");
   if (weakTopics && weakTopics.length > 0) {
@@ -175,9 +228,11 @@ function displayUserStats(user, weakTopics) {
   userStats.classList.remove("hidden");
 }
 
-function displayRecommendations(recommendations, mode) {
+function displayRecommendations(recommendations, mode, csesNotice) {
   const meta = document.getElementById("recommendations-meta");
-  meta.textContent = `Mode: ${mode} • ${recommendations.length} problems`;
+  let metaText = `Mode: ${mode} • ${recommendations.length} problems`;
+  if (csesNotice) metaText += ` • ${csesNotice}`;
+  meta.textContent = metaText;
 
   const list = document.getElementById("recommendations-list");
   list.innerHTML = recommendations

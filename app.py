@@ -4,6 +4,7 @@ import sys
 
 from flask import Flask, jsonify, render_template, request
 
+from core.practice.cses_profile import CsesLoginError
 from core.practice.recommender import (
     ProblemLoader,
     UserProfile,
@@ -67,34 +68,90 @@ def get_topic(slug):
     return jsonify({"error": "Topic not found"}), 404
 
 
-@app.route("/api/recommendations")
-def get_recommendations():
-    handle = request.args.get("handle")
-    count = int(request.args.get("count", 8))
-    mode = request.args.get("mode", "balanced")
-    tags = request.args.get("tags")
-    min_rating = request.args.get("min_rating")
-    max_rating = request.args.get("max_rating")
-    platform = request.args.get("platform")
+def _parse_recommendation_request():
+    if request.method == "POST":
+        payload = request.get_json(silent=True) or {}
+        getter = payload.get
+    else:
+        getter = request.args.get
 
-    if not handle:
-        return jsonify({"success": False, "error": "Handle is required"}), 400
+    handle = getter("handle")
+    count = int(getter("count", 8))
+    mode = getter("mode", "balanced")
+    tags = getter("tags")
+    min_rating = getter("min_rating")
+    max_rating = getter("max_rating")
+    platform = getter("platform")
+    cses_user = getter("cses_user")
+    cses_password = getter("cses_password") if request.method == "POST" else None
 
     min_rating = int(min_rating) if min_rating else None
     max_rating = int(max_rating) if max_rating else None
     tag_filter = [t.strip() for t in tags.split(",")] if tags else None
 
+    return {
+        "handle": handle,
+        "count": count,
+        "mode": mode,
+        "tag_filter": tag_filter,
+        "min_rating": min_rating,
+        "max_rating": max_rating,
+        "platform_filter": platform,
+        "cses_user": cses_user,
+        "cses_password": cses_password,
+    }
+
+
+@app.route("/api/recommendations", methods=["GET", "POST"])
+def get_recommendations():
+    params = _parse_recommendation_request()
+
+    if not params["handle"]:
+        return jsonify({"success": False, "error": "Handle is required"}), 400
+
     try:
-        result = get_recommendations_json(
-            handle=handle,
-            count=count,
-            mode=mode,
-            tag_filter=tag_filter,
-            min_rating=min_rating,
-            max_rating=max_rating,
-            platform_filter=platform,
-        )
+        result = get_recommendations_json(**params)
         return jsonify({"success": True, "data": result})
+    except CsesLoginError as e:
+        return jsonify({"success": False, "error": str(e)}), 401
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/cses/progress", methods=["POST"])
+def sync_cses_progress():
+    payload = request.get_json(silent=True) or {}
+    cses_user = payload.get("cses_user")
+    cses_password = payload.get("cses_password")
+
+    if not cses_user or not cses_password:
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "error": "cses_user and cses_password are required.",
+                }
+            ),
+            400,
+        )
+
+    try:
+        from core.practice.cses_profile import CsesProfile
+
+        profile = CsesProfile(cses_user, cses_password)
+        solved = profile.fetch(force_refresh=True)
+        return jsonify(
+            {
+                "success": True,
+                "data": {
+                    "username": profile.username,
+                    "solved_count": len(solved),
+                    "updated_at": profile.updated_at,
+                },
+            }
+        )
+    except CsesLoginError as e:
+        return jsonify({"success": False, "error": str(e)}), 401
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
