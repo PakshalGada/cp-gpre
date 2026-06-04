@@ -24,7 +24,6 @@ On the Practice page, enter your CSES username and password once to sync progres
 ## to-do list
 
 
-- [ ] make users statistics
 - [ ] for each topic show other articles from web 
 - [ ] make db.json better
 - [ ] make a rag system

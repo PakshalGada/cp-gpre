@@ -50,6 +50,11 @@ def practice():
     return render_template("practice.html")
 
 
+@app.route("/progress")
+def progress():
+    return render_template("progress.html")
+
+
 @app.route("/api/topics")
 def get_topics():
     data = load_db()
@@ -227,6 +232,7 @@ def sync_cses_progress():
                 "data": {
                     "username": profile.username,
                     "solved_count": len(solved),
+                    "solved_ids": list(solved),
                     "updated_at": profile.updated_at,
                 },
             }

@@ -362,108 +362,7 @@ function getRatingClass(rating) {
   return "lgm";
 }
 
-async function viewProgress() {
-  const handle = handleInput.value.trim();
-  if (!handle) {
-    showError("Please enter a Codeforces handle");
-    return;
-  }
 
-  showLoading();
-  hideError();
-
-  try {
-    const response = await fetch(`/api/progress?handle=${handle}`);
-    const data = await response.json();
-
-    if (!data.success) {
-      throw new Error(data.error || "Failed to fetch progress");
-    }
-
-    displayProgress(data.data);
-    hideLoading();
-  } catch (error) {
-    showError(error.message);
-  }
-}
-
-function displayProgress(data) {
-  const content = document.getElementById("progress-content");
-
-  const statsHtml = `
-        <div class="progress-stats">
-            <div class="stat-card">
-                <div class="stat-label">Current Rating</div>
-                <div class="stat-value">${data.user.rating}</div>
-                <div class="stat-sublabel">${data.user.rank}</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Max Rating</div>
-                <div class="stat-value">${data.user.max_rating}</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Submission Streak</div>
-                <div class="stat-value">${data.streaks.submission_streak}</div>
-                <div class="stat-sublabel">days</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Solve Streak</div>
-                <div class="stat-value">${data.streaks.solve_streak}</div>
-                <div class="stat-sublabel">days</div>
-            </div>
-        </div>
-    `;
-
-  let ratingHistoryHtml = "";
-  if (data.rating_history && data.rating_history.length > 0) {
-    const recentRatings = data.rating_history.slice(-10);
-    ratingHistoryHtml = `
-            <div class="progress-subsection">
-                <h3 class="subsection-title">Rating History (Last 10 Contests)</h3>
-                <div class="rating-timeline">
-                    ${recentRatings
-                      .map(
-                        (entry) => `
-                        <div class="rating-entry">
-                            <span class="rating-date">${entry.date}</span>
-                            <span class="rating-value">${entry.rating}</span>
-                        </div>
-                    `,
-                      )
-                      .join("")}
-                </div>
-            </div>
-        `;
-  }
-
-  let activityHtml = "";
-  if (data.activity_history && data.activity_history.length > 0) {
-    const recentActivity = data.activity_history.slice(-7);
-    activityHtml = `
-            <div class="progress-subsection">
-                <h3 class="subsection-title">Recent Activity (Last 7 Days)</h3>
-                <div class="activity-timeline">
-                    ${recentActivity
-                      .map(
-                        (entry) => `
-                        <div class="activity-entry">
-                            <span class="activity-date">${entry.date}</span>
-                            <span class="activity-stats">
-                                ${entry.solved} solved • ${entry.attempted} attempted
-                            </span>
-                        </div>
-                    `,
-                      )
-                      .join("")}
-                </div>
-            </div>
-        `;
-  }
-
-  content.innerHTML = statsHtml + ratingHistoryHtml + activityHtml;
-  progressSection.classList.remove("hidden");
-  progressSection.scrollIntoView({ behavior: "smooth", block: "nearest" });
-}
 
 async function simulateContest() {
   const handle = handleInput.value.trim();
@@ -549,9 +448,7 @@ function displayContests(data) {
 document
   .getElementById("get-recommendations")
   .addEventListener("click", getRecommendations);
-document
-  .getElementById("view-progress")
-  .addEventListener("click", viewProgress);
+
 document
   .getElementById("simulate-contest")
   .addEventListener("click", simulateContest);
