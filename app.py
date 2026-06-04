@@ -16,13 +16,23 @@ from core.practice.recommender import (
 app = Flask(__name__, static_folder="ui/static", template_folder="ui/template")
 
 
+_db_cache = None
+_db_last_mtime = 0
+
+
 def load_db():
+    global _db_cache, _db_last_mtime
     db_path = os.path.join("data", "db.json")
     try:
-        with open(db_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except FileNotFoundError:
+        mtime = os.path.getmtime(db_path)
+        if _db_cache is None or mtime > _db_last_mtime:
+            with open(db_path, "r", encoding="utf-8") as f:
+                _db_cache = json.load(f)
+                _db_last_mtime = mtime
+        return _db_cache
+    except (FileNotFoundError, OSError):
         return []
+
 
 
 @app.route("/")
@@ -66,6 +76,77 @@ def get_topic(slug):
         if topic.get("slug") == slug:
             return jsonify(topic)
     return jsonify({"error": "Topic not found"}), 404
+
+
+@app.route("/api/search")
+def search_topics():
+    query = request.args.get("q", "").strip().lower()
+    if not query:
+        return jsonify([])
+
+    data = load_db()
+    results = []
+    for topic in data:
+        slug = topic.get("slug")
+        title = topic.get("title", "")
+        category = topic.get("category", "")
+        tags = topic.get("tags", [])
+
+        match_in = []
+        if query in title.lower():
+            match_in.append("title")
+        if query in category.lower():
+            match_in.append("category")
+        for tag in tags:
+            if query in tag.lower():
+                match_in.append("tags")
+                break
+
+        # Check other rich content fields for deep search
+        text_fields = {
+            "description": topic.get("description"),
+            "explanation": topic.get("explanation"),
+            "key_insight": topic.get("key_insight"),
+            "worked_example": topic.get("worked_example"),
+            "when_to_use": topic.get("when_to_use"),
+            "variants": topic.get("variants"),
+            "pitfalls": topic.get("pitfalls"),
+            "prereqs": topic.get("prereqs"),
+            "leads_to": topic.get("leads_to"),
+            "cpp_notes": topic.get("cpp_notes"),
+            "walkthrough": topic.get("walkthrough"),
+            "proof": topic.get("proof"),
+        }
+
+        for name, value in text_fields.items():
+            if value:
+                if isinstance(value, list):
+                    parts = []
+                    for item in value:
+                        if isinstance(item, str):
+                            parts.append(item)
+                        elif isinstance(item, dict):
+                            for v in item.values():
+                                if isinstance(v, str):
+                                    parts.append(v)
+                        else:
+                            parts.append(str(item))
+                    joined = " ".join(parts).lower()
+                    if query in joined:
+                        match_in.append(name)
+                elif isinstance(value, str):
+                    if query in value.lower():
+                        match_in.append(name)
+
+        if match_in:
+            results.append({
+                "slug": slug,
+                "title": title,
+                "category": category,
+                "match_in": match_in
+            })
+
+    return jsonify(results)
 
 
 def _parse_recommendation_request():

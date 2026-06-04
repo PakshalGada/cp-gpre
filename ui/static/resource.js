@@ -1,11 +1,7 @@
 let currentTopics = {};
 let currentSlug = null;
 
-// ── Search Index ──────────────────────────────────────────────────────────────
-let searchIndex = []; // [{slug, title, category, tags, fields:{…}}]
-let searchIndexReady = false;
-let searchIndexBuilding = false;
-
+// ── Search State ──────────────────────────────────────────────────────────────
 const FIELD_LABELS = {
   description: "description",
   explanation: "explanation",
@@ -21,103 +17,28 @@ const FIELD_LABELS = {
   proof: "proof",
 };
 
-function buildIndexEntry(topic) {
-  return {
-    slug: topic.slug || "",
-    title: (topic.title || "").toLowerCase(),
-    titleRaw: topic.title || "",
-    category: (topic.category || "").toLowerCase(),
-    tags: (topic.tags || []).map((t) => t.toLowerCase()),
-    fields: {
-      description: topic.description || "",
-      explanation: topic.explanation || "",
-      key_insight: topic.key_insight || "",
-      worked_example: topic.worked_example || "",
-      when_to_use: topic.when_to_use || "",
-      variants: (topic.variants || []).join(" "),
-      pitfalls: (topic.pitfalls || []).join(" "),
-      prereqs: (topic.prereqs || []).join(" "),
-      leads_to: (topic.leads_to || []).join(" "),
-      cpp_notes: (topic.cpp_notes || []).join(" "),
-      walkthrough: topic.walkthrough || "",
-      proof: topic.proof || "",
-    },
-  };
-}
-
 function setSearchStatus(state) {
-  // state: 'building' | 'ready' | ''
+  // state: 'searching' | 'ready' | ''
   const el = document.getElementById("search-status");
   if (!el) return;
-  el.dataset.state = state;
-  if (state === "building") {
-    el.textContent = "Building index…";
-    el.title = "Indexing all topic content for deep search";
+  el.dataset.state = state === "searching" ? "building" : state; // Map to CSS states
+  if (state === "searching") {
+    el.textContent = "Searching…";
+    el.title = "Searching topics on the server";
   } else if (state === "ready") {
-    el.textContent = "Full search ready";
-    el.title = "Searching across titles, tags, and all topic content";
-    // fade out after 2.5 s
+    el.textContent = "Search complete";
+    el.title = "Showing server search results";
+    // fade out after 1.5 s
     setTimeout(() => {
       el.style.opacity = "0";
       setTimeout(() => {
         el.dataset.state = "";
         el.style.opacity = "";
       }, 400);
-    }, 2500);
+    }, 1500);
   }
 }
 
-async function buildSearchIndex(categories) {
-  if (searchIndexBuilding) return;
-  searchIndexBuilding = true;
-  setSearchStatus("building");
-
-  const allTopics = [];
-  Object.values(categories).forEach((topics) => allTopics.push(...topics));
-
-  const BATCH = 6;
-  for (let i = 0; i < allTopics.length; i += BATCH) {
-    const batch = allTopics.slice(i, i + BATCH);
-    await Promise.all(
-      batch.map(async ({ slug }) => {
-        try {
-          const res = await fetch(`/api/topic/${slug}`);
-          const topic = await res.json();
-          if (!topic.error) searchIndex.push(buildIndexEntry(topic));
-        } catch {
-          /* silently skip */
-        }
-      }),
-    );
-  }
-
-  searchIndexReady = true;
-  setSearchStatus("ready");
-
-  // Re-run any active query with the new full index
-  const searchInput = document.getElementById("sidebar-search");
-  const q = searchInput?.value?.trim();
-  if (q) filterTopics(q);
-}
-
-// ── Full-text match using the index ─────────────────────────────────────────
-function getIndexMatch(slug, q) {
-  const entry = searchIndex.find((e) => e.slug === slug);
-  if (!entry) {
-    // Index not yet populated for this slug — fall back to title
-    return null;
-  }
-
-  const matchIn = [];
-  if (entry.title.includes(q)) matchIn.push("title");
-  if (entry.category.includes(q)) matchIn.push("category");
-  if (entry.tags.some((t) => t.includes(q))) matchIn.push("tags");
-  Object.entries(entry.fields).forEach(([field, text]) => {
-    if (text.toLowerCase().includes(q)) matchIn.push(field);
-  });
-
-  return matchIn.length ? matchIn : null;
-}
 
 // ── Collapsed state ──────────────────────────────────────────────────────────
 function getCollapsedState() {
@@ -189,29 +110,35 @@ document.addEventListener("DOMContentLoaded", () => {
   // ── Sidebar search ──
   const searchInput = document.getElementById("sidebar-search");
   const clearBtn = document.getElementById("search-clear-btn");
+  let searchTimeout = null;
 
   searchInput?.addEventListener("input", (e) => {
     const q = e.target.value.trim();
     clearBtn?.classList.toggle("visible", q.length > 0);
-    filterTopics(q);
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      filterTopics(q);
+    }, 250); // 250ms debounce
   });
 
   clearBtn?.addEventListener("click", () => {
     searchInput.value = "";
     clearBtn.classList.remove("visible");
+    if (searchTimeout) clearTimeout(searchTimeout);
     filterTopics("");
     searchInput.focus();
   });
 });
 
 // ── Filter / search ──────────────────────────────────────────────────────────
-function filterTopics(query) {
+async function filterTopics(query) {
   const nav = document.getElementById("sidebar-nav");
   const noResults = document.getElementById("search-no-results");
   const q = query.toLowerCase().trim();
 
   // ── Empty query: full reset, then done ──
   if (!q) {
+    setSearchStatus("");
     nav.querySelectorAll(".category-section").forEach((section) => {
       section.style.display = "";
     });
@@ -227,48 +154,58 @@ function filterTopics(query) {
     return;
   }
 
-  // ── Non-empty query: filter ──
-  let totalVisible = 0;
+  setSearchStatus("searching");
 
-  nav.querySelectorAll(".category-section").forEach((section) => {
-    const items = section.querySelectorAll(".topic-item");
-    let sectionVisible = 0;
+  // ── Non-empty query: fetch matching from server ──
+  try {
+    const response = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+    const results = await response.json(); // Array of {slug, title, category, match_in}
 
-    items.forEach((item) => {
-      const link = item.querySelector(".topic-link");
-      if (!link) return;
-      const slug = link.dataset.slug;
-      const title = link.dataset.title || "";
-
-      let matchIn = null;
-      if (searchIndexReady) {
-        matchIn = getIndexMatch(slug, q);
-      } else {
-        // Index still building — title-only fallback
-        if (title.toLowerCase().includes(q)) matchIn = ["title"];
-      }
-
-      if (matchIn) {
-        item.style.display = "";
-        sectionVisible++;
-        setLinkTitle(link, title, matchIn.includes("title") ? q : "", "title");
-        setLinkHint(
-          link,
-          matchIn.filter((f) => f !== "title"),
-        );
-      } else {
-        item.style.display = "none";
-        setLinkTitle(link, title, "", "");
-        setLinkHint(link, []);
-      }
+    const matchMap = new Map();
+    results.forEach((item) => {
+      matchMap.set(item.slug, item.match_in);
     });
 
-    section.style.display = sectionVisible > 0 ? "" : "none";
-    if (sectionVisible > 0) section.classList.remove("collapsed");
-    totalVisible += sectionVisible;
-  });
+    let totalVisible = 0;
 
-  noResults?.classList.toggle("visible", totalVisible === 0);
+    nav.querySelectorAll(".category-section").forEach((section) => {
+      const items = section.querySelectorAll(".topic-item");
+      let sectionVisible = 0;
+
+      items.forEach((item) => {
+        const link = item.querySelector(".topic-link");
+        if (!link) return;
+        const slug = link.dataset.slug;
+        const title = link.dataset.title || "";
+
+        const matchIn = matchMap.get(slug);
+
+        if (matchIn) {
+          item.style.display = "";
+          sectionVisible++;
+          setLinkTitle(link, title, matchIn.includes("title") ? q : "", "title");
+          setLinkHint(
+            link,
+            matchIn.filter((f) => f !== "title"),
+          );
+        } else {
+          item.style.display = "none";
+          setLinkTitle(link, title, "", "");
+          setLinkHint(link, []);
+        }
+      });
+
+      section.style.display = sectionVisible > 0 ? "" : "none";
+      if (sectionVisible > 0) section.classList.remove("collapsed");
+      totalVisible += sectionVisible;
+    });
+
+    noResults?.classList.toggle("visible", totalVisible === 0);
+    setSearchStatus("ready");
+  } catch (error) {
+    console.error("Search error:", error);
+    setSearchStatus("");
+  }
 }
 
 function setLinkTitle(link, title, q, matchType) {
@@ -314,12 +251,11 @@ async function loadTopics() {
     const response = await fetch("api/topics");
     currentTopics = await response.json();
     renderSidebar(currentTopics);
-    // Kick off background full-text indexing
-    buildSearchIndex(currentTopics);
   } catch (error) {
     console.error("Error loading topics:", error);
   }
 }
+
 
 // ── Render sidebar ───────────────────────────────────────────────────────────
 function renderSidebar(categories) {
