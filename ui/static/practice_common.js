@@ -56,21 +56,26 @@ document.addEventListener("DOMContentLoaded", () => {
   // ─── Global Handles Sync & Top-Left Display ───
   const cfInput = document.getElementById("cf-handle");
   const csesInput = document.getElementById("cses-user");
+  const atcoderInput = document.getElementById("atcoder-handle");
   const mobCfInput = document.getElementById("mobile-cf-handle");
   const mobCsesInput = document.getElementById("mobile-cses-user");
+  const mobAtcoderInput = document.getElementById("mobile-atcoder-handle");
 
   // Load from localStorage
   const cfHandle = localStorage.getItem("cf-handle") || "";
   const csesUser = localStorage.getItem("cses-user") || "";
+  const atcoderHandle = localStorage.getItem("atcoder-handle") || "";
 
   // Populate desktop and mobile inputs if they exist
   if (cfInput) cfInput.value = cfHandle;
   if (mobCfInput) mobCfInput.value = cfHandle;
   if (csesInput) csesInput.value = csesUser;
   if (mobCsesInput) mobCsesInput.value = csesUser;
+  if (atcoderInput) atcoderInput.value = atcoderHandle;
+  if (mobAtcoderInput) mobAtcoderInput.value = atcoderHandle;
 
   // Function to update the top-left corner navbar status
-  function updateNavBadges(cf, cses) {
+  function updateNavBadges(cf, cses, atcoder) {
     const statusContainer = document.getElementById("nav-user-status");
     if (!statusContainer) return;
 
@@ -91,21 +96,30 @@ document.addEventListener("DOMContentLoaded", () => {
       csesBadge.innerHTML = `<span class="badge-label">CSES:</span><span class="badge-value">${cses}</span>`;
       statusContainer.appendChild(csesBadge);
     }
+
+    if (atcoder) {
+      const acBadge = document.createElement("span");
+      acBadge.className = "nav-badge atcoder-badge";
+      acBadge.title = `AtCoder: ${atcoder}`;
+      acBadge.innerHTML = `<span class="badge-label">AC:</span><span class="badge-value">${atcoder}</span>`;
+      statusContainer.appendChild(acBadge);
+    }
   }
 
   // Initial update
-  updateNavBadges(cfHandle, csesUser);
+  updateNavBadges(cfHandle, csesUser, atcoderHandle);
 
   // Sync event listener helper
-  function setupSyncListener(desktopEl, mobileEl, key, isCf) {
+  function setupSyncListener(desktopEl, mobileEl, key) {
     function handleSync(val) {
       localStorage.setItem(key, val);
       if (desktopEl && desktopEl.value !== val) desktopEl.value = val;
       if (mobileEl && mobileEl.value !== val) mobileEl.value = val;
 
-      const currentCf = isCf ? val : (localStorage.getItem("cf-handle") || "");
-      const currentCses = !isCf ? val : (localStorage.getItem("cses-user") || "");
-      updateNavBadges(currentCf, currentCses);
+      const currentCf = localStorage.getItem("cf-handle") || "";
+      const currentCses = localStorage.getItem("cses-user") || "";
+      const currentAtcoder = localStorage.getItem("atcoder-handle") || "";
+      updateNavBadges(currentCf, currentCses, currentAtcoder);
 
       // Trigger custom events to notify page-specific scripts if needed
       window.dispatchEvent(new CustomEvent("handlesynced", { detail: { key, value: val } }));
@@ -119,6 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  setupSyncListener(cfInput, mobCfInput, "cf-handle", true);
-  setupSyncListener(csesInput, mobCsesInput, "cses-user", false);
+  setupSyncListener(cfInput, mobCfInput, "cf-handle");
+  setupSyncListener(csesInput, mobCsesInput, "cses-user");
+  setupSyncListener(atcoderInput, mobAtcoderInput, "atcoder-handle");
 });

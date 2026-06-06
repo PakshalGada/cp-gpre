@@ -4,4 +4,5 @@
 core/__pycache__
 data/cses_progress_*.json
 data/progress_*.json
+core/scripts/__pycache__
 __pycache__

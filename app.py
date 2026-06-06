@@ -365,5 +365,66 @@ def compare_users():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+@app.route("/practice/problems")
+def practice_problems():
+    return render_template("practice_problems.html")
+
+
+@app.route("/api/practice/codeforces")
+def api_practice_codeforces():
+    cf_path = os.path.join("data", "codeforces_div_problems.json")
+    try:
+        with open(cf_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return jsonify({"success": True, "data": data})
+    except Exception as e:
+        return jsonify({"success": False, "error": f"Failed to load Codeforces problems: {str(e)}"}), 500
+
+
+@app.route("/api/practice/atcoder")
+def api_practice_atcoder():
+    ac_path = os.path.join("data", "atcoder_problems.json")
+    try:
+        with open(ac_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return jsonify({"success": True, "data": data})
+    except Exception as e:
+        return jsonify({"success": False, "error": f"Failed to load AtCoder problems: {str(e)}"}), 500
+
+
+@app.route("/api/practice/solved")
+def api_practice_solved():
+    cf_handle = request.args.get("handle", "").strip()
+    atcoder_handle = request.args.get("atcoder_handle", "").strip()
+
+    solved_cf = []
+    solved_ac = []
+
+    if cf_handle:
+        try:
+            profile = UserProfile(cf_handle)
+            profile.fetch()
+            solved_cf = [f"{cid}{idx}" for cid, idx in profile.solved_set]
+        except Exception as e:
+            print(f"Error fetching Codeforces solved for {cf_handle}: {e}")
+
+    if atcoder_handle:
+        try:
+            import requests
+            url = f"https://kenkoooo.com/atcoder/atcoder-api/v3/user/submissions?user={atcoder_handle}&from_second=0"
+            r = requests.get(url, timeout=15)
+            if r.status_code == 200:
+                subs = r.json()
+                solved_ac = [sub["problem_id"] for sub in subs if sub.get("result") == "AC"]
+        except Exception as e:
+            print(f"Error fetching AtCoder solved for {atcoder_handle}: {e}")
+
+    return jsonify({
+        "success": True,
+        "codeforces": solved_cf,
+        "atcoder": solved_ac
+    })
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)

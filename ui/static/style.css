@@ -139,6 +139,7 @@ body {
 }
 
 .navbar-inner {
+    position: relative;
     height: 100%;
     display: flex;
     align-items: center;
@@ -183,6 +184,10 @@ body {
 }
 
 .nav-links {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
     gap: 2px;
@@ -568,9 +573,9 @@ body {
     color: var(--color-active-text);
 }
 
-/* Badges for platforms */
 .badge-cf,
-.badge-cses {
+.badge-cses,
+.badge-atcoder {
     font-size: 9px;
     font-weight: 700;
     padding: 1px 4px;
@@ -587,6 +592,11 @@ body {
 .badge-cses {
     background-color: rgba(16, 185, 129, 0.1);
     color: #10b981;
+}
+
+.badge-atcoder {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
 }
 
 /* Navbar Top-Left Badges */
@@ -622,12 +632,21 @@ body {
     color: #10b981;
 }
 
+.nav-badge.atcoder-badge {
+    background-color: rgba(59, 130, 246, 0.05);
+    color: #3b82f6;
+}
+
 [data-theme="dark"] .nav-badge.cf-badge {
     background-color: rgba(249, 115, 22, 0.08);
 }
 
 [data-theme="dark"] .nav-badge.cses-badge {
     background-color: rgba(16, 185, 129, 0.08);
+}
+
+[data-theme="dark"] .nav-badge.atcoder-badge {
+    background-color: rgba(59, 130, 246, 0.08);
 }
 
 .nav-badge .badge-label {
