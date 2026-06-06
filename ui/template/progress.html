@@ -8,7 +8,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
             rel="stylesheet"
-            href="{{ url_for('static', filename='progress.css') }}"
+            href="{{ url_for('static', filename='progress.css') }}?v=1.0.1"
         />
         <!-- Chart.js CDN for visual graphs -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -488,7 +488,7 @@
         <!-- Positioning Tooltip for Heatmap Squares -->
         <div class="heatmap-tooltip" id="heatmap-tooltip"></div>
 
-        <script src="{{ url_for('static', filename='practice_common.js') }}"></script>
-        <script src="{{ url_for('static', filename='progress.js') }}"></script>
+        <script src="{{ url_for('static', filename='practice_common.js') }}?v=1.0.1"></script>
+        <script src="{{ url_for('static', filename='progress.js') }}?v=1.0.1"></script>
     </body>
 </html>
