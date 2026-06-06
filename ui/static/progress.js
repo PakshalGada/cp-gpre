@@ -52,6 +52,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 100);
     });
 
+    // Resize integration for Chart.js responsiveness
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (window.cachedProgressData) {
+                renderCharts(window.cachedProgressData);
+            }
+        }, 200);
+    });
+
     // Handle platform toggle buttons click
     toggleButtons.forEach(btn => {
         btn.addEventListener("click", () => {
@@ -482,11 +493,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 scales: {
                     x: {
-                        ticks: { color: themeColors.text, font: { family: "DM Sans, sans-serif" } },
+                        ticks: { 
+                            color: themeColors.text, 
+                            font: { 
+                                family: "DM Sans, sans-serif",
+                                size: window.innerWidth < 600 ? 9 : 11
+                            } 
+                        },
                         grid: { display: false }
                     },
                     y: {
-                        ticks: { color: themeColors.text, font: { family: "DM Sans, sans-serif" } },
+                        ticks: { 
+                            color: themeColors.text, 
+                            font: { 
+                                family: "DM Sans, sans-serif",
+                                size: window.innerWidth < 600 ? 9 : 11
+                            } 
+                        },
                         grid: { color: themeColors.grid }
                     }
                 }
@@ -538,10 +561,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'right',
+                        position: window.innerWidth < 600 ? 'bottom' : 'right',
                         labels: {
                             color: themeColors.text,
-                            font: { family: "DM Sans, sans-serif", size: 11.5 }
+                            font: { 
+                                family: "DM Sans, sans-serif", 
+                                size: window.innerWidth < 600 ? 10 : 11.5 
+                            }
                         }
                     },
                     tooltip: {

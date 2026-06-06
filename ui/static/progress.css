@@ -1,10 +1,10 @@
-@import url("style.css?v=1.0.1");
+@import url("style.css?v=1.0.5");
 
 /* ─── Layout & Page Styles ─── */
 .dashboard-container {
     max-width: 1024px;
     padding: 40px 24px;
-    margin: 54px auto 0;
+    margin: 0 auto;
     min-height: calc(100vh - var(--navbar-height) - 60px);
     display: flex;
     flex-direction: column;
@@ -471,28 +471,90 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .dashboard-container {
-        padding: 24px 16px;
+        padding: 20px 16px;
+        gap: 24px;
+    }
+
+    .dashboard-header {
+        margin-bottom: 24px;
     }
 
     .dashboard-title {
-        font-size: 36px;
+        font-size: 32px;
     }
 
     .dashboard-subtitle {
-        font-size: 15px;
+        font-size: 14.5px;
+    }
+
+    .card, .sync-card {
+        padding: 16px;
+        gap: 16px;
+    }
+
+    .sync-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .sync-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .sync-status {
+        text-align: center;
+    }
+
+    .heatmap-container-outer {
+        -webkit-overflow-scrolling: touch;
     }
 
     .charts-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
     }
 
     .chart-canvas-wrapper {
-        height: 280px;
+        height: 260px;
+    }
+
+    .heatmap-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
     }
 }
 
 @media (max-width: 480px) {
+    .dashboard-container {
+        padding: 16px 12px;
+        gap: 20px;
+    }
+
     .dashboard-title {
-        font-size: 28px;
+        font-size: 24px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 12px 8px;
+    }
+
+    .stat-value {
+        font-size: 20px;
+    }
+
+    .stat-label {
+        font-size: 10px;
+    }
+
+    .stat-sublabel {
+        font-size: 9px;
     }
 }

@@ -444,53 +444,6 @@ body {
     color: var(--color-active-text);
 }
 
-@media (max-width: 768px) {
-    .hamburger-btn {
-        display: flex;
-    }
-
-    .nav-links {
-        display: none;
-    }
-
-    .mobile-drawer {
-        display: flex;
-    }
-
-    .sidebar-overlay {
-        display: block;
-    }
-
-    /* Show compact nav on mobile navbar */
-    .navbar-inner {
-        gap: 8px;
-    }
-
-    .nav-right {
-        gap: 4px;
-    }
-
-    /* Hide desktop practice sidebar and collapse content on mobile */
-    .practice-sidebar {
-        display: none;
-    }
-    .practice-content {
-        margin-left: 0;
-    }
-}
-
-/* Small phones */
-@media (max-width: 480px) {
-    .navbar-inner {
-        padding: 0 16px;
-    }
-
-    .btn {
-        padding: 9px 16px;
-        font-size: 13px;
-    }
-}
-
 /* ─── Practice Left Sidebar Layout ─── */
 .practice-layout {
     display: flex;
@@ -522,6 +475,7 @@ body {
     display: flex;
     flex-direction: column;
 }
+
 
 /* Sidebar Profiles (CF and CSES Handles) */
 .sidebar-profile {
@@ -761,4 +715,55 @@ body {
     color: var(--color-text);
     font-size: 13px;
     font-family: inherit;
+}
+
+@media (max-width: 768px) {
+    .hamburger-btn {
+        display: flex;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .mobile-drawer {
+        display: flex;
+    }
+
+    .sidebar-overlay {
+        display: block;
+    }
+
+    /* Show compact nav on mobile navbar */
+    .navbar-inner {
+        gap: 8px;
+    }
+
+    .nav-right {
+        gap: 4px;
+    }
+
+    /* Hide desktop practice sidebar and collapse content on mobile */
+    .practice-sidebar {
+        display: none !important;
+    }
+    .practice-content {
+        margin-left: 0 !important;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    .navbar-inner {
+        padding: 0 16px;
+    }
+
+    .btn {
+        padding: 9px 16px;
+        font-size: 13px;
+    }
+
+    .nav-user-status {
+        display: none !important;
+    }
 }
