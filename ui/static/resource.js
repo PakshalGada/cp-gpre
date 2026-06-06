@@ -65,11 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const slugParam = urlParams.get("topic");
   if (slugParam) loadTopic(slugParam, false);
 
-  // Navbar scroll shadow
-  const navbar = document.getElementById("navbar");
-  window.addEventListener("scroll", () => {
-    navbar?.classList.toggle("scrolled", window.scrollY > 4);
-  });
+  // Navbar scroll shadow is handled in practice_common.js
 
   // ── Mobile sidebar ──
   const hamburger = document.getElementById("hamburger-btn");
@@ -95,17 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
       closeSidebar();
   });
 
-  // ── Theme ──
-  const saved = localStorage.getItem("theme");
-  if (saved) document.documentElement.setAttribute("data-theme", saved);
-
-  document.getElementById("theme-toggle")?.addEventListener("click", () => {
-    const isDark =
-      document.documentElement.getAttribute("data-theme") === "dark";
-    const next = isDark ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("theme", next);
-  });
+  // Theme and navbar scroll shadow are handled globally in practice_common.js
 
   // ── Sidebar search ──
   const searchInput = document.getElementById("sidebar-search");

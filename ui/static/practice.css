@@ -25,6 +25,166 @@ body {
     flex: 1;
 }
 
+/* ─── Practice Sub-navigation ─── */
+.practice-subnav {
+    margin-top: var(--navbar-height);
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    position: sticky;
+    top: var(--navbar-height);
+    z-index: 200;
+}
+
+.practice-subnav-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+}
+
+.subnav-link {
+    padding: 12px 16px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.subnav-link:hover {
+    color: var(--color-text);
+    background-color: var(--color-hover);
+}
+
+.subnav-link.active {
+    color: var(--color-text);
+    border-bottom-color: var(--color-accent);
+}
+
+/* When subnav is present, reduce container top padding */
+.practice-subnav + .practice-container {
+    padding-top: 40px;
+}
+
+/* ─── Hub Cards ─── */
+.hub-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.hub-card {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 32px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: inherit;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.hub-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 60%, rgba(194, 65, 12, 0.03));
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+[data-theme="dark"] .hub-card::before {
+    background: linear-gradient(135deg, transparent 60%, rgba(249, 115, 22, 0.04));
+}
+
+.hub-card:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.hub-card:hover::before {
+    opacity: 1;
+}
+
+.hub-card:hover .hub-card-arrow {
+    transform: translateX(4px);
+    color: var(--color-accent);
+}
+
+.hub-card-icon {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-hover);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    flex-shrink: 0;
+    color: var(--color-text);
+    transition: all var(--transition-base);
+}
+
+.hub-card:hover .hub-card-icon {
+    background-color: var(--color-active);
+    color: var(--color-active-text);
+    border-color: var(--color-active);
+}
+
+.hub-card-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.hub-card-title {
+    font-family: "Noto Serif", serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    margin-bottom: 8px;
+}
+
+.hub-card-description {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 14px;
+}
+
+.hub-card-features {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.hub-feature-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    background-color: var(--color-hover);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.02em;
+}
+
+.hub-card-arrow {
+    flex-shrink: 0;
+    color: var(--color-text-tertiary);
+    transition: all var(--transition-base);
+}
+
 .practice-header {
     text-align: center;
     margin-bottom: 48px;
@@ -411,74 +571,65 @@ body {
 }
 
 .rating-badge {
+    display: inline-block;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 700;
     font-family: "DM Mono", monospace;
-    font-weight: 600;
+    text-transform: capitalize;
 }
 
 .rating-newbie {
-    background-color: #cccccc;
-    color: #000000;
+    color: #808080;
 }
 .rating-pupil {
-    background-color: #77ff77;
-    color: #000000;
+    color: #00a92a;
 }
 .rating-specialist {
-    background-color: #77ddbb;
-    color: #000000;
+    color: #03a89e;
 }
 .rating-expert {
-    background-color: #aaaaff;
-    color: #000000;
+    color: #0000ff;
 }
 .rating-cm {
-    background-color: #ff88ff;
-    color: #000000;
+    color: #aa00aa;
 }
 .rating-master {
-    background-color: #ffcc88;
-    color: #000000;
+    color: #e67e22;
 }
 .rating-im {
-    background-color: #ffbb55;
-    color: #000000;
+    color: #e67e22;
 }
 .rating-gm {
-    background-color: #ff7777;
-    color: #000000;
+    color: #ff0000;
 }
 .rating-lgm {
-    background-color: #ff3333;
-    color: #ffffff;
+    color: #ff0000;
 }
 
-[data-theme="dark"] .rating-newbie {
-    background-color: #808080;
-    color: #ffffff;
-}
 [data-theme="dark"] .rating-pupil {
-    background-color: #3a8f3a;
-    color: #ffffff;
+    color: #77ff77;
 }
 [data-theme="dark"] .rating-specialist {
-    background-color: #3a9d8a;
-    color: #ffffff;
+    color: #77ddbb;
 }
 [data-theme="dark"] .rating-expert {
-    background-color: #5555cc;
-    color: #ffffff;
+    color: #aaaaff;
 }
 [data-theme="dark"] .rating-cm {
-    background-color: #cc55cc;
-    color: #ffffff;
+    color: #ff88ff;
 }
 [data-theme="dark"] .rating-master {
-    background-color: #cc8844;
-    color: #ffffff;
+    color: #ffcc88;
 }
 [data-theme="dark"] .rating-im {
-    background-color: #cc8822;
-    color: #ffffff;
+    color: #ffbb55;
+}
+[data-theme="dark"] .rating-gm {
+    color: #ff7777;
+}
+[data-theme="dark"] .rating-lgm {
+    color: #ff3333;
 }
 
 .problem-tags {

@@ -2,7 +2,7 @@ import json
 import os
 import sys
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, redirect, render_template, request
 
 from core.practice.cses_profile import CsesLoginError
 from core.practice.recommender import (
@@ -11,6 +11,7 @@ from core.practice.recommender import (
     get_contest_json,
     get_progress_json,
     get_recommendations_json,
+    get_virtual_contest_json,
 )
 
 app = Flask(__name__, static_folder="ui/static", template_folder="ui/template")
@@ -47,12 +48,22 @@ def resource():
 
 @app.route("/practice")
 def practice():
-    return render_template("practice.html")
+    return redirect("/practice/recommender")
 
 
-@app.route("/progress")
-def progress():
+@app.route("/practice/recommender")
+def practice_recommender():
+    return render_template("practice_recommender.html")
+
+
+@app.route("/practice/progress")
+def practice_progress():
     return render_template("progress.html")
+
+
+@app.route("/practice/contest")
+def practice_contest():
+    return render_template("practice_contest.html")
 
 
 @app.route("/api/topics")
@@ -268,6 +279,22 @@ def get_contest():
 
     try:
         result = get_contest_json(handle, division, count)
+        return jsonify({"success": True, "data": result})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/contest/generate")
+def generate_contest():
+    handle = request.args.get("handle")
+    division = int(request.args.get("division", 2))
+    count = int(request.args.get("count", 5))
+
+    if not handle:
+        return jsonify({"success": False, "error": "Handle is required"}), 400
+
+    try:
+        result = get_virtual_contest_json(handle, division, count)
         return jsonify({"success": True, "data": result})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500

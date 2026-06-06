@@ -3,15 +3,13 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Progress Dashboard — CP-GPRE</title>
+        <title>Contest Simulator - CP-GPRE</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
             rel="stylesheet"
-            href="{{ url_for('static', filename='progress.css') }}"
+            href="{{ url_for('static', filename='practice_contest.css') }}"
         />
-        <!-- Chart.js CDN for visual graphs -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <link
             rel="icon"
             type="image/png"
@@ -19,7 +17,6 @@
         />
     </head>
     <body>
-        <!-- ── Navbar ── -->
         <nav class="navbar" id="navbar">
             <div class="navbar-inner">
                 <div class="nav-left">
@@ -88,12 +85,11 @@
             </div>
         </nav>
 
-        <!-- ── Mobile Drawer ── -->
         <div class="sidebar-overlay" id="sidebar-overlay"></div>
         <div class="mobile-drawer" id="mobile-drawer">
             <div class="mobile-drawer-header">
                 <a href="/" class="nav-logo">
-                    CP GPRE <span class="nav-version">v0.1</span>
+                    CP GPRE <span class="nav-version">v1</span>
                 </a>
                 <button
                     class="hamburger-btn"
@@ -130,13 +126,13 @@
                         >
                         <a
                             href="/practice/progress"
-                            class="drawer-menu-link active"
+                            class="drawer-menu-link"
                             id="mobile-link-progress"
                             >Progress Tracker</a
                         >
                         <a
                             href="/practice/contest"
-                            class="drawer-menu-link"
+                            class="drawer-menu-link active"
                             id="mobile-link-contest"
                             >Contest Simulator</a
                         >
@@ -230,7 +226,7 @@
                     </a>
                     <a
                         href="/practice/progress"
-                        class="sidebar-menu-link active"
+                        class="sidebar-menu-link"
                         id="sidebar-link-progress"
                     >
                         <svg
@@ -250,7 +246,7 @@
                     </a>
                     <a
                         href="/practice/contest"
-                        class="sidebar-menu-link"
+                        class="sidebar-menu-link active"
                         id="sidebar-link-contest"
                     >
                         <svg
@@ -272,201 +268,249 @@
 
             <!-- Main Content Area -->
             <div class="practice-content">
-                <div class="dashboard-container">
-                    <section class="dashboard-header">
-                        <h1 class="dashboard-title">Progress Tracker</h1>
-                        <p class="dashboard-subtitle">
-                            Analyze your solved problems, rating distribution,
-                            and submission frequency.
+                <div class="contest-container">
+                    <!-- Header -->
+                    <section class="practice-header">
+                        <h1 class="practice-title">Contest Simulator</h1>
+                        <p class="practice-subtitle">
+                            Simulate a competitive programming contest with
+                            problems tailored to your level. Pick a division,
+                            generate problems, and race against the clock.
                         </p>
                     </section>
 
-                    <!-- Accounts Sync Control Card -->
-                    <section class="sync-section">
-                        <div class="sync-card">
-                            <div class="sync-row">
+                    <!-- Configuration -->
+                    <section class="config-section">
+                        <div class="config-card">
+                            <div class="config-row">
                                 <div class="form-group">
-                                    <label for="cses-password"
-                                        >CSES Password (only for sync)</label
+                                    <label for="problem-count"
+                                        >Problem Count</label
                                     >
                                     <input
-                                        type="password"
-                                        id="cses-password"
-                                        placeholder="Required to sync new solves"
+                                        type="number"
+                                        id="problem-count"
+                                        value="5"
+                                        min="3"
+                                        max="10"
                                         class="form-input"
-                                        autocomplete="current-password"
                                     />
                                 </div>
                             </div>
-                            <div class="sync-actions">
-                                <button class="btn btn-primary" id="sync-btn">
-                                    <svg
-                                        class="icon icon-sync"
-                                        viewBox="0 0 24 24"
+
+                            <!-- Division Selector -->
+                            <div class="form-group full-width">
+                                <label>Division</label>
+                                <div class="division-cards">
+                                    <button
+                                        class="division-card"
+                                        data-division="1"
                                     >
-                                        <path
-                                            d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"
-                                        />
-                                    </svg>
-                                    <span>Sync Progress Now</span>
-                                </button>
-                                <span class="sync-status" id="sync-status-msg"
-                                    >Not synced yet</span
+                                        <div class="div-card-header">
+                                            <span class="div-card-badge"
+                                                >Div 1</span
+                                            >
+                                        </div>
+                                        <div class="div-card-rating">1900+</div>
+                                        <div class="div-card-desc">
+                                            Advanced competitive programmers
+                                        </div>
+                                    </button>
+                                    <button
+                                        class="division-card"
+                                        data-division="2"
+                                    >
+                                        <div class="div-card-header">
+                                            <span class="div-card-badge"
+                                                >Div 2</span
+                                            >
+                                        </div>
+                                        <div class="div-card-rating">
+                                            1200 – 1899
+                                        </div>
+                                        <div class="div-card-desc">
+                                            Intermediate problem solvers
+                                        </div>
+                                    </button>
+                                    <button
+                                        class="division-card"
+                                        data-division="3"
+                                    >
+                                        <div class="div-card-header">
+                                            <span class="div-card-badge"
+                                                >Div 3</span
+                                            >
+                                        </div>
+                                        <div class="div-card-rating">
+                                            800 – 1199
+                                        </div>
+                                        <div class="div-card-desc">
+                                            Growing contestants
+                                        </div>
+                                    </button>
+                                    <button
+                                        class="division-card"
+                                        data-division="4"
+                                    >
+                                        <div class="div-card-header">
+                                            <span class="div-card-badge"
+                                                >Div 4</span
+                                            >
+                                        </div>
+                                        <div class="div-card-rating">
+                                            0 – 799
+                                        </div>
+                                        <div class="div-card-desc">
+                                            Beginners welcome
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Generate Button -->
+                            <div class="action-buttons">
+                                <button
+                                    class="btn btn-primary"
+                                    id="generate-contest"
                                 >
+                                    <span>Generate Contest</span>
+                                </button>
                             </div>
                         </div>
                     </section>
 
+                    <!-- Loading State -->
                     <div id="loading-state" class="loading-state hidden">
                         <div class="spinner"></div>
-                        <p>Fetching and aggregating your solved data...</p>
+                        <p>Generating your contest...</p>
                     </div>
 
+                    <!-- Error State -->
                     <div id="error-state" class="error-state hidden">
                         <p class="error-message"></p>
                     </div>
 
-                    <!-- Stats Overview Grid -->
-                    <section id="stats-overview" class="stats-overview hidden">
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-label">CF Rating</div>
-                                <div class="stat-value" id="cf-rating">-</div>
-                                <div class="stat-sublabel" id="cf-rank">-</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-label">Codeforces Solved</div>
-                                <div class="stat-value" id="cf-solved">-</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-label">CSES Solved</div>
-                                <div class="stat-value" id="cses-solved">-</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-label">Total Solved</div>
-                                <div class="stat-value" id="total-solved">
-                                    -
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Heatmap Section -->
-                    <section
-                        id="heatmap-section"
-                        class="heatmap-section card hidden"
-                    >
-                        <div class="card-header">
-                            <h2 class="card-title">
-                                Activity Heatmap (Past 365 Days)
-                            </h2>
-                            <div class="platform-toggle">
-                                <button
-                                    class="toggle-btn active"
-                                    data-platform="both"
-                                >
-                                    Both
-                                </button>
-                                <button
-                                    class="toggle-btn"
-                                    data-platform="codeforces"
-                                >
-                                    Codeforces
-                                </button>
-                                <button class="toggle-btn" data-platform="cses">
-                                    CSES
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Heatmap grid wrapper -->
-                        <div class="heatmap-container-outer">
-                            <div class="heatmap-grid" id="heatmap-grid"></div>
-                        </div>
-
-                        <!-- Heatmap Legend and Warnings -->
-                        <div class="heatmap-footer">
-                            <div class="heatmap-warning" id="cses-warning-msg">
-                                * Historical CSES solved problems are grouped
-                                under your first sync date. Subsequent solves
-                                are tracked daily.
-                            </div>
-                            <div class="heatmap-legends">
-                                <div class="legend-group" id="cf-legend">
-                                    <span class="legend-label">CF Rating:</span>
-                                    <div class="legend-squares">
-                                        <span
-                                            class="legend-sq cf-newbie"
-                                            title="Newbie (< 1200)"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cf-pupil"
-                                            title="Pupil (1200-1399)"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cf-specialist"
-                                            title="Specialist (1400-1599)"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cf-expert"
-                                            title="Expert (1600-1899)"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cf-cm"
-                                            title="Candidate Master (1900-2099)"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cf-master"
-                                            title="Master (2100-2299)"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cf-gm"
-                                            title="Grandmaster/LGM (>= 2400)"
-                                        ></span>
-                                    </div>
-                                </div>
-                                <div class="legend-group" id="cses-legend">
-                                    <span class="legend-label"
-                                        >CSES Solves:</span
+                    <!-- Timer Section (hidden until contest generated) -->
+                    <section id="timer-section" class="timer-section hidden">
+                        <div class="timer-card">
+                            <div class="timer-header">
+                                <h2 class="timer-title">Contest Timer</h2>
+                                <div class="timer-custom-input">
+                                    <label for="custom-hours">Custom:</label>
+                                    <input
+                                        type="number"
+                                        id="custom-hours"
+                                        class="form-input timer-input"
+                                        min="0"
+                                        max="5"
+                                        value="2"
+                                        placeholder="H"
+                                    />
+                                    <span class="timer-separator">:</span>
+                                    <input
+                                        type="number"
+                                        id="custom-minutes"
+                                        class="form-input timer-input"
+                                        min="0"
+                                        max="59"
+                                        value="0"
+                                        placeholder="M"
+                                    />
+                                    <button
+                                        class="btn btn-secondary btn-sm"
+                                        id="set-custom-time"
                                     >
-                                    <div class="legend-squares">
-                                        <span
-                                            class="legend-sq cses-1"
-                                            title="1 Solved"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cses-2"
-                                            title="2 Solved"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cses-3"
-                                            title="3+ Solved"
-                                        ></span>
-                                    </div>
+                                        Set
+                                    </button>
                                 </div>
+                            </div>
+                            <div class="timer-display-wrapper">
+                                <div class="timer-display" id="timer-display">
+                                    02:00:00
+                                </div>
+                                <div class="timer-label" id="timer-label">
+                                    Ready to start
+                                </div>
+                            </div>
+                            <div class="timer-controls">
+                                <button
+                                    class="btn btn-primary"
+                                    id="timer-start"
+                                >
+                                    <svg
+                                        width="14"
+                                        height="14"
+                                        viewBox="0 0 16 16"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                    >
+                                        <polygon points="4,2 14,8 4,14" />
+                                    </svg>
+                                    Start
+                                </button>
+                                <button
+                                    class="btn btn-secondary"
+                                    id="timer-pause"
+                                    disabled
+                                >
+                                    <svg
+                                        width="14"
+                                        height="14"
+                                        viewBox="0 0 16 16"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                    >
+                                        <line x1="5" y1="3" x2="5" y2="13" />
+                                        <line x1="11" y1="3" x2="11" y2="13" />
+                                    </svg>
+                                    Pause
+                                </button>
+                                <button
+                                    class="btn btn-secondary"
+                                    id="timer-reset"
+                                >
+                                    <svg
+                                        width="14"
+                                        height="14"
+                                        viewBox="0 0 16 16"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                    >
+                                        <path d="M3 3v4h4" />
+                                        <path d="M3 7a6 6 0 1 1 1 5" />
+                                    </svg>
+                                    Reset
+                                </button>
                             </div>
                         </div>
                     </section>
 
-                    <!-- Chart Visualizations Section -->
-                    <section id="charts-section" class="charts-section hidden">
-                        <div class="charts-grid">
-                            <div class="chart-card card">
-                                <h2 class="card-title">
-                                    Codeforces Solved per Rating
-                                </h2>
-                                <div class="chart-canvas-wrapper">
-                                    <canvas id="cf-rating-chart"></canvas>
-                                </div>
-                            </div>
-                            <div class="chart-card card">
-                                <h2 class="card-title">
-                                    Codeforces Solved per Tag
-                                </h2>
-                                <div class="chart-canvas-wrapper">
-                                    <canvas id="cf-tag-chart"></canvas>
-                                </div>
-                            </div>
+                    <!-- Problems Table (hidden until generated) -->
+                    <section
+                        id="problems-section"
+                        class="problems-section hidden"
+                    >
+                        <div class="section-header">
+                            <h2 class="section-title">Contest Problems</h2>
+                            <div class="section-meta" id="problems-meta"></div>
+                        </div>
+                        <div class="problems-table-wrapper">
+                            <table class="contest-problems-table">
+                                <thead>
+                                    <tr>
+                                        <th class="col-index">#</th>
+                                        <th class="col-name">Problem</th>
+                                        <th class="col-rating">Rating</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="problems-tbody"></tbody>
+                            </table>
                         </div>
                     </section>
                 </div>
@@ -476,7 +520,6 @@
                         <a
                             href="https://github.com/PakshalGada/cp-gpre"
                             target="_blank"
-                            rel="noopener"
                         >
                             Contribute on GitHub
                         </a>
@@ -485,10 +528,7 @@
             </div>
         </main>
 
-        <!-- Positioning Tooltip for Heatmap Squares -->
-        <div class="heatmap-tooltip" id="heatmap-tooltip"></div>
-
         <script src="{{ url_for('static', filename='practice_common.js') }}"></script>
-        <script src="{{ url_for('static', filename='progress.js') }}"></script>
+        <script src="{{ url_for('static', filename='practice_contest.js') }}"></script>
     </body>
 </html>

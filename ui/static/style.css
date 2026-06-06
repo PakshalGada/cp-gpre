@@ -154,7 +154,7 @@ body {
 }
 
 .nav-logo {
-    font-family: "DM Serif Display", "Noto Serif", serif;
+    font-family: "Noto Serif", serif;
     font-size: 16px;
     font-weight: 400;
     letter-spacing: -0.01em;
@@ -469,6 +469,14 @@ body {
     .nav-right {
         gap: 4px;
     }
+
+    /* Hide desktop practice sidebar and collapse content on mobile */
+    .practice-sidebar {
+        display: none;
+    }
+    .practice-content {
+        margin-left: 0;
+    }
 }
 
 /* Small phones */
@@ -481,4 +489,276 @@ body {
         padding: 9px 16px;
         font-size: 13px;
     }
+}
+
+/* ─── Practice Left Sidebar Layout ─── */
+.practice-layout {
+    display: flex;
+    min-height: calc(100vh - var(--navbar-height));
+    margin-top: var(--navbar-height);
+    background-color: var(--color-bg);
+}
+
+.practice-sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--color-border);
+    position: fixed;
+    top: var(--navbar-height);
+    bottom: 0;
+    left: 0;
+    padding: 24px 20px;
+    overflow-y: auto;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.practice-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sidebar Profiles (CF and CSES Handles) */
+.sidebar-profile {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.sidebar-profile-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+}
+
+.sidebar-profile-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidebar-profile-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sidebar-profile-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-size: 13px;
+    font-family: inherit;
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.sidebar-profile-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(194, 65, 12, 0.1);
+}
+
+/* Sidebar Navigation Menu */
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidebar-menu-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+    margin-bottom: 8px;
+}
+
+.sidebar-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.sidebar-menu-link:hover {
+    background-color: var(--color-hover);
+    color: var(--color-text);
+}
+
+.sidebar-menu-link.active {
+    background-color: var(--color-active);
+    color: var(--color-active-text);
+}
+
+/* Badges for platforms */
+.badge-cf,
+.badge-cses {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 3px;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.badge-cf {
+    background-color: rgba(194, 65, 12, 0.1);
+    color: var(--color-accent);
+}
+
+.badge-cses {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+/* Navbar Top-Left Badges */
+.nav-user-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 12px;
+}
+
+.nav-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: "DM Mono", monospace;
+    border: 1px solid var(--color-border);
+    transition:
+        background-color var(--transition-base),
+        border-color var(--transition-base);
+}
+
+.nav-badge.cf-badge {
+    background-color: rgba(194, 65, 12, 0.05);
+    color: var(--color-accent);
+}
+
+.nav-badge.cses-badge {
+    background-color: rgba(16, 185, 129, 0.05);
+    color: #10b981;
+}
+
+[data-theme="dark"] .nav-badge.cf-badge {
+    background-color: rgba(249, 115, 22, 0.08);
+}
+
+[data-theme="dark"] .nav-badge.cses-badge {
+    background-color: rgba(16, 185, 129, 0.08);
+}
+
+.nav-badge .badge-label {
+    opacity: 0.65;
+    font-weight: 600;
+}
+
+.nav-badge .badge-value {
+    font-weight: 500;
+}
+
+/* Mobile Drawer Extensions */
+.drawer-section {
+    padding: 16px 12px;
+    border-top: 1px solid var(--color-border);
+}
+
+.drawer-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+    padding-left: 12px;
+}
+
+.drawer-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.drawer-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.drawer-menu-link:hover {
+    background-color: var(--color-hover);
+    color: var(--color-text);
+}
+
+.drawer-menu-link.active {
+    background-color: var(--color-active);
+    color: var(--color-active-text);
+}
+
+.drawer-profile-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 12px;
+}
+
+.drawer-profile-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.drawer-profile-field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.drawer-profile-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-size: 13px;
+    font-family: inherit;
 }

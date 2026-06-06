@@ -51,6 +51,7 @@ __all__ = [
     "get_recommendations_json",
     "get_progress_json",
     "get_contest_json",
+    "get_virtual_contest_json",
 ]
 
 
@@ -328,6 +329,17 @@ class ContestSimulator:
             if (p.get("contestId"), p.get("index")) not in self.profile.solved_set
         ]
 
+    # Default rating targets per division slot (progressive difficulty)
+    DIVISION_RATINGS = {
+        1: [1900, 2100, 2300, 2600, 2900],
+        2: [800, 1100, 1400, 1700, 2100],
+        3: [800, 900, 1100, 1300, 1500, 1700],
+        4: [800, 800, 900, 1000, 1100, 1200, 1400],
+    }
+
+    # Tolerance range around target rating for finding problems
+    RATING_TOLERANCE = 200
+
     def recommend_div_contests(self, division: int, count: int = 5) -> list:
         contests = APIClient.cf_get("contest.list")
 
@@ -360,6 +372,88 @@ class ContestSimulator:
                 continue
 
         return recommendations
+
+    def generate_virtual_contest(self, division: int, count: int = 5) -> list:
+        """Generate a virtual contest of unsolved problems with progressive difficulty.
+
+        Picks `count` unsolved Codeforces problems whose ratings match the
+        chosen division's typical difficulty spread, sorted easy → hard.
+        """
+        import random
+
+        base_targets = self.DIVISION_RATINGS.get(division, self.DIVISION_RATINGS[2])
+
+        # Interpolate or truncate the base targets to match requested count
+        if count <= len(base_targets):
+            targets = base_targets[:count]
+        else:
+            # Extend by interpolating between existing targets
+            targets = list(base_targets)
+            while len(targets) < count:
+                last = targets[-1]
+                step = 100 if division >= 3 else 200
+                targets.append(min(last + step, 3500))
+
+        cf_problems = ProblemLoader.load_codeforces()
+
+        # Filter to unsolved, rated problems only
+        unsolved = [
+            p for p in cf_problems
+            if p.get("rating") is not None
+            and (p.get("contestId"), p.get("index")) not in self.profile.solved_set
+        ]
+
+        selected = []
+        used_keys = set()
+
+        for slot_idx, target_rating in enumerate(targets):
+            tolerance = self.RATING_TOLERANCE
+            candidates = [
+                p for p in unsolved
+                if abs(p["rating"] - target_rating) <= tolerance
+                and (p.get("contestId"), p.get("index")) not in used_keys
+            ]
+
+            # Widen tolerance if not enough candidates
+            if len(candidates) < 3:
+                tolerance = 400
+                candidates = [
+                    p for p in unsolved
+                    if abs(p["rating"] - target_rating) <= tolerance
+                    and (p.get("contestId"), p.get("index")) not in used_keys
+                ]
+
+            if not candidates:
+                continue
+
+            # Sort by closeness to target, then shuffle top candidates for variety
+            candidates.sort(key=lambda p: abs(p["rating"] - target_rating))
+            top_pool = candidates[:max(20, len(candidates) // 4)]
+            pick = random.choice(top_pool)
+
+            key = (pick.get("contestId"), pick.get("index"))
+            used_keys.add(key)
+
+            letter = chr(ord("A") + slot_idx)
+            selected.append({
+                "index": letter,
+                "problemIndex": pick.get("index"),
+                "contestId": pick.get("contestId"),
+                "name": pick.get("name"),
+                "rating": pick.get("rating"),
+                "tags": pick.get("tags", []),
+                "url": pick.get("url",
+                    f"https://codeforces.com/problemset/problem/{pick.get('contestId')}/{pick.get('index')}"
+                ),
+            })
+
+        # Final sort by rating (easy → hard)
+        selected.sort(key=lambda p: (p["rating"], p["index"]))
+        # Re-assign letter indices after sorting
+        for i, p in enumerate(selected):
+            p["index"] = chr(ord("A") + i)
+
+        return selected
 
 
 class TopicAnalyzer:
@@ -1155,6 +1249,22 @@ def get_contest_json(handle: str, division: int = 2, contest_count: int = 5) -> 
         },
         "division": division,
         "contests": contests,
+    }
+
+
+def get_virtual_contest_json(
+    handle: str, division: int = 2, count: int = 5
+) -> dict:
+    """Generate a virtual contest with unsolved problems at progressive difficulty."""
+    profile = UserProfile(handle)
+    profile.fetch()
+
+    simulator = ContestSimulator(profile)
+    problems = simulator.generate_virtual_contest(division, count)
+
+    return {
+        "division": division,
+        "problems": problems,
     }
 
 

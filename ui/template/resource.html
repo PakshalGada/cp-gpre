@@ -55,7 +55,11 @@
             async
             src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
         ></script>
-        <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/favicon.png') }}" />
+        <link
+            rel="icon"
+            type="image/png"
+            href="{{ url_for('static', filename='assets/favicon.png') }}"
+        />
     </head>
     <body>
         <div class="app-container">
@@ -82,8 +86,9 @@
                             </svg>
                         </button>
                         <a href="/" class="nav-logo">
-                            CP GPRE <span class="nav-version">v0.1</span>
+                            CP GPRE <span class="nav-version">v1</span>
                         </a>
+                        <div class="nav-user-status" id="nav-user-status"></div>
                     </div>
 
                     <!-- Desktop nav links -->
@@ -100,12 +105,6 @@
                             class="nav-link"
                             data-page="practice"
                             >Practice</a
-                        >
-                        <a
-                            href="/progress"
-                            class="nav-link"
-                            data-page="progress"
-                            >Progress</a
                         >
                     </div>
 
@@ -231,6 +230,7 @@
             </main>
         </div>
 
+        <script src="{{ url_for('static', filename='practice_common.js') }}"></script>
         <script src="{{ url_for('static', filename='resource.js') }}"></script>
     </body>
 </html>

@@ -3,15 +3,13 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Progress Dashboard — CP-GPRE</title>
+        <title>Problem Recommender - CP-GPRE</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
             rel="stylesheet"
-            href="{{ url_for('static', filename='progress.css') }}"
+            href="{{ url_for('static', filename='practice.css') }}"
         />
-        <!-- Chart.js CDN for visual graphs -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <link
             rel="icon"
             type="image/png"
@@ -19,7 +17,6 @@
         />
     </head>
     <body>
-        <!-- ── Navbar ── -->
         <nav class="navbar" id="navbar">
             <div class="navbar-inner">
                 <div class="nav-left">
@@ -88,7 +85,6 @@
             </div>
         </nav>
 
-        <!-- ── Mobile Drawer ── -->
         <div class="sidebar-overlay" id="sidebar-overlay"></div>
         <div class="mobile-drawer" id="mobile-drawer">
             <div class="mobile-drawer-header">
@@ -124,13 +120,13 @@
                     <div class="drawer-menu">
                         <a
                             href="/practice/recommender"
-                            class="drawer-menu-link"
+                            class="drawer-menu-link active"
                             id="mobile-link-recommender"
                             >Problem Recommender</a
                         >
                         <a
                             href="/practice/progress"
-                            class="drawer-menu-link active"
+                            class="drawer-menu-link"
                             id="mobile-link-progress"
                             >Progress Tracker</a
                         >
@@ -211,7 +207,7 @@
                     <div class="sidebar-menu-title">Practice Menu</div>
                     <a
                         href="/practice/recommender"
-                        class="sidebar-menu-link"
+                        class="sidebar-menu-link active"
                         id="sidebar-link-recommender"
                     >
                         <svg
@@ -230,7 +226,7 @@
                     </a>
                     <a
                         href="/practice/progress"
-                        class="sidebar-menu-link active"
+                        class="sidebar-menu-link"
                         id="sidebar-link-progress"
                     >
                         <svg
@@ -272,202 +268,223 @@
 
             <!-- Main Content Area -->
             <div class="practice-content">
-                <div class="dashboard-container">
-                    <section class="dashboard-header">
-                        <h1 class="dashboard-title">Progress Tracker</h1>
-                        <p class="dashboard-subtitle">
-                            Analyze your solved problems, rating distribution,
-                            and submission frequency.
+                <div class="practice-container">
+                    <section class="practice-header">
+                        <h1 class="practice-title">Problem Recommender</h1>
+                        <p class="practice-subtitle">
+                            Get personalized problem recommendations based on
+                            your Codeforces/cses profile
                         </p>
                     </section>
 
-                    <!-- Accounts Sync Control Card -->
-                    <section class="sync-section">
-                        <div class="sync-card">
-                            <div class="sync-row">
+                    <section class="config-section">
+                        <div class="config-card">
+                            <div class="config-row">
+                                <div class="form-group">
+                                    <label for="problem-count">Count</label>
+                                    <input
+                                        type="number"
+                                        id="problem-count"
+                                        value="8"
+                                        min="1"
+                                        max="20"
+                                        class="form-input"
+                                    />
+                                </div>
                                 <div class="form-group">
                                     <label for="cses-password"
-                                        >CSES Password (only for sync)</label
+                                        >CSES password (sync only)</label
                                     >
                                     <input
                                         type="password"
                                         id="cses-password"
-                                        placeholder="Required to sync new solves"
+                                        placeholder="Used once to refresh progress"
                                         class="form-input"
                                         autocomplete="current-password"
                                     />
                                 </div>
                             </div>
-                            <div class="sync-actions">
-                                <button class="btn btn-primary" id="sync-btn">
-                                    <svg
-                                        class="icon icon-sync"
-                                        viewBox="0 0 24 24"
+                            <p class="mode-description">
+                                Your username is saved in the browser. Password
+                                is used only when syncing and is never stored.
+                            </p>
+
+                            <div class="config-row">
+                                <div class="form-group full-width">
+                                    <label>Recommendation Mode</label>
+                                    <div class="mode-buttons">
+                                        <button
+                                            class="mode-btn active"
+                                            data-mode="balanced"
+                                        >
+                                            Balanced
+                                        </button>
+                                        <button
+                                            class="mode-btn"
+                                            data-mode="stretch"
+                                        >
+                                            Stretch
+                                        </button>
+                                        <button
+                                            class="mode-btn"
+                                            data-mode="weak-topics"
+                                        >
+                                            Weak Topics
+                                        </button>
+                                        <button
+                                            class="mode-btn"
+                                            data-mode="explore"
+                                        >
+                                            Explore
+                                        </button>
+                                        <button
+                                            class="mode-btn"
+                                            data-mode="grind"
+                                        >
+                                            Grind
+                                        </button>
+                                    </div>
+                                    <p
+                                        class="mode-description"
+                                        id="mode-description"
                                     >
-                                        <path
-                                            d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"
-                                        />
-                                    </svg>
-                                    <span>Sync Progress Now</span>
-                                </button>
-                                <span class="sync-status" id="sync-status-msg"
-                                    >Not synced yet</span
+                                        Weak topics + slight rating push
+                                        (default)
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="config-row">
+                                <div class="form-group">
+                                    <label for="platform-filter"
+                                        >Platform</label
+                                    >
+                                    <select
+                                        id="platform-filter"
+                                        class="form-select"
+                                    >
+                                        <option value="">Both</option>
+                                        <option value="codeforces">
+                                            Codeforces
+                                        </option>
+                                        <option value="cses">CSES</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tags-filter"
+                                        >Tags (comma-separated)</label
+                                    >
+                                    <input
+                                        type="text"
+                                        id="tags-filter"
+                                        placeholder="dp, graphs"
+                                        class="form-input"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="config-row">
+                                <div class="form-group">
+                                    <label for="min-rating">Min Rating</label>
+                                    <input
+                                        type="number"
+                                        id="min-rating"
+                                        placeholder="Auto"
+                                        class="form-input"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label for="max-rating">Max Rating</label>
+                                    <input
+                                        type="number"
+                                        id="max-rating"
+                                        placeholder="Auto"
+                                        class="form-input"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="action-buttons">
+                                <button
+                                    class="btn btn-primary"
+                                    id="get-recommendations"
                                 >
+                                    <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 16 16"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                    >
+                                        <path d="M8 2v12M2 8h12" />
+                                    </svg>
+                                    <span>Get Recommendations</span>
+                                </button>
                             </div>
                         </div>
                     </section>
 
                     <div id="loading-state" class="loading-state hidden">
                         <div class="spinner"></div>
-                        <p>Fetching and aggregating your solved data...</p>
+                        <p>Loading...</p>
                     </div>
 
                     <div id="error-state" class="error-state hidden">
                         <p class="error-message"></p>
                     </div>
 
-                    <!-- Stats Overview Grid -->
-                    <section id="stats-overview" class="stats-overview hidden">
+                    <section id="user-stats" class="user-stats hidden">
                         <div class="stats-grid">
                             <div class="stat-card">
-                                <div class="stat-label">CF Rating</div>
-                                <div class="stat-value" id="cf-rating">-</div>
-                                <div class="stat-sublabel" id="cf-rank">-</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-label">Codeforces Solved</div>
-                                <div class="stat-value" id="cf-solved">-</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-label">CSES Solved</div>
-                                <div class="stat-value" id="cses-solved">-</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-label">Total Solved</div>
-                                <div class="stat-value" id="total-solved">
+                                <div class="stat-label">Rating</div>
+                                <div class="stat-value" id="user-rating">-</div>
+                                <div class="stat-sublabel" id="user-rank">
                                     -
                                 </div>
                             </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Solved</div>
+                                <div class="stat-value" id="user-solved">-</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Submission Streak</div>
+                                <div class="stat-value" id="submission-streak">
+                                    -
+                                </div>
+                                <div class="stat-sublabel">days</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Solve Streak</div>
+                                <div class="stat-value" id="solve-streak">
+                                    -
+                                </div>
+                                <div class="stat-sublabel">days</div>
+                            </div>
                         </div>
+                        <div
+                            class="weak-topics"
+                            id="weak-topics-container"
+                        ></div>
+                        <p id="cses-stats" class="cses-stats hidden"></p>
                     </section>
 
-                    <!-- Heatmap Section -->
                     <section
-                        id="heatmap-section"
-                        class="heatmap-section card hidden"
+                        id="recommendations-section"
+                        class="recommendations-section hidden"
                     >
-                        <div class="card-header">
-                            <h2 class="card-title">
-                                Activity Heatmap (Past 365 Days)
-                            </h2>
-                            <div class="platform-toggle">
-                                <button
-                                    class="toggle-btn active"
-                                    data-platform="both"
-                                >
-                                    Both
-                                </button>
-                                <button
-                                    class="toggle-btn"
-                                    data-platform="codeforces"
-                                >
-                                    Codeforces
-                                </button>
-                                <button class="toggle-btn" data-platform="cses">
-                                    CSES
-                                </button>
-                            </div>
+                        <div class="section-header">
+                            <h2 class="section-title">Recommended Problems</h2>
+                            <div
+                                class="section-meta"
+                                id="recommendations-meta"
+                            ></div>
                         </div>
-
-                        <!-- Heatmap grid wrapper -->
-                        <div class="heatmap-container-outer">
-                            <div class="heatmap-grid" id="heatmap-grid"></div>
-                        </div>
-
-                        <!-- Heatmap Legend and Warnings -->
-                        <div class="heatmap-footer">
-                            <div class="heatmap-warning" id="cses-warning-msg">
-                                * Historical CSES solved problems are grouped
-                                under your first sync date. Subsequent solves
-                                are tracked daily.
-                            </div>
-                            <div class="heatmap-legends">
-                                <div class="legend-group" id="cf-legend">
-                                    <span class="legend-label">CF Rating:</span>
-                                    <div class="legend-squares">
-                                        <span
-                                            class="legend-sq cf-newbie"
-                                            title="Newbie (< 1200)"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cf-pupil"
-                                            title="Pupil (1200-1399)"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cf-specialist"
-                                            title="Specialist (1400-1599)"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cf-expert"
-                                            title="Expert (1600-1899)"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cf-cm"
-                                            title="Candidate Master (1900-2099)"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cf-master"
-                                            title="Master (2100-2299)"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cf-gm"
-                                            title="Grandmaster/LGM (>= 2400)"
-                                        ></span>
-                                    </div>
-                                </div>
-                                <div class="legend-group" id="cses-legend">
-                                    <span class="legend-label"
-                                        >CSES Solves:</span
-                                    >
-                                    <div class="legend-squares">
-                                        <span
-                                            class="legend-sq cses-1"
-                                            title="1 Solved"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cses-2"
-                                            title="2 Solved"
-                                        ></span>
-                                        <span
-                                            class="legend-sq cses-3"
-                                            title="3+ Solved"
-                                        ></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Chart Visualizations Section -->
-                    <section id="charts-section" class="charts-section hidden">
-                        <div class="charts-grid">
-                            <div class="chart-card card">
-                                <h2 class="card-title">
-                                    Codeforces Solved per Rating
-                                </h2>
-                                <div class="chart-canvas-wrapper">
-                                    <canvas id="cf-rating-chart"></canvas>
-                                </div>
-                            </div>
-                            <div class="chart-card card">
-                                <h2 class="card-title">
-                                    Codeforces Solved per Tag
-                                </h2>
-                                <div class="chart-canvas-wrapper">
-                                    <canvas id="cf-tag-chart"></canvas>
-                                </div>
-                            </div>
-                        </div>
+                        <div
+                            id="recommendations-list"
+                            class="recommendations-list"
+                        ></div>
                     </section>
                 </div>
 
@@ -476,7 +493,6 @@
                         <a
                             href="https://github.com/PakshalGada/cp-gpre"
                             target="_blank"
-                            rel="noopener"
                         >
                             Contribute on GitHub
                         </a>
@@ -485,10 +501,7 @@
             </div>
         </main>
 
-        <!-- Positioning Tooltip for Heatmap Squares -->
-        <div class="heatmap-tooltip" id="heatmap-tooltip"></div>
-
         <script src="{{ url_for('static', filename='practice_common.js') }}"></script>
-        <script src="{{ url_for('static', filename='progress.js') }}"></script>
+        <script src="{{ url_for('static', filename='practice_recommender.js') }}"></script>
     </body>
 </html>

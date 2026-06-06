@@ -44,8 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Theme integration for Chart.js
-    const themeBtn = document.getElementById("theme-toggle");
-    themeBtn?.addEventListener("click", () => {
+    window.addEventListener("themechanged", () => {
         setTimeout(() => {
             if (window.cachedProgressData) {
                 renderCharts(window.cachedProgressData);
@@ -610,40 +609,5 @@ document.addEventListener("DOMContentLoaded", () => {
         errorState.classList.add("hidden");
     }
 
-    // ─── Hamburger/Menu toggles (matching global navigation) ───
-    const hamburger = document.getElementById("hamburger-btn");
-    const drawer = document.getElementById("mobile-drawer");
-    const overlay = document.getElementById("sidebar-overlay");
-    const closeBtn = document.getElementById("drawer-close-btn");
-
-    function openDrawer() {
-        drawer.classList.add("open");
-        overlay.classList.add("active");
-        document.body.style.overflow = "hidden";
-    }
-    function closeDrawer() {
-        drawer.classList.remove("open");
-        overlay.classList.remove("active");
-        document.body.style.overflow = "";
-    }
-
-    hamburger?.addEventListener("click", openDrawer);
-    closeBtn?.addEventListener("click", closeDrawer);
-    overlay?.addEventListener("click", closeDrawer);
-
-    const mobileNavLinks = document.querySelectorAll(".mobile-nav-link");
-    mobileNavLinks.forEach((link) => {
-        link.addEventListener("click", closeDrawer);
-    });
-
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) document.documentElement.setAttribute("data-theme", savedTheme);
-
-    const themeToggleBtn = document.getElementById("theme-toggle");
-    themeToggleBtn?.addEventListener("click", () => {
-        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-        const next = isDark ? "light" : "dark";
-        document.documentElement.setAttribute("data-theme", next);
-        localStorage.setItem("theme", next);
-    });
+    // Common mobile menu logic is handled in practice_common.js
 });

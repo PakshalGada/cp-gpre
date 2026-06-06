@@ -10,7 +10,11 @@
             rel="stylesheet"
             href="{{ url_for('static', filename='practice.css') }}"
         />
-        <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/favicon.png') }}" />
+        <link
+            rel="icon"
+            type="image/png"
+            href="{{ url_for('static', filename='assets/favicon.png') }}"
+        />
     </head>
     <body>
         <nav class="navbar" id="navbar">
@@ -36,7 +40,7 @@
                         </svg>
                     </button>
                     <a href="/" class="nav-logo">
-                        CP GPRE <span class="nav-version">v0.1</span>
+                        CP GPRE <span class="nav-version">v1</span>
                     </a>
                 </div>
 
@@ -50,9 +54,6 @@
                         class="nav-link active"
                         data-page="practice"
                         >Practice</a
-                    >
-                    <a href="/progress" class="nav-link" data-page="progress"
-                        >Progress</a
                     >
                 </div>
 
@@ -112,302 +113,180 @@
                 <a href="/" class="mobile-nav-link">Home</a>
                 <a href="/resource" class="mobile-nav-link">Resources</a>
                 <a href="/practice" class="mobile-nav-link active">Practice</a>
-                <a href="/progress" class="mobile-nav-link">Progress</a>
             </nav>
         </div>
 
         <main class="main">
             <div class="practice-container">
                 <section class="practice-header">
-                    <h1 class="practice-title">Problem Recommender</h1>
+                    <h1 class="practice-title">Practice</h1>
                     <p class="practice-subtitle">
-                        Get personalized problem recommendations based on your
-                        Codeforces profile
+                        Sharpen your competitive programming skills with
+                        personalized tools
                     </p>
                 </section>
 
-                <section class="config-section">
-                    <div class="config-card">
-                        <div class="config-row">
-                            <div class="form-group">
-                                <label for="cf-handle">Codeforces Handle</label>
-                                <input
-                                    type="text"
-                                    id="cf-handle"
-                                    placeholder="tourist"
-                                    class="form-input"
-                                />
-                            </div>
-                            <div class="form-group">
-                                <label for="problem-count">Count</label>
-                                <input
-                                    type="number"
-                                    id="problem-count"
-                                    value="8"
-                                    min="1"
-                                    max="20"
-                                    class="form-input"
-                                />
-                            </div>
-                        </div>
-
-                        <div class="config-row">
-                            <div class="form-group">
-                                <label for="cses-user">CSES username</label>
-                                <input
-                                    type="text"
-                                    id="cses-user"
-                                    placeholder="your CSES nick"
-                                    class="form-input"
-                                    autocomplete="username"
-                                />
-                            </div>
-                            <div class="form-group">
-                                <label for="cses-password"
-                                    >CSES password (sync only)</label
-                                >
-                                <input
-                                    type="password"
-                                    id="cses-password"
-                                    placeholder="Used once to refresh progress"
-                                    class="form-input"
-                                    autocomplete="current-password"
-                                />
-                            </div>
-                        </div>
-                        <p class="mode-description">
-                            CSES recommendations skip problems you have already
-                            solved (AC). Your username is saved in the browser.
-                            Password is used only when syncing and is never stored.
-                        </p>
-
-                        <div class="config-row">
-                            <div class="form-group full-width">
-                                <label>Recommendation Mode</label>
-                                <div class="mode-buttons">
-                                    <button
-                                        class="mode-btn active"
-                                        data-mode="balanced"
-                                    >
-                                        Balanced
-                                    </button>
-                                    <button
-                                        class="mode-btn"
-                                        data-mode="stretch"
-                                    >
-                                        Stretch
-                                    </button>
-                                    <button
-                                        class="mode-btn"
-                                        data-mode="weak-topics"
-                                    >
-                                        Weak Topics
-                                    </button>
-                                    <button
-                                        class="mode-btn"
-                                        data-mode="explore"
-                                    >
-                                        Explore
-                                    </button>
-                                    <button class="mode-btn" data-mode="grind">
-                                        Grind
-                                    </button>
-                                </div>
-                                <p
-                                    class="mode-description"
-                                    id="mode-description"
-                                >
-                                    Weak topics + slight rating push (default)
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="config-row">
-                            <div class="form-group">
-                                <label for="platform-filter">Platform</label>
-                                <select
-                                    id="platform-filter"
-                                    class="form-select"
-                                >
-                                    <option value="">Both</option>
-                                    <option value="codeforces">
-                                        Codeforces
-                                    </option>
-                                    <option value="cses">CSES</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="tags-filter"
-                                    >Tags (comma-separated)</label
-                                >
-                                <input
-                                    type="text"
-                                    id="tags-filter"
-                                    placeholder="dp, graphs"
-                                    class="form-input"
-                                />
-                            </div>
-                        </div>
-
-                        <div class="config-row">
-                            <div class="form-group">
-                                <label for="min-rating">Min Rating</label>
-                                <input
-                                    type="number"
-                                    id="min-rating"
-                                    placeholder="Auto"
-                                    class="form-input"
-                                />
-                            </div>
-                            <div class="form-group">
-                                <label for="max-rating">Max Rating</label>
-                                <input
-                                    type="number"
-                                    id="max-rating"
-                                    placeholder="Auto"
-                                    class="form-input"
-                                />
-                            </div>
-                        </div>
-
-                        <div class="action-buttons">
-                            <button
-                                class="btn btn-primary"
-                                id="get-recommendations"
+                <div class="hub-cards">
+                    <!-- Problem Recommender Card -->
+                    <a
+                        href="/practice/recommender"
+                        class="hub-card"
+                        id="hub-recommender"
+                    >
+                        <div class="hub-card-icon">
+                            <svg
+                                width="32"
+                                height="32"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
                             >
-                                <svg
-                                    width="16"
-                                    height="16"
-                                    viewBox="0 0 16 16"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                >
-                                    <path d="M8 2v12M2 8h12" />
-                                </svg>
-                                <span>Get Recommendations</span>
-                            </button>
-                            <a
-                                href="/progress"
-                                class="btn btn-secondary"
-                                id="view-progress"
-                            >
-                                <svg
-                                    width="16"
-                                    height="16"
-                                    viewBox="0 0 16 16"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                >
-                                    <path d="M2 3h12M2 8h12M2 13h12" />
-                                </svg>
-                                <span>View Progress</span>
-                            </a>
-                            <button
-                                class="btn btn-secondary"
-                                id="simulate-contest"
-                            >
-                                <svg
-                                    width="16"
-                                    height="16"
-                                    viewBox="0 0 16 16"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                >
-                                    <circle cx="8" cy="8" r="6" />
-                                </svg>
-                                <span>Contest Simulator</span>
-                            </button>
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                <line x1="11" y1="8" x2="11" y2="14" />
+                                <line x1="8" y1="11" x2="14" y2="11" />
+                            </svg>
                         </div>
-                    </div>
-                </section>
+                        <div class="hub-card-content">
+                            <h2 class="hub-card-title">Problem Recommender</h2>
+                            <p class="hub-card-description">
+                                Get AI-powered problem recommendations based on
+                                your Codeforces profile, weak topics, and
+                                preferred difficulty.
+                            </p>
+                            <div class="hub-card-features">
+                                <span class="hub-feature-pill">5 Modes</span>
+                                <span class="hub-feature-pill">CF + CSES</span>
+                                <span class="hub-feature-pill"
+                                    >Tag Filters</span
+                                >
+                            </div>
+                        </div>
+                        <div class="hub-card-arrow">
+                            <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <line x1="3" y1="8" x2="13" y2="8" />
+                                <polyline points="9 4 13 8 9 12" />
+                            </svg>
+                        </div>
+                    </a>
 
-                <div id="loading-state" class="loading-state hidden">
-                    <div class="spinner"></div>
-                    <p>Loading...</p>
+                    <!-- Progress Card -->
+                    <a
+                        href="/practice/progress"
+                        class="hub-card"
+                        id="hub-progress"
+                    >
+                        <div class="hub-card-icon">
+                            <svg
+                                width="32"
+                                height="32"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <polyline
+                                    points="22 12 18 12 15 21 9 3 6 12 2 12"
+                                />
+                            </svg>
+                        </div>
+                        <div class="hub-card-content">
+                            <h2 class="hub-card-title">Progress Tracker</h2>
+                            <p class="hub-card-description">
+                                Visualize your solving activity with heatmaps,
+                                rating charts, tag distribution, and streak
+                                tracking.
+                            </p>
+                            <div class="hub-card-features">
+                                <span class="hub-feature-pill">Heatmap</span>
+                                <span class="hub-feature-pill">Charts</span>
+                                <span class="hub-feature-pill">Streaks</span>
+                            </div>
+                        </div>
+                        <div class="hub-card-arrow">
+                            <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <line x1="3" y1="8" x2="13" y2="8" />
+                                <polyline points="9 4 13 8 9 12" />
+                            </svg>
+                        </div>
+                    </a>
+
+                    <!-- Contest Simulator Card -->
+                    <a
+                        href="/practice/contest"
+                        class="hub-card"
+                        id="hub-contest"
+                    >
+                        <div class="hub-card-icon">
+                            <svg
+                                width="32"
+                                height="32"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                        </div>
+                        <div class="hub-card-content">
+                            <h2 class="hub-card-title">Contest Simulator</h2>
+                            <p class="hub-card-description">
+                                Practice under contest conditions with custom
+                                virtual rounds. Choose your division, set a
+                                timer, and solve progressively harder problems.
+                            </p>
+                            <div class="hub-card-features">
+                                <span class="hub-feature-pill">Div 1–4</span>
+                                <span class="hub-feature-pill">Timer</span>
+                                <span class="hub-feature-pill"
+                                    >Unsolved Only</span
+                                >
+                            </div>
+                        </div>
+                        <div class="hub-card-arrow">
+                            <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <line x1="3" y1="8" x2="13" y2="8" />
+                                <polyline points="9 4 13 8 9 12" />
+                            </svg>
+                        </div>
+                    </a>
                 </div>
-
-                <div id="error-state" class="error-state hidden">
-                    <p class="error-message"></p>
-                </div>
-
-                <section id="user-stats" class="user-stats hidden">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-label">Rating</div>
-                            <div class="stat-value" id="user-rating">-</div>
-                            <div class="stat-sublabel" id="user-rank">-</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">Solved</div>
-                            <div class="stat-value" id="user-solved">-</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">Submission Streak</div>
-                            <div class="stat-value" id="submission-streak">
-                                -
-                            </div>
-                            <div class="stat-sublabel">days</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">Solve Streak</div>
-                            <div class="stat-value" id="solve-streak">-</div>
-                            <div class="stat-sublabel">days</div>
-                        </div>
-                    </div>
-                    <div class="weak-topics" id="weak-topics-container"></div>
-                    <p id="cses-stats" class="cses-stats hidden"></p>
-                </section>
-
-                <section
-                    id="recommendations-section"
-                    class="recommendations-section hidden"
-                >
-                    <div class="section-header">
-                        <h2 class="section-title">Recommended Problems</h2>
-                        <div
-                            class="section-meta"
-                            id="recommendations-meta"
-                        ></div>
-                    </div>
-                    <div
-                        id="recommendations-list"
-                        class="recommendations-list"
-                    ></div>
-                </section>
-
-                <section id="progress-section" class="progress-section hidden">
-                    <div class="section-header">
-                        <h2 class="section-title">Progress & Streaks</h2>
-                    </div>
-                    <div id="progress-content"></div>
-                </section>
-
-                <section id="contest-section" class="contest-section hidden">
-                    <div class="section-header">
-                        <h2 class="section-title">Contest Simulator</h2>
-                        <div class="contest-controls">
-                            <select id="division-select" class="form-select">
-                                <option value="1">Div. 1</option>
-                                <option value="2" selected>Div. 2</option>
-                                <option value="3">Div. 3</option>
-                                <option value="4">Div. 4</option>
-                            </select>
-                            <button
-                                class="btn btn-secondary"
-                                id="fetch-contests"
-                            >
-                                Fetch Contests
-                            </button>
-                        </div>
-                    </div>
-                    <div id="contest-content"></div>
-                </section>
             </div>
 
             <footer class="footer">
@@ -422,6 +301,54 @@
             </footer>
         </main>
 
-        <script src="{{ url_for('static', filename='practice.js') }}"></script>
+        <script>
+            // Navbar scroll shadow
+            const navbar = document.getElementById("navbar");
+            window.addEventListener("scroll", () => {
+                navbar.classList.toggle("scrolled", window.scrollY > 4);
+            });
+
+            // Mobile drawer
+            const hamburger = document.getElementById("hamburger-btn");
+            const drawer = document.getElementById("mobile-drawer");
+            const overlay = document.getElementById("sidebar-overlay");
+            const closeBtn = document.getElementById("drawer-close-btn");
+
+            function openDrawer() {
+                drawer.classList.add("open");
+                overlay.classList.add("active");
+                document.body.style.overflow = "hidden";
+            }
+            function closeDrawer() {
+                drawer.classList.remove("open");
+                overlay.classList.remove("active");
+                document.body.style.overflow = "";
+            }
+
+            hamburger.addEventListener("click", openDrawer);
+            closeBtn.addEventListener("click", closeDrawer);
+            overlay.addEventListener("click", closeDrawer);
+
+            const mobileNavLinks =
+                document.querySelectorAll(".mobile-nav-link");
+            mobileNavLinks.forEach((link) => {
+                link.addEventListener("click", closeDrawer);
+            });
+
+            // Theme toggle
+            const themeBtn = document.getElementById("theme-toggle");
+            const saved = localStorage.getItem("theme");
+            if (saved)
+                document.documentElement.setAttribute("data-theme", saved);
+
+            themeBtn.addEventListener("click", () => {
+                const isDark =
+                    document.documentElement.getAttribute("data-theme") ===
+                    "dark";
+                const next = isDark ? "light" : "dark";
+                document.documentElement.setAttribute("data-theme", next);
+                localStorage.setItem("theme", next);
+            });
+        </script>
     </body>
 </html>
