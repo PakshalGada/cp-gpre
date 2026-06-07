@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import threading
 
 from flask import Flask, jsonify, redirect, render_template, request
 
@@ -13,6 +14,47 @@ from core.practice.recommender import (
     get_recommendations_json,
     get_virtual_contest_json,
 )
+from core.practice.ProblemList import fetch_codeforces_problems, save_codeforces_problems
+from core.practice.scrape_cses import scrape_cses_problems, save_cses_problems
+from scripts.fetch_practice_problems import fetch_codeforces as fetch_cf_div, fetch_atcoder
+
+
+def run_auto_scrapers():
+    print("=== STARTING AUTO BACKGROUND SCRAPING ===")
+    try:
+        # 1. Fetch Codeforces problems
+        cf_problems = fetch_codeforces_problems()
+        save_codeforces_problems(cf_problems)
+    except Exception as e:
+        print(f"Auto-scraper Codeforces problems error: {e}")
+
+    try:
+        # 2. Fetch CSES problems
+        cses_problems = scrape_cses_problems()
+        save_cses_problems(cses_problems)
+    except Exception as e:
+        print(f"Auto-scraper CSES problems error: {e}")
+
+    try:
+        # 3. Fetch CF div contests/problems
+        fetch_cf_div()
+    except Exception as e:
+        print(f"Auto-scraper CF div problems error: {e}")
+
+    try:
+        # 4. Fetch AtCoder contests/problems
+        fetch_atcoder()
+    except Exception as e:
+        print(f"Auto-scraper AtCoder problems error: {e}")
+
+    print("=== AUTO BACKGROUND SCRAPING COMPLETE ===")
+
+
+def start_background_scraping():
+    if not app.debug or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        thread = threading.Thread(target=run_auto_scrapers, daemon=True)
+        thread.start()
+
 
 app = Flask(__name__, static_folder="ui/static", template_folder="ui/template")
 
@@ -427,4 +469,6 @@ def api_practice_solved():
 
 
 if __name__ == "__main__":
+    app.debug = True
+    start_background_scraping()
     app.run(host="0.0.0.0", debug=True)
