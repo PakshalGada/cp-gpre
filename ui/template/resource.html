@@ -1,11 +1,23 @@
 <!doctype html>
 <html lang="en">
     <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-XLCE81VYWL"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-XLCE81VYWL');
+        </script>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>CP-GPRE — Resources</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        {% import 'seo_macros.html' as curated_seo %}
+        {{ curated_seo.render_seo(
+            title="Competitive Programming Roadmap & Resources | CP-GPRE",
+            description="Explore curated competitive programming resources, topic-wise roadmaps, and tutorials for Data Structures and Algorithms.",
+            canonical_url=request.url
+        ) }}
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif:wght@600;700&display=swap"
             rel="stylesheet"
@@ -20,8 +32,8 @@
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/catppuccin-mocha.min.css"
         />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js" defer></script>
 
         <!-- MathJax -->
         <script>
@@ -230,7 +242,7 @@
             </main>
         </div>
 
-        <script src="{{ url_for('static', filename='practice_common.js') }}?v=1.0.5"></script>
-        <script src="{{ url_for('static', filename='resource.js') }}?v=1.0.5"></script>
+        <script src="{{ url_for('static', filename='practice_common.js') }}?v=1.0.5" defer></script>
+        <script src="{{ url_for('static', filename='resource.js') }}?v=1.0.5" defer></script>
     </body>
 </html>

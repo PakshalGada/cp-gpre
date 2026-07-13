@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-XLCE81VYWL"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-XLCE81VYWL');
+        </script>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        {% import 'seo_macros.html' as seo %}
+        {{ seo.render_seo(
+            title="About CP-GPRE | Competitive Programming Guide",
+            description="Learn more about CP-GPRE, a comprehensive platform designed for competitive programmers and software engineers preparing for technical interviews.",
+            canonical_url=request.url
+        ) }}
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='index.css') }}?v=1.0.5"
+        />
+        <style>
+            .about-container {
+                padding-top: 40px;
+                padding-bottom: 40px;
+            }
+            .footer {
+                margin-top: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- ── Navbar ── -->
+        <nav class="navbar" id="navbar">
+            <div class="navbar-inner">
+                <div class="nav-left">
+                    <button
+                        class="hamburger-btn"
+                        id="hamburger-btn"
+                        aria-label="Open menu"
+                    >
+                        <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                        >
+                            <line x1="2" y1="4" x2="14" y2="4" />
+                            <line x1="2" y1="8" x2="14" y2="8" />
+                            <line x1="2" y1="12" x2="14" y2="12" />
+                        </svg>
+                    </button>
+                    <a href="/" class="nav-logo">
+                        CP GPRE <span class="nav-version">v1</span>
+                    </a>
+                </div>
+
+                <!-- Desktop nav links -->
+                <div class="nav-links">
+                    <a href="/" class="nav-link" data-page="home">Home</a>
+                    <a href="/resource" class="nav-link" data-page="resource">Resources</a>
+                    <a href="/practice" class="nav-link" data-page="practice">Practice</a>
+                </div>
+
+                <div class="nav-right">
+                    <button
+                        class="theme-toggle"
+                        id="theme-toggle"
+                        aria-label="Toggle theme"
+                    >
+                        <svg class="icon icon-sun" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="5" />
+                            <line x1="12" y1="1" x2="12" y2="3" />
+                            <line x1="12" y1="21" x2="12" y2="23" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line x1="1" y1="12" x2="3" y2="12" />
+                            <line x1="21" y1="12" x2="23" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        </svg>
+                        <svg class="icon icon-moon" viewBox="0 0 24 24">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ── Mobile Drawer ── -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        <div class="mobile-drawer" id="mobile-drawer">
+            <div class="mobile-drawer-header">
+                <a href="/" class="nav-logo">
+                    CP GPRE <span class="nav-version">v0.1</span>
+                </a>
+                <button
+                    class="hamburger-btn"
+                    id="drawer-close-btn"
+                    aria-label="Close menu"
+                >
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    >
+                        <line x1="3" y1="3" x2="13" y2="13" />
+                        <line x1="13" y1="3" x2="3" y2="13" />
+                    </svg>
+                </button>
+            </div>
+            <nav class="mobile-nav">
+                <a href="/" class="mobile-nav-link">Home</a>
+                <a href="/resource" class="mobile-nav-link">Resources</a>
+                <a href="/practice" class="mobile-nav-link">Practice</a>
+            </nav>
+        </div>
+
+        <main class="main about-container">
+            <article class="seo-content">
+                <h2>Elevate Your Competitive Programming Skills with CP-GPRE</h2>
+                <p>CP-GPRE (Competitive Programming Guide and Practice Resource Engine) is a comprehensive, open-source platform designed specifically for competitive programmers, software engineers preparing for technical interviews, and computer science students aiming to master Data Structures and Algorithms (DSA). Whether you are a beginner looking for a structured learning path, a specialist trying to reach expert, or a Grandmaster seeking challenging problems, our platform adapts to your skill level. We bridge the gap between learning theory and applying it under contest conditions.</p>
+
+                <h3>Why Competitive Programming Matters</h3>
+                <p>Competitive programming is more than just solving puzzles; it's about developing the ability to analyze complex problems, design efficient algorithms, and write flawless code under time constraints. These skills are highly sought after by top tech companies during coding interviews. By practicing regularly on platforms like Codeforces, AtCoder, and CSES, you not only improve your ranking but also build a robust foundation in computer science fundamentals. The discipline required to debug complex edge cases and optimize time complexities (Big O notation) translates directly to writing scalable, production-ready software.</p>
+
+                <h3>Seamless Integration with Codeforces, AtCoder, and CSES</h3>
+                <p>Our sophisticated Problem Recommender system analyzes your profiles across major competitive programming platforms to create a unified practice experience.</p>
+                <ul>
+                    <li><strong>Codeforces Integration:</strong> Codeforces is the premier platform for competitive programming, hosting regular Div 1, Div 2, Div 3, and Div 4 contests. We track your Codeforces rating, submission history, and solved problems to suggest new challenges that perfectly match your current skill level. Whether you need to practice Dynamic Programming, greedy algorithms, or Graph Theory, our engine provides targeted recommendations. By filtering out problems you've already solved and identifying your weak topics, CP-GPRE accelerates your journey from Pupil to Candidate Master and beyond.</li>
+                    <li><strong>AtCoder Excellence:</strong> Known for its high-quality, mathematically rigorous problems, AtCoder is a favorite among top competitive programmers worldwide. Their AtCoder Beginner Contests (ABC), Regular Contests (ARC), and Grand Contests (AGC) provide a fantastic progression of difficulty. We integrate AtCoder's rich problem set into our practice lists, allowing you to diversify your problem-solving techniques. AtCoder problems often require deep logical insights and mathematical proofs, making them an excellent complement to Codeforces' more implementation-heavy style.</li>
+                    <li><strong>The CSES Problem Set:</strong> The CSES (Code Submit Evaluate System) Problem Set is a classic, meticulously curated collection of problems that covers every essential algorithm and data structure. Our progress tracker syncs securely with your CSES account, allowing you to monitor your journey. You can seamlessly track your completion of introductory problems, sorting and searching, dynamic programming, graph algorithms, tree algorithms, mathematics, string processing, and advanced techniques. Completing the CSES problem set is a rite of passage for any serious competitive programmer, and CP-GPRE provides the perfect dashboard to visualize your progress.</li>
+                </ul>
+
+                <h3>Master Essential Algorithms and Data Structures</h3>
+                <p>To succeed in competitive programming and technical interviews, you need a deep, intuitive understanding of core topics. CP-GPRE offers curated resources, editorials, and structured roadmaps for:</p>
+                <ul>
+                    <li><strong>Dynamic Programming (DP):</strong> Master state transitions, memoization, tabulation, and classic DP patterns. Learn how to optimize DP solutions using techniques like Matrix Exponentiation, Convex Hull Trick, and Divide and Conquer optimization. We guide you through Knapsack problems, Digit DP, DP on Trees, and Bitmask DP.</li>
+                    <li><strong>Graph Algorithms:</strong> Graphs are ubiquitous in programming contests. Progress from simple Breadth-First Search (BFS) and Depth-First Search (DFS) to Shortest Paths (Dijkstra, Bellman-Ford, Floyd-Warshall). Delve into advanced concepts like Minimum Spanning Trees (Kruskal, Prim), Strongly Connected Components (Tarjan, Kosaraju), Eulerian Paths, and Network Flow (Dinic's Algorithm).</li>
+                    <li><strong>Advanced Data Structures:</strong> Standard libraries are rarely enough for difficult queries. Learn to implement Segment Trees (with lazy propagation), Fenwick Trees (Binary Indexed Trees), Disjoint Set Union (DSU) with path compression, and Tries. These are essential for solving range queries and complex string matching problems efficiently within the strict time limits of Codeforces and AtCoder.</li>
+                    <li><strong>Number Theory & Combinatorics:</strong> Mathematical insight is crucial. We provide roadmaps covering modular arithmetic, the Sieve of Eratosthenes, Fermat's Little Theorem, Euler's Totient Function, and combinatorics (nCr, permutations). These concepts frequently appear in Codeforces Div 2 and Div 1 contests, and mastering them will give you a significant edge.</li>
+                </ul>
+
+                <h3>Tailored Practice Routines and Contest Simulation</h3>
+                <p>Stop wasting time searching for the right problems. Our intelligent practice routines ensure you are always appropriately challenged:</p>
+                <ul>
+                    <li><strong>Balanced Mode:</strong> Reinforces your strong areas while gently pushing you out of your comfort zone, perfect for consistent daily practice.</li>
+                    <li><strong>Weak Topics Mode:</strong> Specifically targets algorithms and tags where you have a lower success rate or slower solve time, helping you round out your skill set and eliminate blind spots.</li>
+                    <li><strong>Virtual Contests:</strong> Simulate the pressure of real contests with carefully curated problem sets. You can generate custom contests based on Codeforces divisions. This is the absolute best way to improve your speed, accuracy, penalty management, and overall time management skills.</li>
+                </ul>
+
+                <h3>Technical Interview Preparation Made Easy</h3>
+                <p>The algorithms required for competitive programming overlap significantly with those tested in technical interviews at FAANG (Facebook/Meta, Amazon, Apple, Netflix, Google) and other top-tier tech companies. By practicing on CP-GPRE, you are inherently preparing for these high-stakes interviews. The problem-solving speed, edge-case awareness, and algorithmic intuition you develop here will make platforms like LeetCode and HackerRank feel much more approachable. You'll transition from merely passing test cases to writing optimal, elegant solutions on the first try.</p>
+
+                <h3>Join the Global Community of Problem Solvers</h3>
+                <p>Competitive programming is a journey best shared. Use our progress tracker to visualize your growth, compare your stats with peers, and stay motivated. Whether your goal is to win the ICPC (International Collegiate Programming Contest), achieve the legendary Tourist rating, or simply land your dream software engineering job, CP-GPRE provides the tools, resources, and structured practice you need. Start your journey today and unlock your full problem-solving potential.</p>
+            </article>
+
+            <footer class="footer">
+                <p>
+                    <a href="/about" style="margin-right: 16px;">About Us</a>
+                    <a href="https://github.com/PakshalGada/cp-gpre" target="_blank">
+                        Contribute on GitHub
+                    </a>
+                </p>
+            </footer>
+        </main>
+
+        <script src="{{ url_for('static', filename='index.js') }}?v=1.0.5" defer></script>
+        <script src="{{ url_for('static', filename='practice_common.js') }}?v=1.0.5" defer></script>
+    </body>
+</html>

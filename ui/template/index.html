@@ -1,11 +1,23 @@
 <!doctype html>
 <html lang="en">
     <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-XLCE81VYWL"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-XLCE81VYWL');
+        </script>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>CP-GPRE</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        {% import 'seo_macros.html' as seo %}
+        {{ seo.render_seo(
+            title="Competitive Programming Guide | CP-GPRE",
+            description="Master the art of problem solving with CP-GPRE. Discover algorithms, data structures, and practice routines to excel in Codeforces, AtCoder, and CSES.",
+            canonical_url=request.url
+        ) }}
         <link
             rel="stylesheet"
             href="{{ url_for('static', filename='index.css') }}?v=1.0.5"
@@ -165,6 +177,7 @@
 
             <footer class="footer">
                 <p>
+                    <a href="/about" style="margin-right: 16px;">About Us</a>
                     <a
                         href="https://github.com/PakshalGada/cp-gpre"
                         target="_blank"
@@ -175,7 +188,7 @@
             </footer>
         </main>
 
-        <script src="{{ url_for('static', filename='index.js') }}?v=1.0.5"></script>
-        <script src="{{ url_for('static', filename='practice_common.js') }}?v=1.0.5"></script>
+        <script src="{{ url_for('static', filename='index.js') }}?v=1.0.5" defer></script>
+        <script src="{{ url_for('static', filename='practice_common.js') }}?v=1.0.5" defer></script>
     </body>
 </html>

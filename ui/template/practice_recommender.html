@@ -1,11 +1,23 @@
 <!doctype html>
 <html lang="en">
     <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-XLCE81VYWL"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-XLCE81VYWL');
+        </script>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Problem Recommender - CP-GPRE</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        {% import 'seo_macros.html' as seo %}
+        {{ seo.render_seo(
+            title="Problem Recommender | Competitive Programming Practice | CP-GPRE",
+            description="Get personalized problem recommendations based on your Codeforces and CSES profile to improve your competitive programming skills.",
+            canonical_url=request.url
+        ) }}
         <link
             rel="stylesheet"
             href="{{ url_for('static', filename='practice.css') }}?v=1.0.5"
@@ -550,7 +562,7 @@
             </div>
         </main>
 
-        <script src="{{ url_for('static', filename='practice_common.js') }}?v=1.0.5"></script>
-        <script src="{{ url_for('static', filename='practice_recommender.js') }}?v=1.0.5"></script>
+        <script src="{{ url_for('static', filename='practice_common.js') }}?v=1.0.5" defer></script>
+        <script src="{{ url_for('static', filename='practice_recommender.js') }}?v=1.0.5" defer></script>
     </body>
 </html>

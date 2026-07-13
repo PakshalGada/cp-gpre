@@ -1,0 +1,52 @@
+{% macro render_seo(title, description, canonical_url=None, og_type='website', schema_type='WebSite') %}
+<!-- Primary Meta Tags -->
+<title>{{ title }}</title>
+<meta name="title" content="{{ title }}" />
+<meta name="description" content="{{ description }}" />
+
+<!-- Preconnect & DNS Prefetch for Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+
+<!-- Canonical URL -->
+<link rel="canonical" href="{{ canonical_url or request.url }}" />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="{{ og_type }}" />
+<meta property="og:url" content="{{ canonical_url or request.url }}" />
+<meta property="og:title" content="{{ title }}" />
+<meta property="og:description" content="{{ description }}" />
+<meta property="og:image" content="{{ url_for('static', filename='assets/favicon.png', _external=True) }}" />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content="{{ canonical_url or request.url }}" />
+<meta property="twitter:title" content="{{ title }}" />
+<meta property="twitter:description" content="{{ description }}" />
+<meta property="twitter:image" content="{{ url_for('static', filename='assets/favicon.png', _external=True) }}" />
+
+<!-- Favicon, Manifest & Theme Color -->
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/favicon.png') }}" />
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='assets/favicon.png') }}" />
+<meta name="theme-color" content="#1e1e2e" />
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "{{ schema_type }}",
+  "name": "{{ title }}",
+  "url": "{{ canonical_url or request.url }}",
+  "description": "{{ description }}",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CP-GPRE",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ url_for('static', filename='assets/favicon.png', _external=True) }}"
+    }
+  }
+}
+</script>
+{% endmacro %}

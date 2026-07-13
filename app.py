@@ -3,7 +3,7 @@ import os
 import sys
 import threading
 
-from flask import Flask, jsonify, redirect, render_template, request
+from flask import Flask, jsonify, redirect, render_template, request, make_response
 
 from core.practice.cses_profile import CsesLoginError
 from core.practice.recommender import (
@@ -78,9 +78,87 @@ def load_db():
 
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
+@app.route("/robots.txt")
+def robots():
+    lines = [
+        "User-agent: *",
+        "Allow: /",
+        f"Sitemap: {request.url_root.rstrip('/')}/sitemap.xml"
+    ]
+    response = make_response("\n".join(lines))
+    response.headers["Content-Type"] = "text/plain"
+    return response
+
+
+@app.route("/sitemap.xml")
+def sitemap():
+    import datetime
+    base_url = request.url_root.rstrip('/')
+    
+    pages = [
+        "/",
+        "/about",
+        "/resource",
+        "/practice",
+        "/practice/recommender",
+        "/practice/progress",
+        "/practice/contest",
+        "/practice/problems"
+    ]
+    
+    today = datetime.datetime.now().strftime("%Y-%m-%d")
+    xml_lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+    ]
+    
+    for page in pages:
+        xml_lines.append("  <url>")
+        xml_lines.append(f"    <loc>{base_url}{page}</loc>")
+        xml_lines.append(f"    <lastmod>{today}</lastmod>")
+        if page == "/":
+            xml_lines.append("    <priority>1.0</priority>")
+        else:
+            xml_lines.append("    <priority>0.8</priority>")
+        xml_lines.append("  </url>")
+        
+    # Also add topics from db
+    try:
+        data = load_db()
+        for topic in data:
+            slug = topic.get("slug")
+            if slug:
+                xml_lines.append("  <url>")
+                # Currently topics might just be loaded on client side via /api/topic/...,
+                # but if there's a dedicated page we should link it. 
+                # Looks like topics are viewed on /resource or /topic/slug?
+                # Actually, there is no /topic/<slug> route in app.py other than /api/topic/<slug>.
+                # They are probably loaded via JS in /resource. We'll stick to static pages for now.
+                # If there's no static route for topic, we skip.
+                pass
+    except Exception:
+        pass
+
+    xml_lines.append("</urlset>")
+    
+    response = make_response("\n".join(xml_lines))
+    response.headers["Content-Type"] = "application/xml"
+    return response
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
 
 @app.route("/resource")

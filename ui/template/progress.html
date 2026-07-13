@@ -1,17 +1,29 @@
 <!doctype html>
 <html lang="en">
     <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-XLCE81VYWL"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-XLCE81VYWL');
+        </script>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Progress Dashboard — CP-GPRE</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        {% import 'seo_macros.html' as seo %}
+        {{ seo.render_seo(
+            title="Progress Dashboard | Competitive Programming | CP-GPRE",
+            description="Track your competitive programming progress, analyze your performance, and view your detailed problem solving statistics.",
+            canonical_url=request.url
+        ) }}
         <link
             rel="stylesheet"
             href="{{ url_for('static', filename='progress.css') }}?v=1.0.5"
         />
         <!-- Chart.js CDN for visual graphs -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
         <link
             rel="icon"
             type="image/png"
@@ -537,7 +549,7 @@
         <!-- Positioning Tooltip for Heatmap Squares -->
         <div class="heatmap-tooltip" id="heatmap-tooltip"></div>
 
-        <script src="{{ url_for('static', filename='practice_common.js') }}?v=1.0.5"></script>
-        <script src="{{ url_for('static', filename='progress.js') }}?v=1.0.5"></script>
+        <script src="{{ url_for('static', filename='practice_common.js') }}?v=1.0.5" defer></script>
+        <script src="{{ url_for('static', filename='progress.js') }}?v=1.0.5" defer></script>
     </body>
 </html>

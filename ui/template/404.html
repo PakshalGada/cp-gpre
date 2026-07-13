@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-XLCE81VYWL"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-XLCE81VYWL');
+        </script>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        {% import 'seo_macros.html' as seo %}
+        {{ seo.render_seo(
+            title="Page Not Found | CP-GPRE",
+            description="The page you are looking for does not exist on CP-GPRE.",
+            canonical_url=request.url
+        ) }}
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='index.css') }}?v=1.0.5"
+        />
+        <style>
+            .not-found-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 60vh;
+                text-align: center;
+                padding: 2rem;
+            }
+            .not-found-title {
+                font-size: 4rem;
+                margin-bottom: 1rem;
+                color: var(--primary-color);
+            }
+            .not-found-message {
+                font-size: 1.2rem;
+                color: var(--text-muted);
+                margin-bottom: 2rem;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar" id="navbar">
+            <div class="navbar-inner">
+                <div class="nav-left">
+                    <a href="/" class="nav-logo">
+                        CP GPRE <span class="nav-version">v1</span>
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <a href="/" class="nav-link" data-page="home">Home</a>
+                    <a href="/resource" class="nav-link" data-page="resource">Resources</a>
+                    <a href="/practice" class="nav-link" data-page="practice">Practice</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="main">
+            <section class="not-found-container">
+                <h1 class="not-found-title">404</h1>
+                <p class="not-found-message">Oops! The page you're looking for doesn't exist.</p>
+                <a href="/" class="btn btn-primary">Go Home</a>
+            </section>
+        </main>
+    </body>
+</html>
